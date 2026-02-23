@@ -60,6 +60,10 @@ async function updateCounts() {
     try {
         // Fetch rooms to count availability
         const respRooms = await fetch('api/rooms/available');
+        if (respRooms.status === 401) {
+            window.location.href = 'staff_login.html';
+            return;
+        }
         const roomsJson = await respRooms.json();
         const rooms = roomsJson.data || [];
         document.getElementById('countAvailable').textContent = rooms.length;

@@ -10,9 +10,7 @@
     <style>
         :root {
             --primary-yellow: #fcc419;
-            /* Exact yellow from screenshot */
             --glass-bg: rgba(255, 255, 255, 0.08);
-            --input-bg: rgba(255, 255, 255, 0.1);
             --text-white: #ffffff;
         }
 
@@ -99,7 +97,8 @@
             font-size: 1.1rem;
         }
 
-        input {
+        input,
+        select {
             width: 100%;
             padding: 0.9rem 1rem 0.9rem 3.5rem;
             border-radius: 12px;
@@ -149,6 +148,61 @@
             margin-top: 1rem;
             display: none;
         }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(40, 40, 40, 0.9);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 24px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
+        .close-btn:hover {
+            opacity: 1;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .full-w {
+            grid-column: span 2;
+        }
     </style>
 </head>
 
@@ -176,22 +230,85 @@
                 </div>
             </div>
             <button type="submit" class="login-btn">Sign In</button>
-            <div class="error-msg" id="errorMsg">Invalid credentials.</div>
+            <div class="error-msg" id="loginError">Invalid credentials.</div>
         </form>
 
         <div class="footer">
-            Don't have an account? <a href="user_register.html"
+            Don't have an account? <a href="#" id="openRegister"
                 style="color: var(--primary-yellow); text-decoration: none; font-weight: 500;">Register Now</a><br><br>
             &copy; 2026 Ocean View Resort Management System
         </div>
     </div>
 
+    <!-- Registration Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeRegister">&times;</span>
+            <div class="logo-container">
+                <i class="fas fa-umbrella-beach"></i>
+                <span>Ocean View</span>
+            </div>
+            <h3 style="text-align: center; color: white; margin-bottom: 2rem; font-weight: 400; letter-spacing: 2px;">
+                GUEST REGISTRATION</h3>
+
+            <form id="registerForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="regFirst" placeholder="John" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="regLast" placeholder="Doe" required>
+                    </div>
+                    <div class="form-group full-w">
+                        <label>Email Address</label>
+                        <input type="email" id="regEmail" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="regPass" placeholder="Create password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" id="regPhone" placeholder="+12345678" required>
+                    </div>
+                    <div class="form-group full-w">
+                        <label>Address</label>
+                        <input type="text" id="regAddr" placeholder="123 Resort St" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ID Type</label>
+                        <select id="regIdType">
+                            <option value="NIC">NIC</option>
+                            <option value="PASSPORT">Passport</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ID Number</label>
+                        <input type="text" id="regIdNum" placeholder="ID Number" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">Create Account</button>
+                <div class="error-msg" id="regError"></div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        const regModal = document.getElementById('registerModal');
+        const openBtn = document.getElementById('openRegister');
+        const closeBtn = document.getElementById('closeRegister');
+
+        openBtn.onclick = (e) => { e.preventDefault(); regModal.classList.add('active'); };
+        closeBtn.onclick = () => { regModal.classList.remove('active'); };
+
+        // Handle Login
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('errorMsg');
+            const errorMsg = document.getElementById('loginError');
             errorMsg.style.display = 'none';
 
             try {
@@ -200,12 +317,15 @@
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
                 });
-
                 const data = await response.json();
                 if (data.success) {
                     window.location.href = 'user_dashboard.html';
                 } else {
-                    errorMsg.textContent = data.message || 'Login failed.';
+                    if (data.message && data.message.includes('not found')) {
+                        errorMsg.innerHTML = `${data.message} <br> <a href="#" onclick="document.getElementById('openRegister').click()" style="color: var(--primary-yellow); text-decoration: underline;">Click here to register</a>`;
+                    } else {
+                        errorMsg.textContent = data.message || 'Login failed.';
+                    }
                     errorMsg.style.display = 'block';
                 }
             } catch (err) {
@@ -213,6 +333,49 @@
                 errorMsg.style.display = 'block';
             }
         });
+
+        // Handle Registration
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorMsg = document.getElementById('regError');
+            errorMsg.style.display = 'none';
+
+            const formData = new URLSearchParams();
+            formData.append('firstName', document.getElementById('regFirst').value);
+            formData.append('lastName', document.getElementById('regLast').value);
+            formData.append('email', document.getElementById('regEmail').value);
+            formData.append('password', document.getElementById('regPass').value);
+            formData.append('contactNumber', document.getElementById('regPhone').value);
+            formData.append('address', document.getElementById('regAddr').value);
+            formData.append('idType', document.getElementById('regIdType').value);
+            formData.append('idNumber', document.getElementById('regIdNum').value);
+            formData.append('nationality', 'United Kingdom');
+
+            try {
+                const response = await fetch('api/guests', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Success! Now sign in with your new account.');
+                    regModal.classList.remove('active');
+                    document.getElementById('email').value = document.getElementById('regEmail').value;
+                } else {
+                    errorMsg.textContent = data.message;
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Registration failed.';
+                errorMsg.style.display = 'block';
+            }
+        });
+
+        // Auto-open if redirected
+        if (window.location.search.includes('register')) {
+            regModal.classList.add('active');
+        }
     </script>
 </body>
 

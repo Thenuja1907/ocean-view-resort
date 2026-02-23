@@ -86,7 +86,12 @@
 
         async function loadMyBookings() {
             try {
-                const resp = await fetch('api/reservations'); // Backend handles filtering for guest session
+                const resp = await fetch('api/reservations');
+                if (resp.status === 401) {
+                    alert('Please register or log in to view your bookings.');
+                    window.location.href = 'user_login.html?register';
+                    return;
+                }
                 const data = await resp.json();
                 const list = data.data || [];
 

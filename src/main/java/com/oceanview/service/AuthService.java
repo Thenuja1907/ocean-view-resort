@@ -62,9 +62,7 @@ public class AuthService {
 
         Optional<Guest> opt = guestDao.findByEmail(email.trim());
         if (opt.isEmpty()) {
-            // "Anyone can login" - auto-create?
-            // Better to keep it secure for existing guests or handle errors gracefully.
-            throw new SecurityException("Guest record not found. Please contact staff to register.");
+            throw new SecurityException("Guest record not found. Please register to create an account.");
         }
 
         Guest guest = opt.get();
