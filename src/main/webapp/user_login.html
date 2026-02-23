@@ -11,7 +11,9 @@
         :root {
             --primary-yellow: #fcc419;
             --glass-bg: rgba(255, 255, 255, 0.08);
+            --modal-bg: rgba(20, 20, 20, 0.95);
             --text-white: #ffffff;
+            --dark-input: rgba(255, 255, 255, 0.05);
         }
 
         body {
@@ -31,14 +33,14 @@
 
         .login-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             padding: 3.5rem 2.5rem;
             width: 100%;
             max-width: 440px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 40px 60px rgba(0, 0, 0, 0.4);
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
 
@@ -79,8 +81,8 @@
         .form-group label {
             display: block;
             margin-bottom: 0.6rem;
-            font-size: 0.95rem;
-            font-weight: 500;
+            font-size: 0.9rem;
+            font-weight: 400;
             color: var(--text-white);
         }
 
@@ -93,8 +95,8 @@
             left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1rem;
         }
 
         input,
@@ -102,18 +104,22 @@
             width: 100%;
             padding: 0.9rem 1rem 0.9rem 3.5rem;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--dark-input);
             color: white;
             box-sizing: border-box;
             outline: none;
             transition: 0.3s;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         input:focus {
             border-color: var(--primary-yellow);
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
 
         .login-btn {
@@ -124,22 +130,23 @@
             background: var(--primary-yellow);
             color: #1a1a1a;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: 0.3s;
             margin-top: 1rem;
+            letter-spacing: 1px;
         }
 
         .login-btn:hover {
             opacity: 0.9;
-            transform: scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(252, 196, 25, 0.3);
         }
 
         .footer {
             margin-top: 3rem;
             font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 0.5px;
         }
 
         .error-msg {
@@ -149,7 +156,7 @@
             display: none;
         }
 
-        /* Modal Styles */
+        /* Registration Modal Matching First Pic Theme */
         .modal {
             position: fixed;
             top: 0;
@@ -157,7 +164,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -169,25 +176,28 @@
         }
 
         .modal-content {
-            background: rgba(40, 40, 40, 0.9);
+            background: rgba(25, 25, 25, 0.8);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
             width: 100%;
             max-width: 600px;
-            border-radius: 24px;
-            padding: 2.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            padding: 3rem 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 60px 100px rgba(0, 0, 0, 0.7);
         }
 
         .close-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 25px;
+            right: 25px;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             cursor: pointer;
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
         .close-btn:hover {
@@ -197,11 +207,19 @@
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .full-w {
             grid-column: span 2;
+        }
+
+        .modal-title {
+            color: var(--primary-yellow);
+            letter-spacing: 3px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
         }
     </style>
 </head>
@@ -244,26 +262,21 @@
     <div class="modal" id="registerModal">
         <div class="modal-content">
             <span class="close-btn" id="closeRegister">&times;</span>
-            <div class="logo-container">
-                <i class="fas fa-umbrella-beach"></i>
-                <span>Ocean View</span>
-            </div>
-            <h3 style="text-align: center; color: white; margin-bottom: 2rem; font-weight: 400; letter-spacing: 2px;">
-                GUEST REGISTRATION</h3>
+            <div class="modal-title">GUEST REGISTRATION</div>
 
             <form id="registerForm">
                 <div class="form-grid">
                     <div class="form-group">
                         <label>First Name</label>
-                        <input type="text" id="regFirst" placeholder="John" required>
+                        <input type="text" id="regFirst" placeholder="Enter first name" required>
                     </div>
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" id="regLast" placeholder="Doe" required>
+                        <input type="text" id="regLast" placeholder="Enter last name" required>
                     </div>
                     <div class="form-group full-w">
                         <label>Email Address</label>
-                        <input type="email" id="regEmail" placeholder="john@example.com" required>
+                        <input type="email" id="regEmail" placeholder="Example: manivannanthenuja@gmail.com" required>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
@@ -271,22 +284,22 @@
                     </div>
                     <div class="form-group">
                         <label>Phone</label>
-                        <input type="text" id="regPhone" placeholder="+12345678" required>
+                        <input type="text" id="regPhone" placeholder="Example: 0712345678" required>
                     </div>
                     <div class="form-group full-w">
                         <label>Address</label>
-                        <input type="text" id="regAddr" placeholder="123 Resort St" required>
+                        <input type="text" id="regAddr" placeholder="Street Address" required>
                     </div>
                     <div class="form-group">
                         <label>ID Type</label>
-                        <select id="regIdType">
+                        <select id="regIdType" style="padding-left: 1rem;">
                             <option value="NIC">NIC</option>
                             <option value="PASSPORT">Passport</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>ID Number</label>
-                        <input type="text" id="regIdNum" placeholder="ID Number" required>
+                        <input type="text" id="regIdNum" placeholder="1999258338896" required>
                     </div>
                 </div>
                 <button type="submit" class="login-btn">Create Account</button>
@@ -349,7 +362,7 @@
             formData.append('address', document.getElementById('regAddr').value);
             formData.append('idType', document.getElementById('regIdType').value);
             formData.append('idNumber', document.getElementById('regIdNum').value);
-            formData.append('nationality', 'United Kingdom');
+            formData.append('nationality', 'Resident');
 
             try {
                 const response = await fetch('api/guests', {
@@ -359,9 +372,8 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    alert('Success! Now sign in with your new account.');
-                    regModal.classList.remove('active');
-                    document.getElementById('email').value = document.getElementById('regEmail').value;
+                    alert('Registration Successful! Redirecting to Portal Selection.');
+                    window.location.href = 'index.html';
                 } else {
                     errorMsg.textContent = data.message;
                     errorMsg.style.display = 'block';
@@ -372,10 +384,7 @@
             }
         });
 
-        // Auto-open if redirected
-        if (window.location.search.includes('register')) {
-            regModal.classList.add('active');
-        }
+        if (window.location.search.includes('register')) regModal.classList.add('active');
     </script>
 </body>
 

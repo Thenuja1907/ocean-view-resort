@@ -60,7 +60,6 @@ public class GuestServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
         try {
-            requireSession(req);
             Guest guest = buildFromRequest(req, new Guest());
             guestService.registerGuest(guest);
             resp.setStatus(HttpServletResponse.SC_CREATED);
