@@ -25,26 +25,46 @@ function initEventListeners() {
         });
     });
 
-    // Modal Control
-    const modal = document.getElementById('bookingModal');
+    // Booking Modal Control
+    const bookingModal = document.getElementById('bookingModal');
     const btnBooking = document.getElementById('btnQuickBooking');
-    const btnClose = document.querySelector('.close-modal');
+    const btnCloseBooking = document.querySelector('.close-modal');
 
     if (btnBooking) {
         btnBooking.addEventListener('click', () => {
-            modal.classList.add('active');
+            bookingModal.classList.add('active');
             prepareBookingForm();
         });
     }
 
-    if (btnClose) {
-        btnClose.addEventListener('click', () => modal.classList.remove('active'));
+    if (btnCloseBooking) {
+        btnCloseBooking.addEventListener('click', () => bookingModal.classList.remove('active'));
     }
 
-    // Form Submission
+    // Guest Modal Control
+    const guestModal = document.getElementById('guestModal');
+    const btnAddGuest = document.getElementById('btnAddGuest');
+    const btnCloseGuest = document.getElementById('btnCloseGuestModal');
+
+    if (btnAddGuest) {
+        btnAddGuest.addEventListener('click', () => {
+            guestModal.classList.add('active');
+        });
+    }
+
+    if (btnCloseGuest) {
+        btnCloseGuest.addEventListener('click', () => guestModal.classList.remove('active'));
+    }
+
+    // Form Submissions
     const bookingForm = document.getElementById('bookingForm');
     if (bookingForm) {
         bookingForm.addEventListener('submit', handleBooking);
+    }
+
+    const guestForm = document.getElementById('guestForm');
+    if (guestForm) {
+        guestForm.addEventListener('submit', handleAddGuest);
     }
 
     // Logout
@@ -58,7 +78,6 @@ function initEventListeners() {
 
 async function updateCounts() {
     try {
-        // Fetch rooms to count availability
         const respRooms = await fetch('api/rooms/available');
         if (respRooms.status === 401) {
             window.location.href = 'staff_login.html';
@@ -68,19 +87,16 @@ async function updateCounts() {
         const rooms = roomsJson.data || [];
         document.getElementById('countAvailable').textContent = rooms.length;
 
-        // Fetch reservations
         const respRes = await fetch('api/reservations');
         const resJson = await respRes.json();
         const resList = resJson.data || [];
         document.getElementById('countActive').textContent =
             resList.filter(r => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN').length;
 
-        // Today's checkins
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('countCheckins').textContent =
             resList.filter(r => r.checkInDate === today).length;
 
-        // Pending bills
         const respBills = await fetch('api/bills');
         const billsJson = await respBills.json();
         const bills = billsJson.data || [];
@@ -175,7 +191,6 @@ async function prepareBookingForm() {
         gSelect.innerHTML = guests.map(g => `<option value="${g.guestId}">${g.firstName} ${g.lastName}</option>`).join('');
         rSelect.innerHTML = rooms.map(r => `<option value="${r.roomId}">${r.roomNumber} (${r.roomType})</option>`).join('');
 
-        // Set default dates
         const inDate = new Date();
         const outDate = new Date();
         outDate.setDate(inDate.getDate() + 1);
@@ -213,6 +228,37 @@ async function handleBooking(e) {
     } catch (err) { alert('Network error'); }
 }
 
+async function handleAddGuest(e) {
+    e.preventDefault();
+    const formData = new URLSearchParams();
+    formData.append('firstName', document.getElementById('guestFirst').value);
+    formData.append('lastName', document.getElementById('guestLast').value);
+    formData.append('email', document.getElementById('guestEmail').value);
+    formData.append('contactNumber', document.getElementById('guestPhone').value);
+    formData.append('address', document.getElementById('guestAddress').value);
+    formData.append('nationality', document.getElementById('guestNationality').value);
+    formData.append('idType', document.getElementById('guestIdType').value);
+    formData.append('idNumber', document.getElementById('guestIdNum').value);
+    formData.append('password', document.getElementById('guestPassword').value);
+
+    try {
+        const resp = await fetch('api/guests', {
+            method: 'POST',
+            body: formData
+        });
+        const res = await resp.json();
+
+        if (res.success) {
+            alert('Guest added successfully!');
+            document.getElementById('guestForm').reset();
+            document.getElementById('guestModal').classList.remove('active');
+            loadGuestList();
+        } else {
+            alert('Error: ' + res.message);
+        }
+    } catch (err) { alert('Network error'); }
+}
+
 // ── HELPERS ─────────────────────────────────────────────────────────────
 
 function showSection(sectionId) {
@@ -236,5 +282,5 @@ function showSection(sectionId) {
 
 async function logout() {
     await fetch('api/auth/logout');
-    window.location.href = 'login.html';
+    window.location.href = 'staff_login.html';
 }

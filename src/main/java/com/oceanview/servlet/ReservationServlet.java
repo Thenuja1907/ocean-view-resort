@@ -2,7 +2,6 @@ package com.oceanview.servlet;
 
 import com.oceanview.model.Reservation;
 import com.oceanview.model.Reservation.Status;
-import com.oceanview.model.User;
 import com.oceanview.service.ReservationService;
 import com.oceanview.util.JsonUtil;
 import jakarta.servlet.annotation.WebServlet;
