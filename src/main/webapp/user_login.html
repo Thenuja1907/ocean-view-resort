@@ -9,20 +9,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-yellow: #fcc419;
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --text-white: #ffffff;
-            --dark-input: rgba(0, 0, 0, 0.25);
+            --primary-blue: #004e92;
+            --secondary-deep: #000428;
+            --accent-yellow: #f1c40f;
+            --text-dark: #2c3e50;
+            --bg-light: #f4f7f6;
         }
 
         body {
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-                url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(135deg, var(--secondary-deep) 0%, var(--primary-blue) 100%);
             height: 100vh;
             display: flex;
             align-items: center;
@@ -31,15 +29,12 @@
         }
 
         .login-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            padding: 3.5rem 2.5rem;
+            background: white;
+            padding: 3rem;
             width: 100%;
-            max-width: 440px;
-            border-radius: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
 
@@ -47,42 +42,39 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 0.5rem;
+            color: var(--secondary-deep);
         }
 
         .logo-container i {
-            font-size: 2.2rem;
-            color: var(--primary-yellow);
+            font-size: 2rem;
+            color: var(--accent-yellow);
         }
 
         .logo-container span {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: 600;
-            color: var(--primary-yellow);
-            letter-spacing: 0.5px;
         }
 
         .subtitle {
-            font-size: 0.85rem;
-            color: var(--text-white);
+            font-size: 0.8rem;
+            color: #7f8c8d;
             letter-spacing: 2px;
-            opacity: 0.8;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
             text-transform: uppercase;
         }
 
         .form-group {
-            margin-bottom: 1.8rem;
+            margin-bottom: 1.5rem;
             text-align: left;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.6rem;
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: var(--text-white);
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: #7f8c8d;
         }
 
         .input-wrapper {
@@ -91,76 +83,75 @@
 
         .input-wrapper i {
             position: absolute;
-            left: 18px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 1rem;
+            color: #bdc3c7;
         }
 
         input,
         select {
             width: 100%;
-            padding: 0.9rem 1rem 0.9rem 3.5rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: var(--dark-input);
-            color: white;
+            padding: 0.8rem 1rem 0.8rem 2.8rem;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            background: #f9f9f9;
             box-sizing: border-box;
             outline: none;
             transition: 0.3s;
-            font-size: 0.95rem;
         }
 
         input:focus {
-            border-color: var(--primary-yellow);
-            background: rgba(0, 0, 0, 0.4);
+            border-color: var(--primary-blue);
+            background: white;
         }
 
         .login-btn {
             width: 100%;
-            padding: 1.1rem;
+            padding: 1rem;
             border: none;
-            border-radius: 12px;
-            background: var(--primary-yellow);
-            color: #1a1a1a;
+            border-radius: 10px;
+            background: var(--secondary-deep);
+            color: white;
             font-weight: 600;
-            font-size: 1rem;
             cursor: pointer;
             transition: 0.3s;
             margin-top: 1rem;
-            letter-spacing: 1px;
         }
 
         .login-btn:hover {
-            opacity: 0.9;
+            background: var(--primary-blue);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(252, 196, 25, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .footer {
-            margin-top: 3rem;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
+        .register-link {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .register-link a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
         }
 
         .error-msg {
-            color: #ff6b6b;
-            font-size: 0.85rem;
+            color: #e74c3c;
+            font-size: 0.8rem;
             margin-top: 1rem;
             display: none;
-            text-align: center;
         }
 
-        /* Registration Modal Matching Premium Theme */
+        /* Modal styling */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.6);
             display: none;
             align-items: center;
             justify-content: center;
@@ -172,47 +163,19 @@
         }
 
         .modal-content {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(40px);
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
             width: 100%;
-            max-width: 650px;
-            border-radius: 28px;
-            padding: 3rem 2.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            position: relative;
+            max-width: 550px;
             max-height: 90vh;
             overflow-y: auto;
-            text-align: center;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            opacity: 0.4;
-            transition: 0.3s;
-        }
-
-        .close-btn:hover {
-            opacity: 1;
-        }
-
-        .modal-title {
-            color: var(--primary-yellow);
-            letter-spacing: 4px;
-            font-weight: 500;
-            font-size: 1.2rem;
-            margin-bottom: 2.5rem;
-            text-transform: uppercase;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.2rem;
+            gap: 1rem;
         }
 
         .full-w {
@@ -227,14 +190,14 @@
             <i class="fas fa-umbrella-beach"></i>
             <span>Ocean View</span>
         </div>
-        <div class="subtitle">USER PORTAL</div>
+        <div class="subtitle">User Guest Portal</div>
 
         <form id="loginForm">
             <div class="form-group">
                 <label>Email Address</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" placeholder="Enter registration email" required>
+                    <input type="email" id="email" placeholder="Enter your email" required>
                 </div>
             </div>
             <div class="form-group">
@@ -248,57 +211,61 @@
             <div class="error-msg" id="loginError">Invalid credentials.</div>
         </form>
 
-        <div class="footer">
-            Don't have an account? <a href="#" id="openRegister"
-                style="color: var(--primary-yellow); text-decoration: none; font-weight: 500;">Register Now</a><br><br>
-            &copy; 2026 Ocean View Resort Management System
+        <div class="register-link">
+            Don't have an account? <a href="#" id="openRegister">Join Now</a>
         </div>
     </div>
 
+    <!-- Registration Modal -->
     <div class="modal" id="registerModal">
         <div class="modal-content">
-            <span class="close-btn" id="closeRegister">&times;</span>
-            <div class="modal-title">GUEST REGISTRATION</div>
+            <h2 style="margin-top: 0; color: var(--secondary-deep);">Start Your Journey</h2>
+            <p style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 2rem;">Register for an exclusive resort
+                experience.</p>
 
             <form id="registerForm">
                 <div class="form-grid">
                     <div class="form-group">
                         <label>First Name</label>
-                        <input type="text" id="regFirst" placeholder="Enter first name" required>
+                        <input type="text" id="regFirst" required>
                     </div>
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" id="regLast" placeholder="Enter last name" required>
+                        <input type="text" id="regLast" required>
                     </div>
                     <div class="form-group full-w">
                         <label>Email Address</label>
-                        <input type="email" id="regEmail" placeholder="e.g. resident@example.com" required>
+                        <input type="email" id="regEmail" required>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" id="regPass" placeholder="Create password" required>
+                        <input type="password" id="regPass" required>
                     </div>
                     <div class="form-group">
-                        <label>Phone</label>
-                        <input type="text" id="regPhone" placeholder="e.g. 0712345678" required>
+                        <label>Contact Number</label>
+                        <input type="text" id="regPhone" required>
                     </div>
                     <div class="form-group full-w">
-                        <label>Address</label>
-                        <input type="text" id="regAddr" placeholder="Street Address" required>
+                        <label>Home Address</label>
+                        <input type="text" id="regAddr" required>
                     </div>
                     <div class="form-group">
                         <label>ID Type</label>
-                        <select id="regIdType" style="padding-left: 1rem;">
+                        <select id="regIdType">
                             <option value="NIC">NIC</option>
                             <option value="PASSPORT">Passport</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>ID Number</label>
-                        <input type="text" id="regIdNum" placeholder="ID Number" required>
+                        <input type="text" id="regIdNum" required>
                     </div>
                 </div>
-                <button type="submit" class="login-btn">Create Account</button>
+                <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                    <button type="button" class="login-btn" style="background:#bdc3c7;"
+                        onclick="document.getElementById('registerModal').classList.remove('active')">Cancel</button>
+                    <button type="submit" class="login-btn">Create Account</button>
+                </div>
                 <div class="error-msg" id="regError"></div>
             </form>
         </div>
@@ -307,12 +274,9 @@
     <script>
         const regModal = document.getElementById('registerModal');
         const openBtn = document.getElementById('openRegister');
-        const closeBtn = document.getElementById('closeRegister');
 
         openBtn.onclick = (e) => { e.preventDefault(); regModal.classList.add('active'); };
-        closeBtn.onclick = () => { regModal.classList.remove('active'); };
 
-        // Handle Login
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
@@ -330,11 +294,7 @@
                 if (data.success) {
                     window.location.href = 'user_dashboard.html';
                 } else {
-                    if (data.message && data.message.includes('not found')) {
-                        errorMsg.innerHTML = `${data.message} <br> <a href="#" onclick="document.getElementById('openRegister').click()" style="color: var(--primary-yellow); text-decoration: underline;">Click here to register</a>`;
-                    } else {
-                        errorMsg.textContent = data.message || 'Login failed.';
-                    }
+                    errorMsg.textContent = data.message || 'Login failed.';
                     errorMsg.style.display = 'block';
                 }
             } catch (err) {
@@ -343,11 +303,10 @@
             }
         });
 
-        // Handle Registration
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const errorMsg = document.getElementById('regError');
-            errorMsg.style.display = 'none'; // CRITICAL: Clear error message when retrying
+            errorMsg.style.display = 'none';
 
             const formData = new URLSearchParams();
             formData.append('firstName', document.getElementById('regFirst').value);
@@ -366,26 +325,16 @@
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData
                 });
-
-                // Check for 401 response explicitly
-                if (response.status === 401) {
-                    // This should NOT happen anymore as requireSession is removed from GuestServlet.doPost
-                    // but we handle it just in case of stale server state.
-                    errorMsg.textContent = "Session error. Please refresh and try again.";
-                    errorMsg.style.display = 'block';
-                    return;
-                }
-
                 const data = await response.json();
                 if (data.success) {
-                    alert('Registration Successful! Your dream stay begins.');
+                    alert('Registration Successful!');
                     window.location.href = 'index.html';
                 } else {
                     errorMsg.textContent = data.message;
                     errorMsg.style.display = 'block';
                 }
             } catch (err) {
-                errorMsg.textContent = 'Registration failed. Check your connection.';
+                errorMsg.textContent = 'Registration failed.';
                 errorMsg.style.display = 'block';
             }
         });

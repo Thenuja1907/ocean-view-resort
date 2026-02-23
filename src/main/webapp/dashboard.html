@@ -157,45 +157,60 @@
         </main>
     </div>
 
-    <!-- Booking Modal -->
-    <div class="modal" id="bookingModal">
+    <!-- Guest Modal -->
+    <div class="modal" id="guestModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>New Reservation</h2>
-                <button class="close-modal">&times;</button>
+                <h2>Add New Guest</h2>
+                <button class="close-modal-guest">&times;</button>
             </div>
-            <form id="bookingForm">
+            <form id="guestForm">
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Select Guest</label>
-                        <select id="guestSelect" required></select>
+                        <label>First Name</label>
+                        <input type="text" id="guestFirst" required>
                     </div>
                     <div class="form-group">
-                        <label>Select Room</label>
-                        <select id="roomSelect" required></select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Check-in Date</label>
-                        <input type="date" id="checkInDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Check-out Date</label>
-                        <input type="date" id="checkOutDate" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Number of Guests</label>
-                        <input type="number" id="numGuests" min="1" value="2" required>
+                        <label>Last Name</label>
+                        <input type="text" id="guestLast" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Special Requests</label>
-                    <textarea id="specialRequests"></textarea>
+                    <label>Email Address</label>
+                    <input type="email" id="guestEmail" required>
                 </div>
-                <button type="submit" class="btn btn-primary full-width">Confirm Reservation</button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" id="guestPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nationality</label>
+                        <input type="text" id="guestNationality" value="Sri Lankan" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Home Address</label>
+                    <textarea id="guestAddress" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ID Type</label>
+                        <select id="guestIdType">
+                            <option value="NIC">NIC</option>
+                            <option value="PASSPORT">Passport</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ID Number</label>
+                        <input type="text" id="guestIdNum" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password (for Guest Portal)</label>
+                    <input type="password" id="guestPassword" placeholder="Default: Guest@123" value="Guest@123">
+                </div>
+                <button type="submit" class="btn btn-primary full-width">Save Guest Record</button>
             </form>
         </div>
     </div>
