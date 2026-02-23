@@ -7,20 +7,126 @@
     <title>User Dashboard - Ocean View Resort</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
     <style>
         :root {
-            --primary: #2ecc71;
-            --secondary: #27ae60;
+            --primary-yellow: #fcc419;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --text-white: #ffffff;
+            --card-glass: rgba(255, 255, 255, 0.05);
         }
 
-        .user-welcome {
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
             color: white;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 0;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-container i {
+            font-size: 2.2rem;
+            color: var(--primary-yellow);
+        }
+
+        .logo-container span {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--primary-yellow);
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+
+        .welcome-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             padding: 3rem;
-            border-radius: 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-card h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-yellow);
+            font-weight: 600;
+        }
+
+        .welcome-card p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 500;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: var(--primary-yellow);
         }
 
         .res-list {
@@ -29,51 +135,109 @@
         }
 
         .res-item {
-            background: white;
+            background: var(--card-glass);
+            backdrop-filter: blur(10px);
             padding: 2rem;
-            border-radius: 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: 0.3s;
         }
 
         .res-item:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-yellow);
         }
 
-        .res-status {
+        .res-info h4 {
+            font-size: 1.2rem;
+            margin: 0 0 5px 0;
+            color: var(--primary-yellow);
+        }
+
+        .res-info p {
+            margin: 0;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        .res-date {
+            text-align: center;
+        }
+
+        .res-date .label {
+            font-size: 0.75rem;
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .res-date .value {
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.8rem;
+        }
+
+        .status-confirmed {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+
+        .status-checked_in {
+            background: rgba(52, 152, 219, 0.15);
+            color: #3498db;
+            border: 1px solid #3498db;
+        }
+
+        .status-pending {
+            background: rgba(241, 196, 15, 0.15);
+            color: #f1c40f;
+            border: 1px solid #f1c40f;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 4rem;
+            background: var(--card-glass);
+            border-radius: 20px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            opacity: 0.6;
         }
     </style>
 </head>
 
 <body>
-    <div class="dashboard-container" style="display: block; padding: 3rem; max-width: 1200px; margin: 0 auto;">
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
-            <div style="font-size: 1.8rem; font-weight: 600; color: #2c3e50;">
-                <i class="fas fa-umbrella-beach" style="color: #2ecc71;"></i> Ocean View <span
-                    style="font-weight: 300; opacity: 0.6;">User Portal</span>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo-container">
+                <i class="fas fa-umbrella-beach"></i>
+                <span>Ocean View</span>
             </div>
-            <button class="btn btn-outline" id="logoutBtn"
-                style="border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            <button class="logout-btn" id="logoutBtn">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </header>
 
-        <div class="user-welcome">
-            <h1>Welcome to Paradise!</h1>
-            <p>Your luxury stay experience at Ocean View Resort starts here.</p>
+        <div class="welcome-card">
+            <h1>Paradise Awaits!</h1>
+            <p>Experience the ultimate luxury stay at Ocean View Resort. We are delighted to have you.</p>
         </div>
 
         <div id="reservationSection">
-            <h2 style="margin-bottom: 1.5rem;">Your Reservations</h2>
+            <h2 class="section-title"><i class="fas fa-calendar-check"></i> Your Bookings</h2>
             <div id="reservationsContainer" class="res-list">
-                <div class="card">Loading your bookings...</div>
+                <div class="no-data">Fetching your luxury bookings...</div>
             </div>
         </div>
     </div>
@@ -88,8 +252,8 @@
             try {
                 const resp = await fetch('api/reservations');
                 if (resp.status === 401) {
-                    alert('Please register or log in to view your bookings.');
-                    window.location.href = 'user_login.html?register';
+                    alert('Please log in to view your bookings.');
+                    window.location.href = 'user_login.html';
                     return;
                 }
                 const data = await resp.json();
@@ -97,29 +261,35 @@
 
                 const container = document.getElementById('reservationsContainer');
                 if (list.length === 0) {
-                    container.innerHTML = '<div class="card">No active reservations found. Ready to book your next stay?</div>';
+                    container.innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-bed" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                            No active reservations yet. Would you like to book a stay?
+                        </div>`;
                     return;
                 }
 
                 container.innerHTML = list.map(r => `
                     <div class="res-item">
+                        <div class="res-info">
+                            <h4>Booking #${r.reservationNumber}</h4>
+                            <p>Room ID: ${r.roomId} • Premium Sea View Access</p>
+                        </div>
+                        <div class="res-date">
+                            <div class="label">Check In</div>
+                            <div class="value">${r.checkInDate}</div>
+                        </div>
+                        <div class="res-date">
+                            <div class="label">Check Out</div>
+                            <div class="value">${r.checkOutDate}</div>
+                        </div>
                         <div>
-                            <div style="font-size: 1.2rem; font-weight: 600; color: #34495e;">Booking #${r.reservationNumber}</div>
-                            <div style="color: #7f8c8d; font-size: 0.9rem;">Room ${r.roomId} • Full Resort Access Included</div>
+                            <span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span>
                         </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.8rem; color: #95a5a6;">CHECK-IN</div>
-                            <div style="font-weight: 500;">${r.checkInDate}</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.8rem; color: #95a5a6;">CHECK-OUT</div>
-                            <div style="font-weight: 500;">${r.checkOutDate}</div>
-                        </div>
-                        <div class="res-status status-${r.status.toLowerCase()}">${r.status}</div>
                     </div>
                 `).join('');
             } catch (err) {
-                document.getElementById('reservationsContainer').innerHTML = '<div class="card">Error loading profile data.</div>';
+                document.getElementById('reservationsContainer').innerHTML = '<div class="no-data">Error loading your resort profile.</div>';
             }
         }
 
