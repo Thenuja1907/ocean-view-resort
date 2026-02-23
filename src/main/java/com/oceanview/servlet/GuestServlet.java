@@ -13,13 +13,6 @@ import java.util.Optional;
 
 /**
  * GuestServlet — REST-ish API for /api/guests/*.
- *
- * GET /api/guests → list all guests
- * GET /api/guests?q=... → search guests
- * GET /api/guests/{id} → get one guest
- * POST /api/guests → register new guest
- * PUT /api/guests/{id} → update guest
- * DELETE /api/guests/{id} → delete guest (admin)
  */
 @WebServlet("/api/guests/*")
 public class GuestServlet extends HttpServlet {
@@ -34,10 +27,10 @@ public class GuestServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        requireSession(req, resp);
-        String path = normalise(req.getPathInfo());
-
         try {
+            requireSession(req);
+            String path = normalise(req.getPathInfo());
+
             if (path.equals("/") || path.isEmpty()) {
                 String q = req.getParameter("q");
                 List<Guest> guests = (q != null && !q.isBlank())
@@ -54,6 +47,9 @@ public class GuestServlet extends HttpServlet {
                     resp.getWriter().write(JsonUtil.ok(opt.get()));
                 }
             }
+        } catch (SecurityException e) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.getWriter().write(JsonUtil.error(e.getMessage()));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(JsonUtil.error(e.getMessage()));
@@ -63,14 +59,14 @@ public class GuestServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        requireSession(req, resp);
         try {
+            requireSession(req);
             Guest guest = buildFromRequest(req, new Guest());
             guestService.registerGuest(guest);
             resp.setStatus(HttpServletResponse.SC_CREATED);
             resp.getWriter().write(JsonUtil.ok("Guest registered.", guest));
-        } catch (IllegalArgumentException e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (SecurityException e) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resp.getWriter().write(JsonUtil.error(e.getMessage()));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -81,16 +77,16 @@ public class GuestServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        requireSession(req, resp);
         try {
+            requireSession(req);
             int id = Integer.parseInt(normalise(req.getPathInfo()).substring(1));
             Guest guest = guestService.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Guest not found: " + id));
             buildFromRequest(req, guest);
             guestService.updateGuest(guest);
             resp.getWriter().write(JsonUtil.ok("Guest updated.", guest));
-        } catch (IllegalArgumentException e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (SecurityException e) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resp.getWriter().write(JsonUtil.error(e.getMessage()));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -101,18 +97,19 @@ public class GuestServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        requireSession(req, resp);
         try {
+            requireSession(req);
             int id = Integer.parseInt(normalise(req.getPathInfo()).substring(1));
             guestService.deleteGuest(id);
             resp.getWriter().write(JsonUtil.ok("Guest deleted.", null));
+        } catch (SecurityException e) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.getWriter().write(JsonUtil.error(e.getMessage()));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(JsonUtil.error(e.getMessage()));
         }
     }
-
-    // ── helpers ─────────────────────────────────────────────────────────────
 
     private Guest buildFromRequest(HttpServletRequest req, Guest g) {
         g.setFirstName(req.getParameter("firstName"));
@@ -130,14 +127,10 @@ public class GuestServlet extends HttpServlet {
         return p == null ? "/" : p;
     }
 
-    private void requireSession(HttpServletRequest req, HttpServletResponse resp) {
+    private void requireSession(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("currentUser") == null) {
-            try {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resp.getWriter().write(JsonUtil.error("Not authenticated."));
-            } catch (IOException ignored) {
-            }
+            throw new SecurityException("Not authenticated.");
         }
     }
 }

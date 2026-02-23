@@ -56,18 +56,18 @@ async function updateCounts() {
         // Fetch reservations
         const respRes = await fetch('api/reservations');
         const resList = (await respRes.json()).data;
-        document.getElementById('countActive').textContent = 
+        document.getElementById('countActive').textContent =
             resList.filter(r => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN').length;
-        
+
         // Today's checkins (mock logic for demo: filter by today's date)
         const today = new Date().toISOString().split('T')[0];
-        document.getElementById('countCheckins').textContent = 
+        document.getElementById('countCheckins').textContent =
             resList.filter(r => r.checkInDate === today).length;
 
         // Pending bills
         const respBills = await fetch('api/bills');
         const bills = (await respBills.json()).data;
-        document.getElementById('countPendingBills').textContent = 
+        document.getElementById('countPendingBills').textContent =
             bills.filter(b => b.paymentStatus === 'PENDING').length;
 
     } catch (err) { console.error('Count update failed', err); }
@@ -116,19 +116,19 @@ async function prepareBookingForm() {
         ]);
 
         const guests = (await respGuests.json()).data;
-        const rooms  = (await respRooms.json()).data;
+        const rooms = (await respRooms.json()).data;
 
         const gSelect = document.getElementById('guestSelect');
         const rSelect = document.getElementById('roomSelect');
 
         gSelect.innerHTML = guests.map(g => `<option value="${g.guestId}">${g.firstName} ${g.lastName}</option>`).join('');
         rSelect.innerHTML = rooms.map(r => `<option value="${r.roomId}">${r.roomNumber} (${r.roomType})</option>`).join('');
-        
+
         // Set default dates
         const inDate = new Date();
         const outDate = new Date();
         outDate.setDate(inDate.getDate() + 1);
-        
+
         document.getElementById('checkInDate').value = inDate.toISOString().split('T')[0];
         document.getElementById('checkOutDate').value = outDate.toISOString().split('T')[0];
 
@@ -151,8 +151,8 @@ async function handleBooking(e) {
             body: formData
         });
         const res = await resp.json();
-        
-        if (res.status === 'ok') {
+
+        if (res.success) {
             alert('Reservation successful! Res #: ' + res.data.reservationNumber);
             document.getElementById('bookingModal').classList.remove('active');
             initDashboard();
@@ -167,8 +167,8 @@ async function handleBooking(e) {
 function showSection(sectionId) {
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
-    
-    document.getElementById('sectionTitle').textContent = 
+
+    document.getElementById('sectionTitle').textContent =
         sectionId.charAt(0).toUpperCase() + sectionId.slice(1) + ' Management';
 }
 

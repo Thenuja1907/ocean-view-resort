@@ -192,7 +192,7 @@
 
                 const data = await response.json();
 
-                if (data.status === 'ok') {
+                if (data.success) {
                     window.location.href = 'dashboard.html';
                 } else {
                     errorMsg.textContent = data.message || 'Login failed.';
