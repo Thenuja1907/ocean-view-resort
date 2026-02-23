@@ -25,7 +25,7 @@ public class AuthServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        String path = req.getPathInfo();
+        String path = normalise(req.getPathInfo());
 
         if ("/login".equals(path)) {
             handleStaffLogin(req, resp);
@@ -33,8 +33,18 @@ public class AuthServlet extends HttpServlet {
             handleUserLogin(req, resp);
         } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            resp.getWriter().write(JsonUtil.error("Endpoint not found."));
+            resp.getWriter().write(JsonUtil.error("Endpoint not found: " + path));
         }
+    }
+
+    private String normalise(String path) {
+        if (path == null || path.isEmpty() || "/".equals(path))
+            return "/";
+        if (!path.startsWith("/"))
+            path = "/" + path;
+        if (path.endsWith("/"))
+            path = path.substring(0, path.length() - 1);
+        return path;
     }
 
     private void handleStaffLogin(HttpServletRequest req, HttpServletResponse resp) throws IOException {
