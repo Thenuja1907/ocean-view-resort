@@ -120,6 +120,11 @@ public class GuestServlet extends HttpServlet {
         g.setIdType(IdType.valueOf(req.getParameter("idType")));
         g.setIdNumber(req.getParameter("idNumber"));
         g.setNationality(req.getParameter("nationality"));
+
+        String pwd = req.getParameter("password");
+        if (pwd != null && !pwd.isBlank()) {
+            g.setPasswordHash(pwd);
+        }
         return g;
     }
 

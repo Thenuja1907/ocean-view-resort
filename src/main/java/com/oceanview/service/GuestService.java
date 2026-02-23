@@ -2,6 +2,7 @@ package com.oceanview.service;
 
 import com.oceanview.dao.GuestDao;
 import com.oceanview.model.Guest;
+import com.oceanview.util.PasswordUtil;
 import com.oceanview.util.ValidationUtil;
 
 import java.sql.SQLException;
@@ -33,6 +34,12 @@ public class GuestService {
         }
 
         guest.setEmail(guest.getEmail().toLowerCase().trim());
+
+        // If password is provided (self-registration), hash it
+        if (guest.getPasswordHash() != null && !guest.getPasswordHash().startsWith("$2a$")) {
+            guest.setPasswordHash(PasswordUtil.hash(guest.getPasswordHash()));
+        }
+
         return guestDao.insert(guest);
     }
 
@@ -58,6 +65,12 @@ public class GuestService {
         ValidationUtil.requireNonBlank(guest.getLastName(), "Last name");
         ValidationUtil.validateEmail(guest.getEmail());
         ValidationUtil.validatePhone(guest.getContactNumber());
+
+        // If password is being updated and is not already a hash
+        if (guest.getPasswordHash() != null && !guest.getPasswordHash().startsWith("$2a$")) {
+            guest.setPasswordHash(PasswordUtil.hash(guest.getPasswordHash()));
+        }
+
         guestDao.update(guest);
     }
 

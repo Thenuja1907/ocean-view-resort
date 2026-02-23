@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <!-- Triggering project synchronization -->
+    <!-- Forced project synchronization: 2026-02-24 00:56 -->
 
     <groupId>com.oceanview</groupId>
     <artifactId>ocean-view-resort</artifactId>
