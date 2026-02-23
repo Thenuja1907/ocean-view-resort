@@ -1,0 +1,26 @@
+# ── Compiled output ──────────────────────────────────────────────────────────
+target/
+*.class
+*.war
+*.jar
+
+# ── Maven ──────────────────────────────────────────────────────────────────
+.mvn/wrapper/maven-wrapper.jar
+
+# ── IDEs ───────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.eclipse/
+.classpath
+.project
+.settings/
+*.launch
+nbproject/
+
+# ── Sensitive config ───────────────────────────────────────────────────────
+# Rename db.properties to db.properties.example and keep real one local
+# src/main/resources/db.properties
+
+# ── OS artefacts ───────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
