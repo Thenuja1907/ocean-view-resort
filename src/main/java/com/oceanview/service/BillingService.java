@@ -118,6 +118,10 @@ public class BillingService {
         return billDao.findAll();
     }
 
+    public List<Bill> findByGuestId(int guestId) throws SQLException {
+        return billDao.findByGuestId(guestId);
+    }
+
     // ── HELPERS ─────────────────────────────────────────────────────────────
 
     private String generateBillNumber() throws SQLException {

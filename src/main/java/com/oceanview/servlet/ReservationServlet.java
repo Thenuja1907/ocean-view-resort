@@ -41,11 +41,31 @@ public class ReservationServlet extends HttpServlet {
         String path = normalise(req.getPathInfo());
 
         try {
+            HttpSession session = req.getSession(false);
+            Object currentUser = (session != null) ? session.getAttribute("currentUser") : null;
+            String userType = (session != null) ? (String) session.getAttribute("userType") : null;
+
+            if (currentUser == null) {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                resp.getWriter().write(JsonUtil.error("Not authenticated."));
+                return;
+            }
+
             if (path.equals("/") || path.isEmpty()) {
-                String statusParam = req.getParameter("status");
-                List<Reservation> list = (statusParam != null && !statusParam.isBlank())
-                        ? reservationService.findByStatus(Status.valueOf(statusParam.toUpperCase()))
-                        : reservationService.findAll();
+                List<Reservation> list;
+                if ("guest".equals(userType)) {
+                    // Guests only see their own bookings
+                    int guestId = ((com.oceanview.model.Guest) currentUser).getGuestId();
+                    list = reservationService.findAll().stream()
+                            .filter(r -> r.getGuestId() == guestId)
+                            .toList();
+                } else {
+                    // Staff see everything or filtered by status
+                    String statusParam = req.getParameter("status");
+                    list = (statusParam != null && !statusParam.isBlank())
+                            ? reservationService.findByStatus(Status.valueOf(statusParam.toUpperCase()))
+                            : reservationService.findAll();
+                }
                 resp.getWriter().write(JsonUtil.ok(list));
             } else {
                 int id = Integer.parseInt(path.substring(1));
@@ -54,7 +74,17 @@ public class ReservationServlet extends HttpServlet {
                     resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     resp.getWriter().write(JsonUtil.error("Reservation not found."));
                 } else {
-                    resp.getWriter().write(JsonUtil.ok(opt.get()));
+                    Reservation res = opt.get();
+                    // Security: Guest can only see their own reservation
+                    if ("guest".equals(userType)) {
+                        int guestId = ((com.oceanview.model.Guest) currentUser).getGuestId();
+                        if (res.getGuestId() != guestId) {
+                            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            resp.getWriter().write(JsonUtil.error("Access denied."));
+                            return;
+                        }
+                    }
+                    resp.getWriter().write(JsonUtil.ok(res));
                 }
             }
         } catch (Exception e) {
@@ -66,14 +96,28 @@ public class ReservationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        User actor = currentUser(req);
+        HttpSession session = req.getSession(false);
+        Object actor = (session != null) ? session.getAttribute("currentUser") : null;
+        String userType = (session != null) ? (String) session.getAttribute("userType") : null;
+
         if (actor == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resp.getWriter().write(JsonUtil.error("Not authenticated."));
             return;
         }
+
         try {
-            int guestId = Integer.parseInt(req.getParameter("guestId"));
+            int guestId;
+            int bookedByUserId;
+
+            if ("guest".equals(userType)) {
+                guestId = ((com.oceanview.model.Guest) actor).getGuestId();
+                bookedByUserId = 1; // Default to Admin for guest self-bookings
+            } else {
+                guestId = Integer.parseInt(req.getParameter("guestId"));
+                bookedByUserId = ((com.oceanview.model.User) actor).getUserId();
+            }
+
             int roomId = Integer.parseInt(req.getParameter("roomId"));
             LocalDate in = LocalDate.parse(req.getParameter("checkInDate"));
             LocalDate out = LocalDate.parse(req.getParameter("checkOutDate"));
@@ -82,7 +126,7 @@ public class ReservationServlet extends HttpServlet {
 
             Reservation res = reservationService.create(
                     guestId, roomId, in, out, numGuests, notes,
-                    actor.getUserId(), req.getRemoteAddr());
+                    bookedByUserId, req.getRemoteAddr());
 
             resp.setStatus(HttpServletResponse.SC_CREATED);
             resp.getWriter().write(JsonUtil.ok("Reservation created.", res));
@@ -99,18 +143,38 @@ public class ReservationServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        User actor = currentUser(req);
+        HttpSession session = req.getSession(false);
+        Object actor = (session != null) ? session.getAttribute("currentUser") : null;
+        String userType = (session != null) ? (String) session.getAttribute("userType") : null;
+
         if (actor == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resp.getWriter().write(JsonUtil.error("Not authenticated."));
             return;
         }
+
         try {
-            // path: /{id}/confirm | /checkin | /checkout | /cancel
             String[] parts = normalise(req.getPathInfo()).split("/");
+            if (parts.length < 2)
+                throw new IllegalArgumentException("Invalid path.");
             int id = Integer.parseInt(parts[1]);
             String action = parts.length > 2 ? parts[2].toLowerCase() : "";
             String ip = req.getRemoteAddr();
+
+            // Check permission: Guests can only cancel their own check-ins
+            if ("guest".equals(userType)) {
+                Optional<Reservation> opt = reservationService.findById(id);
+                if (opt.isPresent() && opt.get().getGuestId() != ((com.oceanview.model.Guest) actor).getGuestId()) {
+                    resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    resp.getWriter().write(JsonUtil.error("Permission denied."));
+                    return;
+                }
+                if (!"cancel".equals(action)) {
+                    resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    resp.getWriter().write(JsonUtil.error("Guests can only cancel bookings."));
+                    return;
+                }
+            }
 
             Reservation res = switch (action) {
                 case "confirm" -> reservationService.confirm(id, ip);
@@ -128,13 +192,6 @@ public class ReservationServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(JsonUtil.error(e.getMessage()));
         }
-    }
-
-    // ── helpers ─────────────────────────────────────────────────────────────
-
-    private User currentUser(HttpServletRequest req) {
-        HttpSession s = req.getSession(false);
-        return s == null ? null : (User) s.getAttribute("currentUser");
     }
 
     private String normalise(String p) {

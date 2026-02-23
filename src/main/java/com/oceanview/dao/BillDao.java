@@ -79,6 +79,25 @@ public class BillDao {
         }
     }
 
+    public List<Bill> findByGuestId(int guestId) throws SQLException {
+        String sql = "SELECT b.* FROM bills b " +
+                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "WHERE r.guest_id = ? " +
+                "ORDER BY b.issued_at DESC";
+        List<Bill> list = new ArrayList<>();
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, guestId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    list.add(mapRow(rs));
+            }
+        } finally {
+            DatabaseConnection.getInstance().releaseConnection(conn);
+        }
+        return list;
+    }
+
     public List<Bill> findAll() throws SQLException {
         String sql = "SELECT * FROM bills ORDER BY issued_at DESC";
         List<Bill> list = new ArrayList<>();

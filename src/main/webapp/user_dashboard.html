@@ -4,28 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - Ocean View Resort</title>
+    <title>Guest Portal - Ocean View Resort</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-yellow: #fcc419;
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --text-white: #ffffff;
-            --card-glass: rgba(255, 255, 255, 0.05);
+            --primary: #2ecc71;
+            --secondary: #27ae60;
+            --bg: #f4f7f6;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
         body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-                url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
-            color: white;
+            color: #2c3e50;
         }
 
         .dashboard-container {
@@ -38,63 +33,133 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 2rem 0;
-            margin-bottom: 3rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-container i {
-            font-size: 2.2rem;
-            color: var(--primary-yellow);
-        }
-
-        .logo-container span {
-            font-size: 2.2rem;
+        .logo {
+            font-size: 1.5rem;
             font-weight: 600;
-            color: var(--primary-yellow);
-            letter-spacing: 1px;
         }
 
-        .logout-btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 12px;
+        .logo i {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: 0.3s;
+            border: none;
             font-weight: 500;
-            display: flex;
+            transition: 0.3s;
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: white;
+        .btn-primary {
+            background: var(--primary);
+            color: white;
         }
 
-        .welcome-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid #ddd;
+            background: white;
+        }
+
+        .btn-outline:hover {
+            background: #f8f9fa;
+        }
+
+        .btn-danger {
+            background: #ff7675;
+            color: white;
+        }
+
+        .welcome-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
             padding: 3rem;
             border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            margin-bottom: 3rem;
-            animation: fadeIn 0.8s ease-out;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 35px rgba(46, 204, 113, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: block;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 1rem;
+        }
+
+        .tab-link {
+            text-decoration: none;
+            color: #7f8c8d;
+            font-weight: 500;
+            padding: 5px 15px;
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+
+        .tab-link.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
 
             to {
@@ -103,116 +168,93 @@
             }
         }
 
-        .welcome-card h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary-yellow);
-            font-weight: 600;
-        }
-
-        .welcome-card p {
-            font-size: 1.1rem;
-            opacity: 0.8;
-            letter-spacing: 0.5px;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 500;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-title i {
-            color: var(--primary-yellow);
-        }
-
-        .res-list {
+        .data-list {
             display: grid;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
-        .res-item {
-            background: var(--card-glass);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
+        .card-item {
+            background: white;
+            padding: 1.5rem;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: 0.3s;
-        }
-
-        .res-item:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--primary-yellow);
-        }
-
-        .res-info h4 {
-            font-size: 1.2rem;
-            margin: 0 0 5px 0;
-            color: var(--primary-yellow);
-        }
-
-        .res-info p {
-            margin: 0;
-            opacity: 0.6;
-            font-size: 0.9rem;
-        }
-
-        .res-date {
-            text-align: center;
-        }
-
-        .res-date .label {
-            font-size: 0.75rem;
-            opacity: 0.5;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .res-date .value {
-            font-weight: 500;
+            box-shadow: var(--card-shadow);
         }
 
         .status-badge {
-            padding: 6px 16px;
+            padding: 5px 15px;
             border-radius: 50px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
         }
 
         .status-confirmed {
-            background: rgba(46, 204, 113, 0.15);
-            color: #2ecc71;
-            border: 1px solid #2ecc71;
-        }
-
-        .status-checked_in {
-            background: rgba(52, 152, 219, 0.15);
-            color: #3498db;
-            border: 1px solid #3498db;
+            background: #e8f5e9;
+            color: #2e7d32;
         }
 
         .status-pending {
-            background: rgba(241, 196, 15, 0.15);
-            color: #f1c40f;
-            border: 1px solid #f1c40f;
+            background: #fff8e1;
+            color: #f39c12;
         }
 
-        .no-data {
-            text-align: center;
-            padding: 4rem;
-            background: var(--card-glass);
-            border-radius: 20px;
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            opacity: 0.6;
+        .status-cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-checkedin {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -220,80 +262,234 @@
 <body>
     <div class="dashboard-container">
         <header>
-            <div class="logo-container">
-                <i class="fas fa-umbrella-beach"></i>
-                <span>Ocean View</span>
+            <div class="logo"><i class="fas fa-umbrella-beach"></i> Ocean View</div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" onclick="openBookingModal()"><i class="fas fa-plus"></i> New
+                    Booking</button>
+                <button class="btn btn-outline" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
-            <button class="logout-btn" id="logoutBtn">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
         </header>
 
-        <div class="welcome-card">
-            <h1>Paradise Awaits!</h1>
-            <p>Experience the ultimate luxury stay at Ocean View Resort. We are delighted to have you.</p>
+        <div class="welcome-hero">
+            <h1>Aloha, <span id="guestName">Guest</span>!</h1>
+            <p>Ready for another tropical escape? View your bookings and bills below.</p>
         </div>
 
-        <div id="reservationSection">
-            <h2 class="section-title"><i class="fas fa-calendar-check"></i> Your Bookings</h2>
-            <div id="reservationsContainer" class="res-list">
-                <div class="no-data">Fetching your luxury bookings...</div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-calendar-check"></i>
+                <span class="value" id="countActive">0</span>
+                <span class="label">Upcoming Stays</span>
             </div>
+            <div class="stat-card">
+                <i class="fas fa-history"></i>
+                <span class="value" id="countTotal">0</span>
+                <span class="label">Total Visits</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-wallet"></i>
+                <span class="value" id="countUnpaid">0</span>
+                <span class="label">Unpaid Bills</span>
+            </div>
+        </div>
+
+        <nav class="tab-nav">
+            <a href="#" class="tab-link active" data-section="sectionReservations">Reservations</a>
+            <a href="#" class="tab-link" data-section="sectionBills">Bills & Payments</a>
+        </nav>
+
+        <section id="sectionReservations" class="content-section active">
+            <div id="reservationsList" class="data-list">
+                <div class="card-item">Loading your paradise plans...</div>
+            </div>
+        </section>
+
+        <section id="sectionBills" class="content-section">
+            <div id="billsList" class="data-list">
+                <div class="card-item">Fetching your billing history...</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0;">Plan Your Getaway</h2>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label>Select Room</label>
+                    <select id="roomSelect" required>
+                        <option value="">Checking availability...</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Check-in</label>
+                        <input type="date" id="checkIn" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Check-out</label>
+                        <input type="date" id="checkOut" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Guests</label>
+                    <input type="number" id="numGuests" value="2" min="1" required>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeBookingModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Book Now</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            await fetch('api/auth/logout');
-            window.location.href = 'index.html';
+        // Tab Navigation
+        document.querySelectorAll('.tab-link').forEach(link => {
+            link.onclick = (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.tab-link, .content-section').forEach(el => el.classList.remove('active'));
+                link.classList.add('active');
+                document.getElementById(link.dataset.section).classList.add('active');
+            };
         });
 
-        async function loadMyBookings() {
+        document.getElementById('logoutBtn').onclick = async () => {
+            await fetch('api/auth/logout');
+            window.location.href = 'index.html';
+        };
+
+        async function loadData() {
             try {
-                const resp = await fetch('api/reservations');
-                if (resp.status === 401) {
-                    alert('Please log in to view your bookings.');
-                    window.location.href = 'user_login.html';
-                    return;
-                }
-                const data = await resp.json();
-                const list = data.data || [];
-
-                const container = document.getElementById('reservationsContainer');
-                if (list.length === 0) {
-                    container.innerHTML = `
-                        <div class="no-data">
-                            <i class="fas fa-bed" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
-                            No active reservations yet. Would you like to book a stay?
-                        </div>`;
-                    return;
+                // Load Profile
+                const profResp = await fetch('api/auth/profile');
+                if (profResp.status === 401) return window.location.href = 'user_login.html';
+                const profData = await profResp.json();
+                if (profData.success) {
+                    const guest = profData.data;
+                    document.getElementById('guestName').textContent = guest.firstName;
                 }
 
-                container.innerHTML = list.map(r => `
-                    <div class="res-item">
-                        <div class="res-info">
-                            <h4>Booking #${r.reservationNumber}</h4>
-                            <p>Room ID: ${r.roomId} • Premium Sea View Access</p>
-                        </div>
-                        <div class="res-date">
-                            <div class="label">Check In</div>
-                            <div class="value">${r.checkInDate}</div>
-                        </div>
-                        <div class="res-date">
-                            <div class="label">Check Out</div>
-                            <div class="value">${r.checkOutDate}</div>
-                        </div>
-                        <div>
-                            <span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span>
-                        </div>
+                // Load Reservations
+                const resResp = await fetch('api/reservations');
+                const resData = await resResp.json();
+                const reservations = resData.data || [];
+
+                // Filter Active vs Historical
+                const active = reservations.filter(r => r.status !== 'CANCELLED' && r.status !== 'CHECKED_OUT');
+                document.getElementById('countActive').textContent = active.length;
+                document.getElementById('countTotal').textContent = reservations.length;
+
+                renderReservations(reservations);
+
+                // Load Bills
+                const billResp = await fetch('api/bills');
+                const billData = await billResp.json();
+                const bills = billData.data || [];
+                const unpaid = bills.filter(b => b.paymentStatus === 'PENDING').length;
+                document.getElementById('countUnpaid').textContent = unpaid;
+
+                renderBills(bills);
+
+            } catch (err) { console.error(err); }
+        }
+
+        function renderReservations(list) {
+            const container = document.getElementById('reservationsList');
+            if (list.length === 0) {
+                container.innerHTML = '<div class="card-item" style="justify-content: center; opacity: 0.6;">No reservations found. Start your journey today!</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(r => `
+                <div class="card-item">
+                    <div>
+                        <div style="font-weight: 600; font-size: 1.1rem; color: #2c3e50;">${r.reservationNumber}</div>
+                        <div style="font-size: 0.85rem; color: #7f8c8d;">${r.checkInDate} to ${r.checkOutDate}</div>
                     </div>
-                `).join('');
-            } catch (err) {
-                document.getElementById('reservationsContainer').innerHTML = '<div class="no-data">Error loading your resort profile.</div>';
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span>
+                        ${r.status === 'PENDING' || r.status === 'CONFIRMED' ?
+                    `<button class="btn btn-outline btn-danger" onclick="cancelBooking(${r.reservationId})" style="padding: 5px 10px; font-size: 0.75rem;">Cancel</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderBills(list) {
+            const container = document.getElementById('billsList');
+            if (list.length === 0) {
+                container.innerHTML = '<div class="card-item" style="justify-content: center; opacity: 0.6;">No billing records found.</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(b => `
+                <div class="card-item">
+                    <div>
+                        <div style="font-weight: 600;">Bill #${b.billNumber}</div>
+                        <div style="font-size: 0.85rem; color: #7f8c8d;">Total: LKR ${b.totalAmount.toFixed(2)}</div>
+                    </div>
+                    <div>
+                        <span class="status-badge status-${b.paymentStatus.toLowerCase()}">${b.paymentStatus}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function cancelBooking(id) {
+            if (!confirm('Are you sure you want to cancel this booking?')) return;
+            const resp = await fetch(`api/reservations/${id}/cancel`, { method: 'PUT' });
+            if (resp.ok) {
+                alert('Booking cancelled successfully.');
+                loadData();
             }
         }
 
-        loadMyBookings();
+        // Modal Logic
+        function openBookingModal() {
+            document.getElementById('bookingModal').classList.add('active');
+            loadRooms();
+        }
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+        }
+
+        async function loadRooms() {
+            const resp = await fetch('api/rooms/available');
+            const data = await resp.json();
+            const select = document.getElementById('roomSelect');
+            select.innerHTML = (data.data || []).map(r =>
+                `<option value="${r.roomId}">${r.roomNumber} - ${r.roomType} (LKR ${r.ratePerNight})</option>`
+            ).join('');
+        }
+
+        document.getElementById('bookingForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new URLSearchParams();
+            formData.append('roomId', document.getElementById('roomSelect').value);
+            formData.append('checkInDate', document.getElementById('checkIn').value);
+            formData.append('checkOutDate', document.getElementById('checkOut').value);
+            formData.append('numGuests', document.getElementById('numGuests').value);
+            formData.append('specialRequests', 'Guest Self-Booking');
+
+            const resp = await fetch('api/reservations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData
+            });
+
+            if (resp.ok) {
+                alert('Resort Booking Successful!');
+                closeBookingModal();
+                loadData();
+            } else {
+                const data = await resp.json();
+                alert('Error: ' + data.message);
+            }
+        };
+
+        loadData();
     </script>
 </body>
 

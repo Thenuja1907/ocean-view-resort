@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gateway - Ocean View Resort</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-yellow: #fcc419;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --text-white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .gateway-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 4rem 3rem;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .logo-container i {
+            font-size: 3.5rem;
+            color: var(--primary-yellow);
+        }
+
+        .logo-container span {
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: var(--primary-yellow);
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-white);
+            letter-spacing: 4px;
+            opacity: 0.9;
+            margin-bottom: 4rem;
+            text-transform: uppercase;
+        }
+
+        .portal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .portal-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2.5rem 1.5rem;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .portal-btn i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-yellow);
+        }
+
+        .portal-btn span {
+            font-weight: 500;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .portal-btn:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--primary-yellow);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer {
+            margin-top: 4rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="gateway-card">
+        <div class="logo-container">
+            <i class="fas fa-umbrella-beach"></i>
+            <span>Ocean View</span>
+        </div>
+        <div class="subtitle">Premium Resort Management</div>
+
+        <div class="portal-grid">
+            <a href="user_login.html" class="portal-btn">
+                <i class="fas fa-user-circle"></i>
+                <span>USER PORTAL</span>
+            </a>
+            <a href="staff_login.html" class="portal-btn">
+                <i class="fas fa-user-shield"></i>
+                <span>STAFF PORTAL</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            &copy; 2026 Ocean View Resort Management System
+        </div>
+    </div>
+</body>
+
+</html>

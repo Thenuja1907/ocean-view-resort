@@ -31,10 +31,26 @@ public class AuthServlet extends HttpServlet {
             handleStaffLogin(req, resp);
         } else if ("/guest-login".equals(path)) {
             handleUserLogin(req, resp);
+        } else if ("/profile".equals(path)) {
+            handleProfile(req, resp);
         } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             resp.getWriter().write(JsonUtil.error("Endpoint not found: " + path));
         }
+    }
+
+    private void handleProfile(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("currentUser") == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.getWriter().write(JsonUtil.error("Not authenticated."));
+            return;
+        }
+        Object user = session.getAttribute("currentUser");
+        String type = (String) session.getAttribute("userType");
+
+        // Return a wrapper with type and data
+        resp.getWriter().write(JsonUtil.ok(type, user));
     }
 
     private String normalise(String path) {

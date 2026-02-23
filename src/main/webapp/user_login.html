@@ -11,9 +11,8 @@
         :root {
             --primary-yellow: #fcc419;
             --glass-bg: rgba(255, 255, 255, 0.08);
-            --modal-bg: rgba(20, 20, 20, 0.95);
             --text-white: #ffffff;
-            --dark-input: rgba(255, 255, 255, 0.05);
+            --dark-input: rgba(0, 0, 0, 0.25);
         }
 
         body {
@@ -115,11 +114,7 @@
 
         input:focus {
             border-color: var(--primary-yellow);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.4);
         }
 
         .login-btn {
@@ -154,17 +149,18 @@
             font-size: 0.85rem;
             margin-top: 1rem;
             display: none;
+            text-align: center;
         }
 
-        /* Registration Modal Matching First Pic Theme */
+        /* Registration Modal Matching Premium Theme */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -176,18 +172,17 @@
         }
 
         .modal-content {
-            background: rgba(25, 25, 25, 0.8);
+            background: rgba(20, 20, 20, 0.8);
             backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             border-radius: 28px;
             padding: 3rem 2.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 60px 100px rgba(0, 0, 0, 0.7);
+            text-align: center;
         }
 
         .close-btn {
@@ -198,10 +193,20 @@
             font-size: 1.8rem;
             cursor: pointer;
             opacity: 0.4;
+            transition: 0.3s;
         }
 
         .close-btn:hover {
             opacity: 1;
+        }
+
+        .modal-title {
+            color: var(--primary-yellow);
+            letter-spacing: 4px;
+            font-weight: 500;
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
         }
 
         .form-grid {
@@ -212,14 +217,6 @@
 
         .full-w {
             grid-column: span 2;
-        }
-
-        .modal-title {
-            color: var(--primary-yellow);
-            letter-spacing: 3px;
-            font-weight: 500;
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
         }
     </style>
 </head>
@@ -258,7 +255,6 @@
         </div>
     </div>
 
-    <!-- Registration Modal -->
     <div class="modal" id="registerModal">
         <div class="modal-content">
             <span class="close-btn" id="closeRegister">&times;</span>
@@ -276,7 +272,7 @@
                     </div>
                     <div class="form-group full-w">
                         <label>Email Address</label>
-                        <input type="email" id="regEmail" placeholder="Example: manivannanthenuja@gmail.com" required>
+                        <input type="email" id="regEmail" placeholder="e.g. resident@example.com" required>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
@@ -284,7 +280,7 @@
                     </div>
                     <div class="form-group">
                         <label>Phone</label>
-                        <input type="text" id="regPhone" placeholder="Example: 0712345678" required>
+                        <input type="text" id="regPhone" placeholder="e.g. 0712345678" required>
                     </div>
                     <div class="form-group full-w">
                         <label>Address</label>
@@ -299,7 +295,7 @@
                     </div>
                     <div class="form-group">
                         <label>ID Number</label>
-                        <input type="text" id="regIdNum" placeholder="1999258338896" required>
+                        <input type="text" id="regIdNum" placeholder="ID Number" required>
                     </div>
                 </div>
                 <button type="submit" class="login-btn">Create Account</button>
@@ -351,7 +347,7 @@
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const errorMsg = document.getElementById('regError');
-            errorMsg.style.display = 'none';
+            errorMsg.style.display = 'none'; // CRITICAL: Clear error message when retrying
 
             const formData = new URLSearchParams();
             formData.append('firstName', document.getElementById('regFirst').value);
@@ -362,7 +358,7 @@
             formData.append('address', document.getElementById('regAddr').value);
             formData.append('idType', document.getElementById('regIdType').value);
             formData.append('idNumber', document.getElementById('regIdNum').value);
-            formData.append('nationality', 'Resident');
+            formData.append('nationality', 'Guest');
 
             try {
                 const response = await fetch('api/guests', {
@@ -370,16 +366,26 @@
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData
                 });
+
+                // Check for 401 response explicitly
+                if (response.status === 401) {
+                    // This should NOT happen anymore as requireSession is removed from GuestServlet.doPost
+                    // but we handle it just in case of stale server state.
+                    errorMsg.textContent = "Session error. Please refresh and try again.";
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
                 const data = await response.json();
                 if (data.success) {
-                    alert('Registration Successful! Redirecting to Portal Selection.');
+                    alert('Registration Successful! Your dream stay begins.');
                     window.location.href = 'index.html';
                 } else {
                     errorMsg.textContent = data.message;
                     errorMsg.style.display = 'block';
                 }
             } catch (err) {
-                errorMsg.textContent = 'Registration failed.';
+                errorMsg.textContent = 'Registration failed. Check your connection.';
                 errorMsg.style.display = 'block';
             }
         });

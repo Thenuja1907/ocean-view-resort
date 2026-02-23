@@ -2,7 +2,6 @@ package com.oceanview.servlet;
 
 import com.oceanview.model.Bill;
 import com.oceanview.model.Bill.PaymentMethod;
-import com.oceanview.model.User;
 import com.oceanview.service.BillingService;
 import com.oceanview.util.JsonUtil;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,12 +13,6 @@ import java.util.Optional;
 
 /**
  * BillingServlet — REST-ish API for /api/bills/*.
- *
- * GET /api/bills → list all bills
- * GET /api/bills/{id} → single bill
- * GET /api/bills/reservation/{resId} → bill for a reservation
- * POST /api/bills/generate/{resId} → generate bill for reservation
- * PUT /api/bills/{id}/pay → record payment
  */
 @WebServlet("/api/bills/*")
 public class BillingServlet extends HttpServlet {
@@ -37,8 +30,24 @@ public class BillingServlet extends HttpServlet {
         String path = normalise(req.getPathInfo());
 
         try {
+            HttpSession session = req.getSession(false);
+            Object currentUser = (session != null) ? session.getAttribute("currentUser") : null;
+            String userType = (session != null) ? (String) session.getAttribute("userType") : null;
+
+            if (currentUser == null) {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                resp.getWriter().write(JsonUtil.error("Not authenticated."));
+                return;
+            }
+
             if (path.equals("/") || path.isEmpty()) {
-                List<Bill> bills = billingService.findAll();
+                List<Bill> bills;
+                if ("guest".equals(userType)) {
+                    int guestId = ((com.oceanview.model.Guest) currentUser).getGuestId();
+                    bills = billingService.findByGuestId(guestId);
+                } else {
+                    bills = billingService.findAll();
+                }
                 resp.getWriter().write(JsonUtil.ok(bills));
 
             } else if (path.startsWith("/reservation/")) {
@@ -69,13 +78,13 @@ public class BillingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        if (currentUser(req) == null) {
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("currentUser") == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resp.getWriter().write(JsonUtil.error("Not authenticated."));
             return;
         }
         try {
-            // POST /api/bills/generate/{resId}
             String path = normalise(req.getPathInfo());
             int resId = Integer.parseInt(path.replace("/generate/", ""));
             Bill bill = billingService.generateBill(resId);
@@ -93,14 +102,16 @@ public class BillingServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        if (currentUser(req) == null) {
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("currentUser") == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resp.getWriter().write(JsonUtil.error("Not authenticated."));
             return;
         }
         try {
-            // PUT /api/bills/{id}/pay?method=CASH
             String[] parts = normalise(req.getPathInfo()).split("/");
+            if (parts.length < 2)
+                throw new IllegalArgumentException("Invalid ID");
             int billId = Integer.parseInt(parts[1]);
             PaymentMethod method = PaymentMethod.valueOf(req.getParameter("method").toUpperCase());
             billingService.recordPayment(billId, method);
@@ -109,13 +120,6 @@ public class BillingServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(JsonUtil.error(e.getMessage()));
         }
-    }
-
-    // ── helpers ─────────────────────────────────────────────────────────────
-
-    private User currentUser(HttpServletRequest req) {
-        HttpSession s = req.getSession(false);
-        return s == null ? null : (User) s.getAttribute("currentUser");
     }
 
     private String normalise(String p) {
