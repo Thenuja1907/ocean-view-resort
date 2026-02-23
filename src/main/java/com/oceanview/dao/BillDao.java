@@ -4,8 +4,6 @@ import com.oceanview.model.Bill;
 import com.oceanview.model.Bill.PaymentMethod;
 import com.oceanview.model.Bill.PaymentStatus;
 import com.oceanview.util.DatabaseConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,8 +14,6 @@ import java.util.Optional;
  * BillDao — CRUD for the 'bills' table.
  */
 public class BillDao {
-
-    private static final Logger log = LoggerFactory.getLogger(BillDao.class);
 
     // ── CREATE ──────────────────────────────────────────────────────────────
 

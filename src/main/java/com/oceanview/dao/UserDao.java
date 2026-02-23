@@ -3,8 +3,6 @@ package com.oceanview.dao;
 import com.oceanview.model.User;
 import com.oceanview.model.User.Role;
 import com.oceanview.util.DatabaseConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,8 +13,6 @@ import java.util.Optional;
  * UserDao — CRUD for the 'users' table.
  */
 public class UserDao {
-
-    private static final Logger log = LoggerFactory.getLogger(UserDao.class);
 
     // ── CREATE ──────────────────────────────────────────────────────────────
 

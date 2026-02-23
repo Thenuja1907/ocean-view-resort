@@ -3,8 +3,6 @@ package com.oceanview.service;
 import com.oceanview.dao.GuestDao;
 import com.oceanview.model.Guest;
 import com.oceanview.util.ValidationUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -14,8 +12,6 @@ import java.util.Optional;
  * GuestService — business logic for guest management.
  */
 public class GuestService {
-
-    private static final Logger log = LoggerFactory.getLogger(GuestService.class);
 
     private final GuestDao guestDao;
 

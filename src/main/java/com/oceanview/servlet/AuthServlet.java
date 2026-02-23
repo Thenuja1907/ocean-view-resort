@@ -3,7 +3,6 @@ package com.oceanview.servlet;
 import com.oceanview.model.User;
 import com.oceanview.service.AuthService;
 import com.oceanview.util.JsonUtil;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 

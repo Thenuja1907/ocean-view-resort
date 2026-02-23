@@ -5,8 +5,6 @@ import com.oceanview.model.Room;
 import com.oceanview.model.Room.RoomType;
 import com.oceanview.pattern.RoomFactory;
 import com.oceanview.util.ValidationUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -17,8 +15,6 @@ import java.util.Optional;
  * RoomService — business logic for room management.
  */
 public class RoomService {
-
-    private static final Logger log = LoggerFactory.getLogger(RoomService.class);
 
     private final RoomDao roomDao;
 

@@ -2,11 +2,8 @@ package com.oceanview.dao;
 
 import com.oceanview.model.AuditLog;
 import com.oceanview.util.DatabaseConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +11,6 @@ import java.util.List;
  * AuditLogDao — CRUD for the audit_log table.
  */
 public class AuditLogDao {
-
-    private static final Logger log = LoggerFactory.getLogger(AuditLogDao.class);
 
     // ── INSERT ──────────────────────────────────────────────────────────────
 

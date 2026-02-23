@@ -3,10 +3,7 @@ package com.oceanview.dao;
 import com.oceanview.model.Room;
 import com.oceanview.model.Room.RoomType;
 import com.oceanview.util.DatabaseConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +13,6 @@ import java.util.Optional;
  * RoomDao — persistence for the 'rooms' table.
  */
 public class RoomDao {
-
-    private static final Logger log = LoggerFactory.getLogger(RoomDao.class);
 
     // ── CREATE ──────────────────────────────────────────────────────────────
 

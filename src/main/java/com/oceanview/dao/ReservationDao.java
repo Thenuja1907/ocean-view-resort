@@ -3,8 +3,6 @@ package com.oceanview.dao;
 import com.oceanview.model.Reservation;
 import com.oceanview.model.Reservation.Status;
 import com.oceanview.util.DatabaseConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -16,8 +14,6 @@ import java.util.Optional;
  * ReservationDao — CRUD for the 'reservations' table.
  */
 public class ReservationDao {
-
-    private static final Logger log = LoggerFactory.getLogger(ReservationDao.class);
 
     // ── CREATE ──────────────────────────────────────────────────────────────
 

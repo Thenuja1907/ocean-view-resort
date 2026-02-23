@@ -3,8 +3,6 @@ package com.oceanview.dao;
 import com.oceanview.model.Guest;
 import com.oceanview.model.Guest.IdType;
 import com.oceanview.util.DatabaseConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,8 +13,6 @@ import java.util.Optional;
  * GuestDao — CRUD for the 'guests' table.
  */
 public class GuestDao {
-
-    private static final Logger log = LoggerFactory.getLogger(GuestDao.class);
 
     // ── CREATE ──────────────────────────────────────────────────────────────
 
