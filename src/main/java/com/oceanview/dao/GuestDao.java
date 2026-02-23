@@ -17,18 +17,20 @@ public class GuestDao {
     // ── CREATE ──────────────────────────────────────────────────────────────
 
     public Guest insert(Guest guest) throws SQLException {
-        String sql = "INSERT INTO guests (first_name, last_name, email, contact_number, " +
-                "address, id_type, id_number, nationality) VALUES (?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO guests (first_name, last_name, email, password_hash, is_active, " +
+                "contact_number, address, id_type, id_number, nationality) VALUES (?,?,?,?,?,?,?,?,?,?)";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, guest.getFirstName());
             ps.setString(2, guest.getLastName());
             ps.setString(3, guest.getEmail());
-            ps.setString(4, guest.getContactNumber());
-            ps.setString(5, guest.getAddress());
-            ps.setString(6, guest.getIdType().name());
-            ps.setString(7, guest.getIdNumber());
-            ps.setString(8, guest.getNationality());
+            ps.setString(4, guest.getPasswordHash());
+            ps.setBoolean(5, guest.isActive());
+            ps.setString(6, guest.getContactNumber());
+            ps.setString(7, guest.getAddress());
+            ps.setString(8, guest.getIdType().name());
+            ps.setString(9, guest.getIdNumber());
+            ps.setString(10, guest.getNationality());
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next())
@@ -107,19 +109,32 @@ public class GuestDao {
     // ── UPDATE ──────────────────────────────────────────────────────────────
 
     public void update(Guest guest) throws SQLException {
-        String sql = "UPDATE guests SET first_name=?, last_name=?, email=?, contact_number=?, " +
-                "address=?, id_type=?, id_number=?, nationality=? WHERE guest_id=?";
+        String sql = "UPDATE guests SET first_name=?, last_name=?, email=?, password_hash=?, is_active=?, " +
+                "contact_number=?, address=?, id_type=?, id_number=?, nationality=? WHERE guest_id=?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, guest.getFirstName());
             ps.setString(2, guest.getLastName());
             ps.setString(3, guest.getEmail());
-            ps.setString(4, guest.getContactNumber());
-            ps.setString(5, guest.getAddress());
-            ps.setString(6, guest.getIdType().name());
-            ps.setString(7, guest.getIdNumber());
-            ps.setString(8, guest.getNationality());
-            ps.setInt(9, guest.getGuestId());
+            ps.setString(4, guest.getPasswordHash());
+            ps.setBoolean(5, guest.isActive());
+            ps.setString(6, guest.getContactNumber());
+            ps.setString(7, guest.getAddress());
+            ps.setString(8, guest.getIdType().name());
+            ps.setString(9, guest.getIdNumber());
+            ps.setString(10, guest.getNationality());
+            ps.setInt(11, guest.getGuestId());
+            ps.executeUpdate();
+        } finally {
+            DatabaseConnection.getInstance().releaseConnection(conn);
+        }
+    }
+
+    public void updateLastLogin(int guestId) throws SQLException {
+        String sql = "UPDATE guests SET last_login = CURRENT_TIMESTAMP WHERE guest_id = ?";
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, guestId);
             ps.executeUpdate();
         } finally {
             DatabaseConnection.getInstance().releaseConnection(conn);
@@ -147,14 +162,22 @@ public class GuestDao {
         g.setFirstName(rs.getString("first_name"));
         g.setLastName(rs.getString("last_name"));
         g.setEmail(rs.getString("email"));
+        g.setPasswordHash(rs.getString("password_hash"));
+        g.setActive(rs.getBoolean("is_active"));
         g.setContactNumber(rs.getString("contact_number"));
         g.setAddress(rs.getString("address"));
         g.setIdType(IdType.valueOf(rs.getString("id_type")));
         g.setIdNumber(rs.getString("id_number"));
         g.setNationality(rs.getString("nationality"));
+
+        Timestamp ll = rs.getTimestamp("last_login");
+        if (ll != null)
+            g.setLastLogin(ll.toLocalDateTime());
+
         Timestamp ca = rs.getTimestamp("created_at");
         if (ca != null)
             g.setCreatedAt(ca.toLocalDateTime());
+
         Timestamp ua = rs.getTimestamp("updated_at");
         if (ua != null)
             g.setUpdatedAt(ua.toLocalDateTime());

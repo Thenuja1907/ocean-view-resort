@@ -46,7 +46,7 @@ public class AppBootstrap implements ServletContextListener {
         subject.addObserver(new AuditLogObserver(auditLogDao));
 
         // ── Services ──────────────────────────────────────────────────────
-        AuthService authService = new AuthService(userDao);
+        AuthService authService = new AuthService(userDao, guestDao);
         GuestService guestService = new GuestService(guestDao);
         RoomService roomService = new RoomService(roomDao);
         ReservationService reservationService = new ReservationService(reservationDao, roomDao, subject);

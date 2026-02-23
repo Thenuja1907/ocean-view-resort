@@ -126,7 +126,33 @@
                     </div>
                 </section>
 
-                <!-- Other sections will be dynamically populated or toggled -->
+                <!-- Guests Management Section -->
+                <section id="guests" class="content-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Guest Records</h3>
+                            <button class="btn btn-primary btn-sm" id="btnAddGuest">
+                                <i class="fas fa-user-plus"></i> Add Guest
+                            </button>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Contact</th>
+                                    <th>ID Number</th>
+                                    <th>Nationality</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guestListBody">
+                                <!-- Dynamic guest rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
         </main>
     </div>

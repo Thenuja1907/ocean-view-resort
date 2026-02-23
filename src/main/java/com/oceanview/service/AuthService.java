@@ -1,6 +1,8 @@
 package com.oceanview.service;
 
+import com.oceanview.dao.GuestDao;
 import com.oceanview.dao.UserDao;
+import com.oceanview.model.Guest;
 import com.oceanview.model.User;
 import com.oceanview.util.PasswordUtil;
 import com.oceanview.util.ValidationUtil;
@@ -11,59 +13,70 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 /**
- * AuthService — handles login / logout business logic.
+ * AuthService — handles login / logout business logic for both Staff and
+ * Guests.
  */
 public class AuthService {
 
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserDao userDao;
+    private final GuestDao guestDao;
 
-    public AuthService(UserDao userDao) {
+    public AuthService(UserDao userDao, GuestDao guestDao) {
         this.userDao = userDao;
+        this.guestDao = guestDao;
     }
 
     /**
-     * Validates username + password and returns the authenticated User.
-     *
-     * @throws IllegalArgumentException if credentials are blank
-     * @throws SecurityException        if credentials are wrong or account is inactive
-     * @throws SQLException             on DB error
+     * Staff Login
      */
     public User login(String username, String plainPassword) throws SQLException {
-        try {
-            ValidationUtil.requireNonBlank(username, "Username");
-            ValidationUtil.requireNonBlank(plainPassword, "Password");
+        ValidationUtil.requireNonBlank(username, "Username");
+        ValidationUtil.requireNonBlank(plainPassword, "Password");
 
-            Optional<User> opt = userDao.findByUsername(username.trim());
-            if (opt.isEmpty()) {
-                log.warn("Login failed — unknown username: {}", username);
-                throw new SecurityException("Invalid username or password.");
-            }
-
-            User user = opt.get();
-
-            if (!user.isActive()) {
-                log.warn("Login rejected — inactive account: {}", username);
-                throw new SecurityException("Account is disabled. Contact your administrator.");
-            }
-
-            if (!PasswordUtil.verify(plainPassword, user.getPasswordHash())) {
-                log.warn("Login failed — wrong password for: {}", username);
-                throw new SecurityException("Invalid username or password.");
-            }
-
-            userDao.updateLastLogin(user.getUserId());
-            log.info("User '{}' logged in successfully.", username);
-            return user;
-        } catch (SQLException e) {
-            log.error("Database error during login for '{}'", username, e);
-            throw e;
-        } catch (SecurityException e) {
-            throw e; // re-throw as-is
-        } catch (Exception e) {
-            log.error("Unexpected error during login for '{}'", username, e);
-            throw new RuntimeException("An internal error occurred", e);
+        Optional<User> opt = userDao.findByUsername(username.trim());
+        if (opt.isEmpty()) {
+            throw new SecurityException("Invalid username or password.");
         }
+
+        User user = opt.get();
+        if (!user.isActive()) {
+            throw new SecurityException("Account is disabled.");
+        }
+
+        if (!PasswordUtil.verify(plainPassword, user.getPasswordHash())) {
+            throw new SecurityException("Invalid username or password.");
+        }
+
+        userDao.updateLastLogin(user.getUserId());
+        log.info("Staff '{}' logged in.", username);
+        return user;
+    }
+
+    /**
+     * Guest Login
+     */
+    public Guest loginGuest(String email, String plainPassword) throws SQLException {
+        ValidationUtil.requireNonBlank(email, "Email");
+        ValidationUtil.requireNonBlank(plainPassword, "Password");
+
+        Optional<Guest> opt = guestDao.findByEmail(email.trim());
+        if (opt.isEmpty()) {
+            throw new SecurityException("Invalid email or password.");
+        }
+
+        Guest guest = opt.get();
+        if (!guest.isActive()) {
+            throw new SecurityException("Account is disabled.");
+        }
+
+        if (guest.getPasswordHash() == null || !PasswordUtil.verify(plainPassword, guest.getPasswordHash())) {
+            throw new SecurityException("Invalid email or password.");
+        }
+
+        guestDao.updateLastLogin(guest.getGuestId());
+        log.info("Guest '{}' logged in.", email);
+        return guest;
     }
 }

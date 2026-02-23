@@ -30,18 +30,28 @@ function initEventListeners() {
     const btnBooking = document.getElementById('btnQuickBooking');
     const btnClose = document.querySelector('.close-modal');
 
-    btnBooking.addEventListener('click', () => {
-        modal.classList.add('active');
-        prepareBookingForm();
-    });
+    if (btnBooking) {
+        btnBooking.addEventListener('click', () => {
+            modal.classList.add('active');
+            prepareBookingForm();
+        });
+    }
 
-    btnClose.addEventListener('click', () => modal.classList.remove('active'));
+    if (btnClose) {
+        btnClose.addEventListener('click', () => modal.classList.remove('active'));
+    }
 
     // Form Submission
-    document.getElementById('bookingForm').addEventListener('submit', handleBooking);
+    const bookingForm = document.getElementById('bookingForm');
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', handleBooking);
+    }
 
     // Logout
-    document.getElementById('logoutBtn').addEventListener('click', logout);
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 }
 
 // ── DATA FETCHING ────────────────────────────────────────────────────────
@@ -50,23 +60,26 @@ async function updateCounts() {
     try {
         // Fetch rooms to count availability
         const respRooms = await fetch('api/rooms/available');
-        const rooms = (await respRooms.json()).data;
+        const roomsJson = await respRooms.json();
+        const rooms = roomsJson.data || [];
         document.getElementById('countAvailable').textContent = rooms.length;
 
         // Fetch reservations
         const respRes = await fetch('api/reservations');
-        const resList = (await respRes.json()).data;
+        const resJson = await respRes.json();
+        const resList = resJson.data || [];
         document.getElementById('countActive').textContent =
             resList.filter(r => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN').length;
 
-        // Today's checkins (mock logic for demo: filter by today's date)
+        // Today's checkins
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('countCheckins').textContent =
             resList.filter(r => r.checkInDate === today).length;
 
         // Pending bills
         const respBills = await fetch('api/bills');
-        const bills = (await respBills.json()).data;
+        const billsJson = await respBills.json();
+        const bills = billsJson.data || [];
         document.getElementById('countPendingBills').textContent =
             bills.filter(b => b.paymentStatus === 'PENDING').length;
 
@@ -75,10 +88,11 @@ async function updateCounts() {
 
 async function loadRecentReservations() {
     const tbody = document.getElementById('recentReservationsBody');
+    if (!tbody) return;
     try {
         const resp = await fetch('api/reservations');
         const data = await resp.json();
-        const list = data.data.slice(0, 5); // top 5
+        const list = (data.data || []).slice(0, 5); // top 5
 
         tbody.innerHTML = list.map(r => `
             <tr>
@@ -94,9 +108,11 @@ async function loadRecentReservations() {
 
 async function loadRoomGrid() {
     const grid = document.getElementById('roomStatusGrid');
+    if (!grid) return;
     try {
         const resp = await fetch('api/rooms');
-        const rooms = (await resp.json()).data;
+        const data = await resp.json();
+        const rooms = data.data || [];
 
         grid.innerHTML = rooms.map(room => `
             <div class="room-node ${room.available ? 'available' : 'occupied'}" title="${room.roomType}">
@@ -104,6 +120,35 @@ async function loadRoomGrid() {
             </div>
         `).join('');
     } catch (err) { grid.innerHTML = 'Error'; }
+}
+
+async function loadGuestList() {
+    const tbody = document.getElementById('guestListBody');
+    if (!tbody) return;
+    try {
+        const resp = await fetch('api/guests');
+        const data = await resp.json();
+        const list = data.data || [];
+
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7">No guests registered.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = list.map(g => `
+            <tr>
+                <td>${g.guestId}</td>
+                <td>${g.firstName} ${g.lastName}</td>
+                <td>${g.email}</td>
+                <td>${g.contactNumber}</td>
+                <td>${g.idNumber} (${g.idType})</td>
+                <td>${g.nationality}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline" title="Edit Guest"><i class="fas fa-edit"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (err) { tbody.innerHTML = '<tr><td colspan="7">Error loading guests.</td></tr>'; }
 }
 
 // ── FORM LOGIC ───────────────────────────────────────────────────────────
@@ -115,8 +160,10 @@ async function prepareBookingForm() {
             fetch('api/rooms/available')
         ]);
 
-        const guests = (await respGuests.json()).data;
-        const rooms = (await respRooms.json()).data;
+        const guestsJson = await respGuests.json();
+        const roomsJson = await respRooms.json();
+        const guests = guestsJson.data || [];
+        const rooms = roomsJson.data || [];
 
         const gSelect = document.getElementById('guestSelect');
         const rSelect = document.getElementById('roomSelect');
@@ -166,10 +213,21 @@ async function handleBooking(e) {
 
 function showSection(sectionId) {
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+    const activeLink = document.querySelector(`[data-section="${sectionId}"]`);
+    if (activeLink) activeLink.classList.add('active');
+
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    const activeSection = document.getElementById(sectionId);
+    if (activeSection) activeSection.classList.add('active');
 
     document.getElementById('sectionTitle').textContent =
-        sectionId.charAt(0).toUpperCase() + sectionId.slice(1) + ' Management';
+        sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+
+    if (sectionId === 'guests') {
+        loadGuestList();
+    } else if (sectionId === 'overview') {
+        initDashboard();
+    }
 }
 
 async function logout() {

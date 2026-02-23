@@ -15,6 +15,9 @@ public class Guest {
     private String firstName;
     private String lastName;
     private String email;
+    private String passwordHash;
+    private boolean active = true;
+    private LocalDateTime lastLogin;
     private String contactNumber;
     private String address;
     private IdType idType;
@@ -41,7 +44,6 @@ public class Guest {
 
     // ─── Convenience ─────────────────────────────────────────────────────────
 
-    /** Returns full name: FirstName + " " + LastName */
     public String getFullName() {
         return firstName + " " + lastName;
     }
@@ -78,6 +80,30 @@ public class Guest {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String hash) {
+        this.passwordHash = hash;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime t) {
+        this.lastLogin = t;
     }
 
     public String getContactNumber() {
@@ -139,6 +165,6 @@ public class Guest {
     @Override
     public String toString() {
         return "Guest{guestId=" + guestId + ", name='" + getFullName() +
-                "', email='" + email + "', contact='" + contactNumber + "'}";
+                "', email='" + email + "'}";
     }
 }
