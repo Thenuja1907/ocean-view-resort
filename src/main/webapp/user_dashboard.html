@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Ocean View Resort</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --primary: #2ecc71;
+            --secondary: #27ae60;
+        }
+
+        .user-welcome {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.2);
+        }
+
+        .res-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .res-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+        }
+
+        .res-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .res-status {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container" style="display: block; padding: 3rem; max-width: 1200px; margin: 0 auto;">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+            <div style="font-size: 1.8rem; font-weight: 600; color: #2c3e50;">
+                <i class="fas fa-umbrella-beach" style="color: #2ecc71;"></i> Ocean View <span
+                    style="font-weight: 300; opacity: 0.6;">User Portal</span>
+            </div>
+            <button class="btn btn-outline" id="logoutBtn"
+                style="border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </header>
+
+        <div class="user-welcome">
+            <h1>Welcome to Paradise!</h1>
+            <p>Your luxury stay experience at Ocean View Resort starts here.</p>
+        </div>
+
+        <div id="reservationSection">
+            <h2 style="margin-bottom: 1.5rem;">Your Reservations</h2>
+            <div id="reservationsContainer" class="res-list">
+                <div class="card">Loading your bookings...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await fetch('api/auth/logout');
+            window.location.href = 'index.html';
+        });
+
+        async function loadMyBookings() {
+            try {
+                const resp = await fetch('api/reservations'); // Backend handles filtering for guest session
+                const data = await resp.json();
+                const list = data.data || [];
+
+                const container = document.getElementById('reservationsContainer');
+                if (list.length === 0) {
+                    container.innerHTML = '<div class="card">No active reservations found. Ready to book your next stay?</div>';
+                    return;
+                }
+
+                container.innerHTML = list.map(r => `
+                    <div class="res-item">
+                        <div>
+                            <div style="font-size: 1.2rem; font-weight: 600; color: #34495e;">Booking #${r.reservationNumber}</div>
+                            <div style="color: #7f8c8d; font-size: 0.9rem;">Room ${r.roomId} • Full Resort Access Included</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.8rem; color: #95a5a6;">CHECK-IN</div>
+                            <div style="font-weight: 500;">${r.checkInDate}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.8rem; color: #95a5a6;">CHECK-OUT</div>
+                            <div style="font-weight: 500;">${r.checkOutDate}</div>
+                        </div>
+                        <div class="res-status status-${r.status.toLowerCase()}">${r.status}</div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                document.getElementById('reservationsContainer').innerHTML = '<div class="card">Error loading profile data.</div>';
+            }
+        }
+
+        loadMyBookings();
+    </script>
+</body>
+
+</html>

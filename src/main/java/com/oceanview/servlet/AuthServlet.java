@@ -10,7 +10,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 
 /**
- * AuthServlet — handles login / logout for both staff and guests.
+ * AuthServlet — supports dual login endpoints for Staff and User portals.
  */
 @WebServlet("/api/auth/*")
 public class AuthServlet extends HttpServlet {
@@ -30,7 +30,7 @@ public class AuthServlet extends HttpServlet {
         if ("/login".equals(path)) {
             handleStaffLogin(req, resp);
         } else if ("/guest-login".equals(path)) {
-            handleGuestLogin(req, resp);
+            handleUserLogin(req, resp);
         } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             resp.getWriter().write(JsonUtil.error("Endpoint not found."));
@@ -38,11 +38,10 @@ public class AuthServlet extends HttpServlet {
     }
 
     private void handleStaffLogin(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
-
+        String u = req.getParameter("username");
+        String p = req.getParameter("password");
         try {
-            User user = authService.login(username, password);
+            User user = authService.login(u, p);
             HttpSession session = req.getSession(true);
             session.setAttribute("currentUser", user);
             session.setAttribute("userType", "staff");
@@ -52,26 +51,25 @@ public class AuthServlet extends HttpServlet {
             resp.getWriter().write(JsonUtil.error(e.getMessage()));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write(JsonUtil.error("Login error: " + e.getMessage()));
+            resp.getWriter().write(JsonUtil.error(e.getMessage()));
         }
     }
 
-    private void handleGuestLogin(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void handleUserLogin(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String email = req.getParameter("email");
-        String password = req.getParameter("password");
-
+        String p = req.getParameter("password");
         try {
-            Guest guest = authService.loginGuest(email, password);
+            Guest guest = authService.loginGuest(email, p);
             HttpSession session = req.getSession(true);
             session.setAttribute("currentUser", guest);
             session.setAttribute("userType", "guest");
-            resp.getWriter().write(JsonUtil.ok("Welcome back, " + guest.getFirstName(), guest));
+            resp.getWriter().write(JsonUtil.ok("Login successful.", guest));
         } catch (SecurityException e) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resp.getWriter().write(JsonUtil.error(e.getMessage()));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write(JsonUtil.error("Login error: " + e.getMessage()));
+            resp.getWriter().write(JsonUtil.error(e.getMessage()));
         }
     }
 

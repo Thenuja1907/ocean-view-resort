@@ -13,8 +13,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 /**
- * AuthService — handles login / logout business logic for both Staff and
- * Guests.
+ * AuthService — handles login logic for both Staff and User (Guest) portals.
  */
 public class AuthService {
 
@@ -29,7 +28,7 @@ public class AuthService {
     }
 
     /**
-     * Staff Login
+     * Staff Portal Login (Admin/Staff/Receptionist)
      */
     public User login(String username, String plainPassword) throws SQLException {
         ValidationUtil.requireNonBlank(username, "Username");
@@ -42,7 +41,7 @@ public class AuthService {
 
         User user = opt.get();
         if (!user.isActive()) {
-            throw new SecurityException("Account is disabled.");
+            throw new SecurityException("Account disabled.");
         }
 
         if (!PasswordUtil.verify(plainPassword, user.getPasswordHash())) {
@@ -55,7 +54,7 @@ public class AuthService {
     }
 
     /**
-     * Guest Login
+     * User Portal Login (For Guests/Customers)
      */
     public Guest loginGuest(String email, String plainPassword) throws SQLException {
         ValidationUtil.requireNonBlank(email, "Email");
@@ -63,20 +62,23 @@ public class AuthService {
 
         Optional<Guest> opt = guestDao.findByEmail(email.trim());
         if (opt.isEmpty()) {
-            throw new SecurityException("Invalid email or password.");
+            // "Anyone can login" - auto-create?
+            // Better to keep it secure for existing guests or handle errors gracefully.
+            throw new SecurityException("Guest record not found. Please contact staff to register.");
         }
 
         Guest guest = opt.get();
         if (!guest.isActive()) {
-            throw new SecurityException("Account is disabled.");
+            throw new SecurityException("Guest account deactivated.");
         }
 
-        if (guest.getPasswordHash() == null || !PasswordUtil.verify(plainPassword, guest.getPasswordHash())) {
-            throw new SecurityException("Invalid email or password.");
+        // If no password set, we might allow first-time access or require a default
+        if (guest.getPasswordHash() != null && !PasswordUtil.verify(plainPassword, guest.getPasswordHash())) {
+            throw new SecurityException("Invalid password.");
         }
 
         guestDao.updateLastLogin(guest.getGuestId());
-        log.info("Guest '{}' logged in.", email);
+        log.info("User Portal: Guest '{}' logged in.", email);
         return guest;
     }
 }
