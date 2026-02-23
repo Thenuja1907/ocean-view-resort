@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Dashboard - Ocean View Resort</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-umbrella-beach"></i>
+                <span>Ocean View</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" data-section="overview">
+                    <i class="fas fa-th-large"></i> <span>Overview</span>
+                </a>
+                <a href="#" class="nav-link" data-section="rooms">
+                    <i class="fas fa-bed"></i> <span>Rooms</span>
+                </a>
+                <a href="#" class="nav-link" data-section="guests">
+                    <i class="fas fa-users"></i> <span>Guests</span>
+                </a>
+                <a href="#" class="nav-link" data-section="reservations">
+                    <i class="fas fa-calendar-check"></i> <span>Reservations</span>
+                </a>
+                <a href="#" class="nav-link" data-section="billing">
+                    <i class="fas fa-file-invoice-dollar"></i> <span>Billing</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=f1c40f&color=000428" alt="User">
+                    <div class="details">
+                        <span class="name" id="userName">User</span>
+                        <span class="role" id="userRole">Staff</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1 id="sectionTitle">Dashboard Overview</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="btnQuickBooking">
+                        <i class="fas fa-plus"></i> Quick Booking
+                    </button>
+                </div>
+            </header>
+
+            <div id="contentArea">
+                <!-- Dashboard Overview Section -->
+                <section id="overview" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-door-open"></i>
+                            <div class="stat-info">
+                                <span class="label">Available Rooms</span>
+                                <span class="value" id="countAvailable">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-user-check"></i>
+                            <div class="stat-info">
+                                <span class="label">Today's Check-ins</span>
+                                <span class="value" id="countCheckins">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-calendar-day"></i>
+                            <div class="stat-info">
+                                <span class="label">Active Reservations</span>
+                                <span class="value" id="countActive">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-wallet"></i>
+                            <div class="stat-info">
+                                <span class="label">Pending Payments</span>
+                                <span class="value" id="countPendingBills">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-grid">
+                        <div class="card recent-bookings">
+                            <div class="card-header">
+                                <h3>Recent Reservations</h3>
+                                <a href="#" onclick="showSection('reservations')">View All</a>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Res #</th>
+                                        <th>Guest</th>
+                                        <th>Room</th>
+                                        <th>Dates</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentReservationsBody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card room-status">
+                            <div class="card-header">
+                                <h3>Room Availability</h3>
+                            </div>
+                            <div class="room-grid" id="roomStatusGrid">
+                                <!-- Dynamic room circles/cards -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Other sections will be dynamically populated or toggled -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Reservation</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="bookingForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Select Guest</label>
+                        <select id="guestSelect" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Room</label>
+                        <select id="roomSelect" required></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Check-in Date</label>
+                        <input type="date" id="checkInDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Check-out Date</label>
+                        <input type="date" id="checkOutDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Number of Guests</label>
+                        <input type="number" id="numGuests" min="1" value="2" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Special Requests</label>
+                    <textarea id="specialRequests"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary full-width">Confirm Reservation</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
