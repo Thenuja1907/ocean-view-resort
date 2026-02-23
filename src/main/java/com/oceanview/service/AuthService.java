@@ -27,8 +27,7 @@ public class AuthService {
      * Validates username + password and returns the authenticated User.
      *
      * @throws IllegalArgumentException if credentials are blank
-     * @throws SecurityException        if credentials are wrong or account is
-     *                                  inactive
+     * @throws SecurityException        if credentials are wrong or account is inactive
      * @throws SQLException             on DB error
      */
     public User login(String username, String plainPassword) throws SQLException {
@@ -47,13 +46,6 @@ public class AuthService {
             if (!user.isActive()) {
                 log.warn("Login rejected — inactive account: {}", username);
                 throw new SecurityException("Account is disabled. Contact your administrator.");
-            }
-
-            if (user.getPasswordHash() != null) {
-                System.out.println("DEBUG: Username: [" + user.getUsername() + "]");
-                System.out.println("DEBUG: DB hash length: " + user.getPasswordHash().length());
-                System.out.println("DEBUG: DB hash content: [" + user.getPasswordHash() + "]");
-                System.out.println("DEBUG: Input password length: " + plainPassword.length());
             }
 
             if (!PasswordUtil.verify(plainPassword, user.getPasswordHash())) {
