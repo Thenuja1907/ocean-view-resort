@@ -32,29 +32,39 @@ public class AuthService {
      * @throws SQLException             on DB error
      */
     public User login(String username, String plainPassword) throws SQLException {
-        ValidationUtil.requireNonBlank(username, "Username");
-        ValidationUtil.requireNonBlank(plainPassword, "Password");
+        try {
+            ValidationUtil.requireNonBlank(username, "Username");
+            ValidationUtil.requireNonBlank(plainPassword, "Password");
 
-        Optional<User> opt = userDao.findByUsername(username.trim());
-        if (opt.isEmpty()) {
-            log.warn("Login failed — unknown username: {}", username);
-            throw new SecurityException("Invalid username or password.");
+            Optional<User> opt = userDao.findByUsername(username.trim());
+            if (opt.isEmpty()) {
+                log.warn("Login failed — unknown username: {}", username);
+                throw new SecurityException("Invalid username or password.");
+            }
+
+            User user = opt.get();
+
+            if (!user.isActive()) {
+                log.warn("Login rejected — inactive account: {}", username);
+                throw new SecurityException("Account is disabled. Contact your administrator.");
+            }
+
+            if (!PasswordUtil.verify(plainPassword, user.getPasswordHash())) {
+                log.warn("Login failed — wrong password for: {}", username);
+                throw new SecurityException("Invalid username or password.");
+            }
+
+            userDao.updateLastLogin(user.getUserId());
+            log.info("User '{}' logged in successfully.", username);
+            return user;
+        } catch (SQLException e) {
+            log.error("Database error during login for '{}'", username, e);
+            throw e;
+        } catch (SecurityException e) {
+            throw e; // re-throw as-is
+        } catch (Exception e) {
+            log.error("Unexpected error during login for '{}'", username, e);
+            throw new RuntimeException("An internal error occurred", e);
         }
-
-        User user = opt.get();
-
-        if (!user.isActive()) {
-            log.warn("Login rejected — inactive account: {}", username);
-            throw new SecurityException("Account is disabled. Contact your administrator.");
-        }
-
-        if (!PasswordUtil.verify(plainPassword, user.getPasswordHash())) {
-            log.warn("Login failed — wrong password for: {}", username);
-            throw new SecurityException("Invalid username or password.");
-        }
-
-        userDao.updateLastLogin(user.getUserId());
-        log.info("User '{}' logged in successfully.", username);
-        return user;
     }
 }
