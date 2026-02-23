@@ -49,6 +49,13 @@ public class AuthService {
                 throw new SecurityException("Account is disabled. Contact your administrator.");
             }
 
+            if (user.getPasswordHash() != null) {
+                System.out.println("DEBUG: Username: [" + user.getUsername() + "]");
+                System.out.println("DEBUG: DB hash length: " + user.getPasswordHash().length());
+                System.out.println("DEBUG: DB hash content: [" + user.getPasswordHash() + "]");
+                System.out.println("DEBUG: Input password length: " + plainPassword.length());
+            }
+
             if (!PasswordUtil.verify(plainPassword, user.getPasswordHash())) {
                 log.warn("Login failed — wrong password for: {}", username);
                 throw new SecurityException("Invalid username or password.");
