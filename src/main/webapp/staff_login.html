@@ -7,39 +7,21 @@
     <title>Staff Portal Login - Ocean View Resort</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        :root {
-            --primary-yellow: #fcc419;
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --text-white: #ffffff;
-            --dark-input: rgba(255, 255, 255, 0.05);
-        }
-
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-                url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            height: 100vh;
+            margin: 0;
             overflow: hidden;
         }
 
         .login-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            padding: 3.5rem 2.5rem;
             width: 100%;
             max-width: 440px;
-            border-radius: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            padding: 4rem 3rem;
             text-align: center;
         }
 
@@ -47,41 +29,41 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 15px;
             margin-bottom: 0.5rem;
         }
 
         .logo-container i {
-            font-size: 2.2rem;
-            color: var(--primary-yellow);
+            font-size: 2.5rem;
+            color: var(--primary);
         }
 
         .logo-container span {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 600;
-            color: var(--primary-yellow);
+            color: var(--primary);
             letter-spacing: 0.5px;
         }
 
         .subtitle {
             font-size: 0.85rem;
             color: var(--text-white);
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             opacity: 0.8;
-            margin-bottom: 3rem;
+            margin-bottom: 3.5rem;
             text-transform: uppercase;
         }
 
         .form-group {
-            margin-bottom: 1.8rem;
+            margin-bottom: 2rem;
             text-align: left;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.6rem;
-            font-size: 0.9rem;
-            font-weight: 400;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            font-weight: 500;
             color: var(--text-white);
         }
 
@@ -95,69 +77,30 @@
             top: 50%;
             transform: translateY(-50%);
             color: rgba(255, 255, 255, 0.5);
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
         input {
-            width: 100%;
-            padding: 0.9rem 1rem 0.9rem 3.5rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: var(--dark-input);
-            color: white;
-            box-sizing: border-box;
-            outline: none;
-            transition: 0.3s;
-            font-size: 0.95rem;
+            padding-left: 3.5rem !important;
         }
 
-        input:focus {
-            border-color: var(--primary-yellow);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 1.1rem;
-            border: none;
-            border-radius: 12px;
-            background: var(--primary-yellow);
-            color: #1a1a1a;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 1rem;
-            letter-spacing: 1px;
-        }
-
-        .login-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(252, 196, 25, 0.3);
-        }
-
-        .footer {
-            margin-top: 3rem;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
+        .footer-text {
+            margin-top: 3.5rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .error-msg {
             color: #ff6b6b;
-            font-size: 0.85rem;
-            margin-top: 1rem;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
             display: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="login-card">
+    <div class="glass-card login-card">
         <div class="logo-container">
             <i class="fas fa-umbrella-beach"></i>
             <span>Ocean View</span>
@@ -169,7 +112,7 @@
                 <label>Username</label>
                 <div class="input-wrapper">
                     <i class="fas fa-user-shield"></i>
-                    <input type="text" id="username" value="Admin@1234" required>
+                    <input type="text" id="username" placeholder="Enter username" value="Admin@1234" required>
                 </div>
             </div>
             <div class="form-group">
@@ -179,11 +122,11 @@
                     <input type="password" id="password" placeholder="Enter password" required>
                 </div>
             </div>
-            <button type="submit" class="login-btn">Sign In</button>
+            <button type="submit" class="btn btn-primary full-width" style="width: 100%;">Sign In</button>
             <div class="error-msg" id="errorMsg">Invalid credentials.</div>
         </form>
 
-        <div class="footer">
+        <div class="footer-text">
             &copy; 2026 Ocean View Resort Management System
         </div>
     </div>
