@@ -323,3 +323,17 @@ input:focus {
 .modal.active {
     display: flex;
 }
+
+/* Auth page layout - centers auth-card on screen */
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    margin: 0;
+}
+
+.auth-page .auth-card {
+    margin: 0 auto;
+}
