@@ -296,3 +296,30 @@ input:focus {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 30px;
 }
+
+/* Auth panels (login / register) - unified sizing and spacing */
+.auth-card,
+.modal .modal-content {
+    width: 100%;
+    max-width: 650px;
+    padding: 3.5rem 2.5rem;
+    text-align: center;
+    border-radius: 25px;
+    background: rgba(8, 8, 10, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* Modal visibility and centering */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal.active {
+    display: flex;
+}
