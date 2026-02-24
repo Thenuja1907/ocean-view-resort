@@ -31,8 +31,6 @@ public class AuthServlet extends HttpServlet {
             handleStaffLogin(req, resp);
         } else if ("/guest-login".equals(path)) {
             handleUserLogin(req, resp);
-        } else if ("/profile".equals(path)) {
-            handleProfile(req, resp);
         } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             resp.getWriter().write(JsonUtil.error("Endpoint not found: " + path));
@@ -102,9 +100,18 @@ public class AuthServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        HttpSession session = req.getSession(false);
-        if (session != null)
-            session.invalidate();
-        resp.getWriter().write(JsonUtil.ok("Logged out.", null));
+        String path = normalise(req.getPathInfo());
+
+        if ("/profile".equals(path)) {
+            handleProfile(req, resp);
+        } else if ("/logout".equals(path)) {
+            HttpSession session = req.getSession(false);
+            if (session != null)
+                session.invalidate();
+            resp.getWriter().write(JsonUtil.ok("Logged out.", null));
+        } else {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write(JsonUtil.error("Endpoint not found: " + path));
+        }
     }
 }

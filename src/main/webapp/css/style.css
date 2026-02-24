@@ -261,6 +261,11 @@ textarea {
     font-size: 0.95rem;
 }
 
+option {
+    background: #1a1a1a;
+    color: white;
+}
+
 .input-wrapper {
     position: relative;
     display: flex;
