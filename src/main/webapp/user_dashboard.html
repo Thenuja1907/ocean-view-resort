@@ -7,459 +7,296 @@
     <title>Guest Portal - Ocean View Resort</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2ecc71;
-            --secondary: #27ae60;
-            --bg: #f4f7f6;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 0;
-            color: #2c3e50;
-        }
-
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .logo i {
-            color: var(--primary);
-            margin-right: 10px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: none;
-            font-weight: 500;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            border: 1px solid #ddd;
-            background: white;
-        }
-
-        .btn-outline:hover {
-            background: #f8f9fa;
-        }
-
-        .btn-danger {
-            background: #ff7675;
-            color: white;
-        }
-
-        .welcome-hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 3rem;
-            border-radius: 24px;
-            margin-bottom: 2rem;
-            box-shadow: 0 15px 35px rgba(46, 204, 113, 0.2);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 20px;
-            box-shadow: var(--card-shadow);
-            text-align: center;
-        }
-
-        .stat-card i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .stat-card .value {
-            font-size: 1.8rem;
-            font-weight: 600;
-            display: block;
-        }
-
-        .stat-card .label {
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            text-transform: uppercase;
-        }
-
-        .tab-nav {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 1rem;
-        }
-
-        .tab-link {
-            text-decoration: none;
-            color: #7f8c8d;
-            font-weight: 500;
-            padding: 5px 15px;
-            border-radius: 50px;
-            transition: 0.3s;
-        }
-
-        .tab-link.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .content-section {
-            display: none;
-        }
-
-        .content-section.active {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .data-list {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .card-item {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--card-shadow);
-        }
-
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-confirmed {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .status-pending {
-            background: #fff8e1;
-            color: #f39c12;
-        }
-
-        .status-cancelled {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .status-checkedin {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-sizing: border-box;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <div class="dashboard-container">
-        <header>
-            <div class="logo"><i class="fas fa-umbrella-beach"></i> Ocean View</div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-primary" onclick="openBookingModal()"><i class="fas fa-plus"></i> New
-                    Booking</button>
-                <button class="btn btn-outline" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-umbrella-beach"></i>
+                <span>Ocean View</span>
             </div>
-        </header>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" data-section="sectionOverview">
+                    <i class="fas fa-th-large"></i> <span>Overview</span>
+                </a>
+                <a href="#" class="nav-link" data-section="sectionReservations">
+                    <i class="fas fa-calendar-alt"></i> <span>My Stays</span>
+                </a>
+                <a href="#" class="nav-link" data-section="sectionBills">
+                    <i class="fas fa-file-invoice-dollar"></i> <span>Billing</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="details">
+                        <span class="name" id="sidebarGuestName"
+                            style="color: var(--primary); font-weight: 500;">Guest</span>
+                        <span class="role" style="font-size: 0.7rem; color: var(--text-muted); display: block;">Valued
+                            Guest</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn"
+                    style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
 
-        <div class="welcome-hero">
-            <h1>Aloha, <span id="guestName">Guest</span>!</h1>
-            <p>Ready for another tropical escape? View your bookings and bills below.</p>
-        </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1 id="pageTitle">Dashboard Overview</h1>
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="openBookingModal()">
+                        <i class="fas fa-plus"></i> New Booking
+                    </button>
+                </div>
+            </header>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-calendar-check"></i>
-                <span class="value" id="countActive">0</span>
-                <span class="label">Upcoming Stays</span>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-history"></i>
-                <span class="value" id="countTotal">0</span>
-                <span class="label">Total Visits</span>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-wallet"></i>
-                <span class="value" id="countUnpaid">0</span>
-                <span class="label">Unpaid Bills</span>
-            </div>
-        </div>
+            <!-- Overview Section -->
+            <div id="sectionOverview" class="tab-content section-active">
+                <div class="card"
+                    style="margin-bottom: 3rem; background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(252,196,25,0.05) 100%);">
+                    <h2 style="color: var(--primary); font-size: 2.2rem; margin-bottom: 0.5rem;">Aloha, <span
+                            id="welcomeName">Guest</span>!</h2>
+                    <p style="color: var(--text-muted); font-size: 1.1rem;">Your tropical paradise awaits. Manage your
+                        stay details below.</p>
+                </div>
 
-        <nav class="tab-nav">
-            <a href="#" class="tab-link active" data-section="sectionReservations">Reservations</a>
-            <a href="#" class="tab-link" data-section="sectionBills">Bills & Payments</a>
-        </nav>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <div class="stat-info">
+                            <span class="label">Upcoming Stays</span>
+                            <span class="value" id="countActive">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-history"></i>
+                        <div class="stat-info">
+                            <span class="label">Total Visits</span>
+                            <span class="value" id="countTotal">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-wallet"></i>
+                        <div class="stat-info">
+                            <span class="label">Unpaid Bills</span>
+                            <span class="value" id="countUnpaid">0</span>
+                        </div>
+                    </div>
+                </div>
 
-        <section id="sectionReservations" class="content-section active">
-            <div id="reservationsList" class="data-list">
-                <div class="card-item">Loading your paradise plans...</div>
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary);">Recent Plans</h3>
+                        <a href="#" onclick="showSection('sectionReservations')"
+                            style="color: var(--primary); font-size: 0.8rem; text-decoration: none;">View All</a>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Booking #</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentReservationsTable">
+                            <tr>
+                                <td colspan="4" style="text-align:center;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </section>
 
-        <section id="sectionBills" class="content-section">
-            <div id="billsList" class="data-list">
-                <div class="card-item">Fetching your billing history...</div>
+            <!-- Stays Section -->
+            <div id="sectionReservations" class="tab-content" style="display:none;">
+                <div class="card">
+                    <h3 style="color: var(--primary); margin-bottom: 2rem;">My Reservations</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Booking #</th>
+                                <th>Room</th>
+                                <th>Dates</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allReservationsTable"></tbody>
+                    </table>
+                </div>
             </div>
-        </section>
+
+            <!-- Billing Section -->
+            <div id="sectionBills" class="tab-content" style="display:none;">
+                <div class="card">
+                    <h3 style="color: var(--primary); margin-bottom: 2rem;">Billing History</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Bill #</th>
+                                <th>Date</th>
+                                <th>Total (LKR)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Booking Modal -->
+    <!-- Modals -->
     <div class="modal" id="bookingModal">
         <div class="modal-content">
-            <h2 style="margin-top: 0;">Plan Your Getaway</h2>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2.5rem;">
+                <h2 style="color: var(--primary);">Plan Your Next Booking</h2>
+                <button onclick="closeBookingModal()"
+                    style="background: none; border: none; font-size: 2rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            </div>
             <form id="bookingForm">
-                <div class="form-group">
-                    <label>Select Room</label>
-                    <select id="roomSelect" required>
-                        <option value="">Checking availability...</option>
-                    </select>
+                <div style="margin-bottom: 1.5rem;">
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">Select
+                        Your Haven</label>
+                    <select id="roomSelect" required></select>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Check-in</label>
-                        <input type="date" id="checkIn" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Check-out</label>
-                        <input type="date" id="checkOut" required>
-                    </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div><label
+                            style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">Check-in
+                            Date</label><input type="date" id="checkIn" required></div>
+                    <div><label
+                            style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">Check-out
+                            Date</label><input type="date" id="checkOut" required></div>
                 </div>
-                <div class="form-group">
-                    <label>Guests</label>
+                <div style="margin-bottom: 2rem;">
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">Number
+                        of Guests</label>
                     <input type="number" id="numGuests" value="2" min="1" required>
                 </div>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1rem;">
-                    <button type="button" class="btn btn-outline" onclick="closeBookingModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Book Now</button>
-                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Confirm Booking</button>
             </form>
         </div>
     </div>
 
     <script>
-        // Tab Navigation
-        document.querySelectorAll('.tab-link').forEach(link => {
-            link.onclick = (e) => {
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.tab-content');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
                 e.preventDefault();
-                document.querySelectorAll('.tab-link, .content-section').forEach(el => el.classList.remove('active'));
-                link.classList.add('active');
-                document.getElementById(link.dataset.section).classList.add('active');
-            };
+                showSection(link.dataset.section);
+            });
         });
+
+        function showSection(sectionId) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            sections.forEach(s => s.style.display = 'none');
+            const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+            const section = document.getElementById(sectionId);
+            if (section) section.style.display = 'block';
+            document.getElementById('pageTitle').textContent =
+                sectionId === 'sectionOverview' ? 'Dashboard Overview' :
+                    (sectionId === 'sectionReservations' ? 'My Stays' : 'Billing History');
+        }
 
         document.getElementById('logoutBtn').onclick = async () => {
             await fetch('api/auth/logout');
             window.location.href = 'index.html';
         };
 
+        async function loadProfile() {
+            const resp = await fetch('api/auth/profile');
+            if (resp.status === 401) return window.location.href = 'user_login.html';
+            const data = await resp.json();
+            if (data.success) {
+                document.getElementById('sidebarGuestName').textContent = data.data.firstName;
+                document.getElementById('welcomeName').textContent = data.data.firstName;
+            }
+        }
+
         async function loadData() {
             try {
-                // Load Profile
-                const profResp = await fetch('api/auth/profile');
-                if (profResp.status === 401) return window.location.href = 'user_login.html';
-                const profData = await profResp.json();
-                if (profData.success) {
-                    const guest = profData.data;
-                    document.getElementById('guestName').textContent = guest.firstName;
-                }
-
-                // Load Reservations
                 const resResp = await fetch('api/reservations');
                 const resData = await resResp.json();
                 const reservations = resData.data || [];
-
-                // Filter Active vs Historical
                 const active = reservations.filter(r => r.status !== 'CANCELLED' && r.status !== 'CHECKED_OUT');
                 document.getElementById('countActive').textContent = active.length;
                 document.getElementById('countTotal').textContent = reservations.length;
-
                 renderReservations(reservations);
 
-                // Load Bills
                 const billResp = await fetch('api/bills');
                 const billData = await billResp.json();
                 const bills = billData.data || [];
-                const unpaid = bills.filter(b => b.paymentStatus === 'PENDING').length;
-                document.getElementById('countUnpaid').textContent = unpaid;
-
+                document.getElementById('countUnpaid').textContent = bills.filter(b => b.paymentStatus === 'PENDING').length;
                 renderBills(bills);
-
             } catch (err) { console.error(err); }
         }
 
         function renderReservations(list) {
-            const container = document.getElementById('reservationsList');
+            const recentTable = document.getElementById('recentReservationsTable');
+            const allTable = document.getElementById('allReservationsTable');
             if (list.length === 0) {
-                container.innerHTML = '<div class="card-item" style="justify-content: center; opacity: 0.6;">No reservations found. Start your journey today!</div>';
+                recentTable.innerHTML = '<tr><td colspan="4" style="text-align:center;">No bookings found.</td></tr>';
+                allTable.innerHTML = '<tr><td colspan="5" style="text-align:center;">No bookings found.</td></tr>';
                 return;
             }
-
-            container.innerHTML = list.map(r => `
-                <div class="card-item">
-                    <div>
-                        <div style="font-weight: 600; font-size: 1.1rem; color: #2c3e50;">${r.reservationNumber}</div>
-                        <div style="font-size: 0.85rem; color: #7f8c8d;">${r.checkInDate} to ${r.checkOutDate}</div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 1.5rem;">
-                        <span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span>
-                        ${r.status === 'PENDING' || r.status === 'CONFIRMED' ?
-                    `<button class="btn btn-outline btn-danger" onclick="cancelBooking(${r.reservationId})" style="padding: 5px 10px; font-size: 0.75rem;">Cancel</button>` : ''}
-                    </div>
-                </div>
+            recentTable.innerHTML = list.slice(0, 5).map(r => `
+                <tr>
+                    <td>${r.reservationNumber}</td>
+                    <td>${r.checkInDate}</td>
+                    <td>${r.checkOutDate}</td>
+                    <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
+                </tr>
+            `).join('');
+            allTable.innerHTML = list.map(r => `
+                <tr>
+                    <td>${r.reservationNumber}</td>
+                    <td>Room ${r.roomId}</td>
+                    <td>${r.checkInDate} to ${r.checkOutDate}</td>
+                    <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
+                    <td>${(r.status === 'PENDING' || r.status === 'CONFIRMED') ? `<button class="btn" style="background:rgba(244, 67, 54, 0.4); color:white; padding:5px 10px; font-size:0.7rem; border: 1px solid rgba(255,255,255,0.2);" onclick="cancelBooking(${r.reservationId})">Cancel</button>` : '-'}</td>
+                </tr>
             `).join('');
         }
 
         function renderBills(list) {
-            const container = document.getElementById('billsList');
-            if (list.length === 0) {
-                container.innerHTML = '<div class="card-item" style="justify-content: center; opacity: 0.6;">No billing records found.</div>';
-                return;
-            }
-
-            container.innerHTML = list.map(b => `
-                <div class="card-item">
-                    <div>
-                        <div style="font-weight: 600;">Bill #${b.billNumber}</div>
-                        <div style="font-size: 0.85rem; color: #7f8c8d;">Total: LKR ${b.totalAmount.toFixed(2)}</div>
-                    </div>
-                    <div>
-                        <span class="status-badge status-${b.paymentStatus.toLowerCase()}">${b.paymentStatus}</span>
-                    </div>
-                </div>
+            const table = document.getElementById('billsTable');
+            if (list.length === 0) { table.innerHTML = '<tr><td colspan="4" style="text-align:center;">No billing history.</td></tr>'; return; }
+            table.innerHTML = list.map(b => `
+                <tr>
+                    <td>${b.billNumber}</td>
+                    <td>${new Date(b.issuedAt).toLocaleDateString()}</td>
+                    <td>${b.totalAmount.toLocaleString()}</td>
+                    <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${b.paymentStatus}</span></td>
+                </tr>
             `).join('');
         }
 
         async function cancelBooking(id) {
-            if (!confirm('Are you sure you want to cancel this booking?')) return;
+            if (!confirm('Cancel this booking?')) return;
             const resp = await fetch(`api/reservations/${id}/cancel`, { method: 'PUT' });
-            if (resp.ok) {
-                alert('Booking cancelled successfully.');
-                loadData();
-            }
+            if (resp.ok) { alert('Booking cancelled.'); loadData(); }
         }
 
-        // Modal Logic
-        function openBookingModal() {
-            document.getElementById('bookingModal').classList.add('active');
-            loadRooms();
-        }
-        function closeBookingModal() {
-            document.getElementById('bookingModal').classList.remove('active');
-        }
+        function openBookingModal() { document.getElementById('bookingModal').classList.add('active'); loadAvailableRooms(); }
+        function closeBookingModal() { document.getElementById('bookingModal').classList.remove('active'); }
 
-        async function loadRooms() {
+        async function loadAvailableRooms() {
             const resp = await fetch('api/rooms/available');
             const data = await resp.json();
-            const select = document.getElementById('roomSelect');
-            select.innerHTML = (data.data || []).map(r =>
+            document.getElementById('roomSelect').innerHTML = (data.data || []).map(r =>
                 `<option value="${r.roomId}">${r.roomNumber} - ${r.roomType} (LKR ${r.ratePerNight})</option>`
             ).join('');
         }
@@ -472,24 +309,12 @@
             formData.append('checkOutDate', document.getElementById('checkOut').value);
             formData.append('numGuests', document.getElementById('numGuests').value);
             formData.append('specialRequests', 'Guest Self-Booking');
-
-            const resp = await fetch('api/reservations', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData
-            });
-
-            if (resp.ok) {
-                alert('Resort Booking Successful!');
-                closeBookingModal();
-                loadData();
-            } else {
-                const data = await resp.json();
-                alert('Error: ' + data.message);
-            }
+            const resp = await fetch('api/reservations', { method: 'POST', body: formData });
+            if (resp.ok) { alert('Booking Successful!'); closeBookingModal(); loadData(); }
+            else { const d = await resp.json(); alert('Error: ' + d.message); }
         };
 
-        loadData();
+        loadProfile(); loadData();
     </script>
 </body>
 

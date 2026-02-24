@@ -17,6 +17,7 @@
     <session-config>
         <session-timeout>30</session-timeout>
         <cookie-config>
+            <path>/</path>
             <http-only>true</http-only>
         </cookie-config>
     </session-config>

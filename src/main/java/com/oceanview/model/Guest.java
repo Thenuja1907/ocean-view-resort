@@ -1,11 +1,13 @@
 package com.oceanview.model;
 
 import java.time.LocalDateTime;
+import java.io.Serializable;
 
 /**
  * Guest entity — maps to the 'guests' table.
  */
-public class Guest {
+public class Guest implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public enum IdType {
         NIC, PASSPORT, DRIVING_LICENSE

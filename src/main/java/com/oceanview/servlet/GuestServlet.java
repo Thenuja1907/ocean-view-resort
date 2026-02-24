@@ -61,9 +61,14 @@ public class GuestServlet extends HttpServlet {
         resp.setContentType("application/json;charset=UTF-8");
         try {
             Guest guest = buildFromRequest(req, new Guest());
-            guestService.registerGuest(guest);
+            Guest registered = guestService.registerGuest(guest);
+            // Automatically log in the user after registration
+            HttpSession session = req.getSession(true);
+            session.setAttribute("currentUser", registered);
+            session.setAttribute("userType", "guest");
+
             resp.setStatus(HttpServletResponse.SC_CREATED);
-            resp.getWriter().write(JsonUtil.ok("Guest registered.", guest));
+            resp.getWriter().write(JsonUtil.ok("Guest registered and logged in.", registered));
         } catch (SecurityException e) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resp.getWriter().write(JsonUtil.error(e.getMessage()));

@@ -55,11 +55,14 @@ CREATE TABLE IF NOT EXISTS guests (
     first_name     VARCHAR(75)  NOT NULL,
     last_name      VARCHAR(75)  NOT NULL,
     email          VARCHAR(150) NOT NULL UNIQUE,
+    password_hash  VARCHAR(255) NULL,   -- Added for Guest Portal
+    is_active      BOOLEAN      NOT NULL DEFAULT TRUE, -- Added for Guest Portal
     contact_number VARCHAR(20)  NOT NULL,
     address        TEXT         NOT NULL,
     id_type        ENUM('NIC','PASSPORT','DRIVING_LICENSE') NOT NULL DEFAULT 'NIC',
     id_number      VARCHAR(50)  NOT NULL,
     nationality    VARCHAR(100) NOT NULL DEFAULT 'Sri Lankan',
+    last_login     DATETIME     NULL,   -- Added for Guest Portal
     created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_guests_email   (email),
