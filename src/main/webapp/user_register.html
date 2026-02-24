@@ -102,110 +102,148 @@
     </head>
 
     <body class="auth-page">
-    <div class="glass-card auth-card register-card">
-        <div class="logo-container">
-            <i class="fas fa-umbrella-beach"></i>
-            <span>Ocean View</span>
-        </div>
-        <div class="subtitle">Join Our Elite Membership</div>
+        <div class="auth-container">
+            <div class="auth-left">
+                <div class="glass-card auth-card">
+                    <div class="logo-container">
+                        <i class="fas fa-umbrella-beach"></i>
+                        <span>Ocean View</span>
+                    </div>
+                    <h2>SIGN IN</h2>
+                    <div class="subtitle">GUEST PORTAL</div>
 
-        <form id="registerForm">
-            <div class="form-grid">
-                <div>
-                    <label>First Name</label>
-                    <div class="input-wrapper"><i class="fas fa-user"></i><input type="text" id="firstName"
-                            placeholder="John" required></div>
-                </div>
-                <div>
-                    <label>Last Name</label>
-                    <div class="input-wrapper"><i class="fas fa-user"></i><input type="text" id="lastName"
-                            placeholder="Doe" required></div>
-                </div>
-                <div class="full-w">
-                    <label>Email Address</label>
-                    <div class="input-wrapper"><i class="fas fa-envelope"></i><input type="email" id="email" required>
-                    </div>
-                </div>
-                <div>
-                    <label>Password</label>
-                    <div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="password" required>
-                    </div>
-                </div>
-                <div>
-                    <label>Contact Number</label>
-                    <div class="input-wrapper"><i class="fas fa-phone"></i><input type="text" id="contactNumber"
-                            required></div>
-                </div>
-                <div class="full-w">
-                    <label>Residential Address</label>
-                    <div class="input-wrapper"><i class="fas fa-map-marker-alt"></i><input type="text" id="address"
-                            required></div>
-                </div>
-                <div>
-                    <label>Identity Type</label>
-                    <select id="idType" style="padding-left: 1rem;">
-                        <option value="NIC">NIC</option>
-                        <option value="PASSPORT">Passport</option>
-                    </select>
-                </div>
-                <div>
-                    <label>ID Number</label>
-                    <div class="input-wrapper"><i class="fas fa-id-card"></i><input type="text" id="idNumber" required>
-                    </div>
-                </div>
-                <div class="full-w">
-                    <label>Nationality</label>
-                    <div class="input-wrapper"><i class="fas fa-globe"></i><input type="text" id="nationality"
-                            placeholder="e.g. Sri Lankan" required></div>
+                    <form id="loginFormLeft">
+                        <div class="form-group">
+                            <label class="label-small">Email Address</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="loginEmail" placeholder="Enter email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="label-small">Password</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="loginPass" placeholder="Enter password" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary full">Sign In</button>
+                        <div style="height:12px"></div>
+                        <div class="links" style="text-align:center; margin-top:0.5rem;">
+                            <a href="#" onclick="document.getElementById('regFormRight').scrollIntoView(); return false;" style="color:var(--primary);">Create an account</a>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2.5rem;">Begin Your
-                Journey</button>
-            <div class="error-msg" id="errorMsg"></div>
-        </form>
 
-        <div class="links">
-            Already part of our resort? <a href="user_login.html">Sign In Here</a>
+            <div class="auth-right">
+                <div class="glass-card auth-card">
+                    <h2>CREATE ACCOUNT</h2>
+                    <div class="subtitle">Join Our Elite Membership</div>
+                    <form id="regFormRight">
+                        <div class="form-grid">
+                            <div>
+                                <label class="label-small">First Name</label>
+                                <div class="input-wrapper"><i class="fas fa-user"></i><input type="text" id="firstName" placeholder="First name" required></div>
+                            </div>
+                            <div>
+                                <label class="label-small">Last Name</label>
+                                <div class="input-wrapper"><i class="fas fa-user"></i><input type="text" id="lastName" placeholder="Last name" required></div>
+                            </div>
+                            <div class="full-w">
+                                <label class="label-small">Email Address</label>
+                                <div class="input-wrapper"><i class="fas fa-envelope"></i><input type="email" id="email" placeholder="Enter email" required></div>
+                            </div>
+                            <div>
+                                <label class="label-small">Phone Number</label>
+                                <div class="input-wrapper"><i class="fas fa-phone"></i><input type="text" id="contactNumber" placeholder="Enter phone number" required></div>
+                            </div>
+                            <div>
+                                <label class="label-small">Password</label>
+                                <div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="password" placeholder="Create a password" required></div>
+                            </div>
+                            <div class="full-w">
+                                <label class="label-small">Confirm Password</label>
+                                <div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="confirmPassword" placeholder="Confirm your password" required></div>
+                            </div>
+                            <div class="full-w">
+                                <label class="label-small">Residential Address</label>
+                                <div class="input-wrapper"><i class="fas fa-map-marker-alt"></i><input type="text" id="address" placeholder="Address" required></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary full" style="margin-top:1rem;">Create Account</button>
+                        <div class="error-msg" id="regErrorRight"></div>
+                    </form>
+
+                    <div style="margin-top:1rem; text-align:center; color:rgba(255,255,255,0.6);">Already have an account? <a href="user_login.html" style="color:var(--primary);">Sign in</a></div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <script>
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const errorMsg = document.getElementById('errorMsg');
-            errorMsg.style.display = 'none';
-
-            const formData = new URLSearchParams();
-            formData.append('firstName', document.getElementById('firstName').value);
-            formData.append('lastName', document.getElementById('lastName').value);
-            formData.append('email', document.getElementById('email').value);
-            formData.append('password', document.getElementById('password').value);
-            formData.append('contactNumber', document.getElementById('contactNumber').value);
-            formData.append('address', document.getElementById('address').value);
-            formData.append('idType', document.getElementById('idType').value);
-            formData.append('idNumber', document.getElementById('idNumber').value);
-            formData.append('nationality', document.getElementById('nationality').value);
-
-            try {
-                const response = await fetch('api/guests', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData
-                });
-                const data = await response.json();
-                if (data.success) {
-                    alert('Registration successful! Welcome to Ocean View.');
-                    window.location.href = 'user_login.html';
-                } else {
-                    errorMsg.textContent = data.message;
-                    errorMsg.style.display = 'block';
+        <script>
+            // Left sign-in handler
+            document.getElementById('loginFormLeft').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPass').value;
+                try {
+                    const response = await fetch('api/auth/guest-login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        window.location.href = 'user_dashboard.html';
+                    } else {
+                        alert(data.message || 'Login failed.');
+                    }
+                } catch (err) {
+                    alert('Server connection failed.');
                 }
-            } catch (err) {
-                errorMsg.textContent = 'Server connection failed.';
-                errorMsg.style.display = 'block';
-            }
-        });
-    </script>
-</body>
+            });
+
+            // Right registration handler
+            document.getElementById('regFormRight').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const err = document.getElementById('regErrorRight');
+                err.style.display = 'none';
+                const pw = document.getElementById('password').value;
+                const cpw = document.getElementById('confirmPassword').value;
+                if (pw !== cpw) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; return; }
+
+                const formData = new URLSearchParams();
+                formData.append('firstName', document.getElementById('firstName').value);
+                formData.append('lastName', document.getElementById('lastName').value);
+                formData.append('email', document.getElementById('email').value);
+                formData.append('password', pw);
+                formData.append('contactNumber', document.getElementById('contactNumber').value);
+                formData.append('address', document.getElementById('address').value);
+                formData.append('idType', 'NIC');
+                formData.append('idNumber', '');
+                formData.append('nationality', '');
+
+                try {
+                    const response = await fetch('api/guests', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Registration successful!');
+                        window.location.href = 'user_login.html';
+                    } else {
+                        err.textContent = data.message || 'Registration failed.';
+                        err.style.display = 'block';
+                    }
+                } catch (errx) {
+                    err.textContent = 'Server connection failed.';
+                    err.style.display = 'block';
+                }
+            });
+        </script>
+    </body>
 
 </html>
