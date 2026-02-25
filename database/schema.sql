@@ -148,8 +148,8 @@ CREATE TABLE IF NOT EXISTS audit_log (
 
 -- Default admin user  (password = Admin@1234)
 INSERT INTO users (username, password_hash, full_name, email, role) VALUES
-('admin',       '$2a$12$KIx5TwMbFcAEfxQGMFhWRu3G6z7m4j8Qlj9mL2sKP1pXbRNz1cA3S', 'System Administrator', 'admin@oceanviewresort.lk', 'ADMIN'),
-('receptionist','$2a$12$KIx5TwMbFcAEfxQGMFhWRu3G6z7m4j8Qlj9mL2sKP1pXbRNz1cA3S', 'Front Desk Staff',      'desk@oceanviewresort.lk',  'RECEPTIONIST');
+('admin',       '$2b$12$aiBaEvaegq2MU7heTLcrLO4BZ9cl4wDs4nvQcyldCbBBQKoRBUNGI.', 'System Administrator', 'admin@oceanviewresort.lk', 'ADMIN'),
+('receptionist','$2b$12$aiBaEvaegq2MU7heTLcrLO4BZ9cl4wDs4nvQcyldCbBBQKoRBUNGI.', 'Front Desk Staff',      'desk@oceanviewresort.lk',  'RECEPTIONIST');
 
 -- Room catalogue
 INSERT INTO rooms (room_number, room_type, floor_number, capacity, rate_per_night, description, amenities) VALUES
