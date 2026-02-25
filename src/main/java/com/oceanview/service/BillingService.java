@@ -69,8 +69,11 @@ public class BillingService {
                         "Room not found for reservation: " + reservationId));
 
         int nights = (int) res.getNumNights();
-        if (nights <= 0)
-            throw new IllegalStateException("Cannot bill a same-day reservation.");
+        // Allow same-day reservations by charging at least 1 night or handling 0 nights
+        if (nights < 0)
+            throw new IllegalStateException("Check-out cannot be before check-in.");
+        if (nights == 0)
+            nights = 1; // Default to 1 night for same-day stays
 
         BigDecimal rate = room.getRatePerNight();
         BigDecimal roomCharges = rate.multiply(BigDecimal.valueOf(nights));
@@ -124,6 +127,24 @@ public class BillingService {
 
     public List<Bill> findByGuestId(int guestId) throws SQLException {
         return billDao.findByGuestId(guestId);
+    }
+
+    /**
+     * Maintenance: Generates bills for all reservations that don't have one.
+     * Useful for recovering from failed automatic generation or manual entries.
+     */
+    public void generateMissingBills() throws SQLException {
+        List<Reservation> allRes = reservationDao.findAll();
+        for (Reservation res : allRes) {
+            if (billDao.findByReservationId(res.getReservationId()).isEmpty()) {
+                try {
+                    generateBill(res.getReservationId());
+                    log.info("Recovered missing bill for reservation: {}", res.getReservationId());
+                } catch (Exception e) {
+                    log.warn("Failed to recover bill for reservation {}: {}", res.getReservationId(), e.getMessage());
+                }
+            }
+        }
     }
 
     // ── HELPERS ─────────────────────────────────────────────────────────────

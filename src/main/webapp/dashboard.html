@@ -156,10 +156,76 @@
                     </div>
                 </section>
 
-                <!-- Rooms/Reservations/Billing sections follow same card pattern -->
-                <section id="rooms" class="content-section" style="display: none;"></section>
-                <section id="reservations" class="content-section" style="display: none;"></section>
-                <section id="billing" class="content-section" style="display: none;"></section>
+                <!-- Rooms Section -->
+                <section id="rooms" class="content-section" style="display: none;">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">Room Inventory</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Room Number</th>
+                                    <th>Type</th>
+                                    <th>Rate (LKR)</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roomListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Reservations Section -->
+                <section id="reservations" class="content-section" style="display: none;">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">All Reservations</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Res #</th>
+                                    <th>Guest</th>
+                                    <th>Room</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Billing Section -->
+                <section id="billing" class="content-section" style="display: none;">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">Billing & Payments</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Bill #</th>
+                                    <th>Reservation</th>
+                                    <th>Total (LKR)</th>
+                                    <th>Status</th>
+                                    <th>Method</th>
+                                    <th>Issued At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
         </main>
     </div>

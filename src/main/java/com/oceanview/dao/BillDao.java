@@ -93,8 +93,11 @@ public class BillDao {
     }
 
     public List<Bill> findByGuestId(int guestId) throws SQLException {
-        String sql = "SELECT b.* FROM bills b " +
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+                "FROM bills b " +
                 "JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "JOIN guests g ON r.guest_id = g.guest_id " +
+                "JOIN rooms rm ON r.room_id = rm.room_id " +
                 "WHERE r.guest_id = ? " +
                 "ORDER BY b.issued_at DESC";
         List<Bill> list = new ArrayList<>();
@@ -112,7 +115,12 @@ public class BillDao {
     }
 
     public List<Bill> findAll() throws SQLException {
-        String sql = "SELECT * FROM bills ORDER BY issued_at DESC";
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+                "FROM bills b " +
+                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "JOIN guests g ON r.guest_id = g.guest_id " +
+                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "ORDER BY b.issued_at DESC";
         List<Bill> list = new ArrayList<>();
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql);
@@ -171,6 +179,27 @@ public class BillDao {
         if (pa != null)
             b.setPaidAt(pa.toLocalDateTime());
         b.setNotes(rs.getString("notes"));
+
+        // Attempt to populate Reservation hierarchy if columns exist
+        try {
+            com.oceanview.model.Reservation res = new com.oceanview.model.Reservation();
+            res.setReservationId(b.getReservationId());
+            res.setReservationNumber(rs.getString("reservation_number"));
+
+            com.oceanview.model.Guest g = new com.oceanview.model.Guest();
+            g.setFirstName(rs.getString("first_name"));
+            g.setLastName(rs.getString("last_name"));
+            res.setGuest(g);
+
+            com.oceanview.model.Room rm = new com.oceanview.model.Room();
+            rm.setRoomNumber(rs.getString("room_number"));
+            res.setRoom(rm);
+
+            b.setReservation(res);
+        } catch (SQLException ignored) {
+            // Join columns not present
+        }
+
         return b;
     }
 }

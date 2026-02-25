@@ -7,6 +7,7 @@ import com.oceanview.dao.RoomDao;
 import com.oceanview.dao.ReservationDao;
 import com.oceanview.dao.BillDao;
 import com.oceanview.observer.AuditLogObserver;
+import com.oceanview.observer.BillingObserver;
 import com.oceanview.observer.ReservationSubject;
 import com.oceanview.service.*;
 import jakarta.servlet.ServletContext;
@@ -15,6 +16,8 @@ import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
 
 /**
  * AppBootstrap — initialises all services once at startup
@@ -62,6 +65,13 @@ public class AppBootstrap implements ServletContextListener {
         ctx.setAttribute("reservationService", reservationService);
         ctx.setAttribute("billingService", billingService);
         ctx.setAttribute("auditLogDao", auditLogDao);
+
+        // Maintenance: Generate missing bills
+        try {
+            billingService.generateMissingBills();
+        } catch (SQLException e) {
+            log.error("Startup maintenance failed: {}", e.getMessage());
+        }
 
         log.info("Application context ready.");
     }

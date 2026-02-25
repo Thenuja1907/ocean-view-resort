@@ -4,7 +4,7 @@ import com.oceanview.model.Bill;
 import com.oceanview.model.Bill.PaymentMethod;
 import com.oceanview.service.BillingService;
 import com.oceanview.util.Config;
-import com.paytm.pg.PaytmChecksum;
+import com.paytm.pg.merchant.PaytmChecksum;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 

@@ -93,9 +93,13 @@ async function updateCounts() {
         document.getElementById('countActive').textContent =
             resList.filter(r => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN').length;
 
-        const today = new Date().toISOString().split('T')[0];
+        // Check-in count (Today local date)
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const localToday = new Date(now.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+
         document.getElementById('countCheckins').textContent =
-            resList.filter(r => r.checkInDate === today).length;
+            resList.filter(r => r.checkInDate === localToday && r.status !== 'CANCELLED').length;
 
         const respBills = await fetch('api/bills');
         const billsJson = await respBills.json();
@@ -117,8 +121,8 @@ async function loadRecentReservations() {
         tbody.innerHTML = list.map(r => `
             <tr>
                 <td><strong>${r.reservationNumber}</strong></td>
-                <td>Guest ID: ${r.guestId}</td>
-                <td>Room ID: ${r.roomId}</td>
+                <td>${r.guest ? r.guest.firstName + ' ' + r.guest.lastName : 'Guest ID: ' + r.guestId}</td>
+                <td>${r.room ? 'Room ' + r.room.roomNumber : 'Room ID: ' + r.roomId}</td>
                 <td>${r.checkInDate}</td>
                 <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
             </tr>
@@ -277,7 +281,91 @@ function showSection(sectionId) {
         loadGuestList();
     } else if (sectionId === 'overview') {
         initDashboard();
+    } else if (sectionId === 'rooms') {
+        loadFullRooms();
+    } else if (sectionId === 'reservations') {
+        loadFullReservations();
+    } else if (sectionId === 'billing') {
+        loadFullBilling();
     }
+}
+
+async function loadFullRooms() {
+    const tbody = document.getElementById('roomListBody');
+    if (!tbody) return;
+    try {
+        const resp = await fetch('api/rooms');
+        const data = await resp.json();
+        const list = data.data || [];
+        tbody.innerHTML = list.map(r => `
+            <tr>
+                <td>${r.roomId}</td>
+                <td><strong>${r.roomNumber}</strong></td>
+                <td>${r.roomType}</td>
+                <td>${r.ratePerNight.toLocaleString()}</td>
+                <td><span class="status-badge ${r.available ? 'status-confirmed' : 'status-cancelled'}">${r.available ? 'Available' : 'Occupied'}</span></td>
+                <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+            </tr>
+        `).join('');
+    } catch (err) { tbody.innerHTML = 'Error loading rooms'; }
+}
+
+async function loadFullReservations() {
+    const tbody = document.getElementById('resListBody');
+    if (!tbody) return;
+    try {
+        const resp = await fetch('api/reservations');
+        const data = await resp.json();
+        const list = data.data || [];
+        tbody.innerHTML = list.map(r => `
+            <tr>
+                <td><strong>${r.reservationNumber}</strong></td>
+                <td>${r.guest ? r.guest.firstName + ' ' + r.guest.lastName : 'ID: ' + r.guestId}</td>
+                <td>${r.room ? 'Room ' + r.room.roomNumber : 'ID: ' + r.roomId}</td>
+                <td>${r.checkInDate}</td>
+                <td>${r.checkOutDate}</td>
+                <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline" title="View Details"><i class="fas fa-eye"></i></button>
+                    ${r.status === 'PENDING' ? `<button class="btn btn-sm btn-primary" onclick="updateResStatus(${r.reservationId},'confirm')">Confirm</button>` : ''}
+                </td>
+            </tr>
+        `).join('');
+    } catch (err) { tbody.innerHTML = 'Error loading reservations'; }
+}
+
+async function loadFullBilling() {
+    const tbody = document.getElementById('billListBody');
+    if (!tbody) return;
+    try {
+        const resp = await fetch('api/bills');
+        const data = await resp.json();
+        const list = data.data || [];
+        tbody.innerHTML = list.map(b => `
+            <tr>
+                <td><strong>${b.billNumber}</strong></td>
+                <td>
+                    ${b.reservation ? b.reservation.reservationNumber : 'Res ID: ' + b.reservationId}
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">
+                        ${b.reservation?.guest ? b.reservation.guest.firstName + ' ' + b.reservation.guest.lastName : ''}
+                    </div>
+                </td>
+                <td>${b.totalAmount.toLocaleString()}</td>
+                <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${b.paymentStatus}</span></td>
+                <td>${b.paymentMethod || '-'}</td>
+                <td>${new Date(b.issuedAt).toLocaleString()}</td>
+                <td><button class="btn btn-sm btn-outline"><i class="fas fa-print"></i></button></td>
+            </tr>
+        `).join('');
+    } catch (err) { tbody.innerHTML = 'Error loading billing'; }
+}
+
+async function updateResStatus(id, action) {
+    if (!confirm(`Are you sure you want to ${action} this reservation?`)) return;
+    try {
+        const resp = await fetch(`api/reservations/${id}/${action}`, { method: 'PUT' });
+        if (resp.ok) { loadFullReservations(); updateCounts(); }
+    } catch (err) { alert('Action failed'); }
 }
 
 async function logout() {

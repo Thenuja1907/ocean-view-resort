@@ -142,7 +142,7 @@
                         <thead>
                             <tr>
                                 <th>Bill #</th>
-                                <th>Date</th>
+                                <th>Reservation / Room</th>
                                 <th>Total (LKR)</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -264,7 +264,7 @@
             allTable.innerHTML = list.map(r => `
                 <tr>
                     <td>${r.reservationNumber}</td>
-                    <td>Room ${r.roomId}</td>
+                    <td>${r.room ? 'Room ' + r.room.roomNumber : 'Room ID: ' + r.roomId}</td>
                     <td>${r.checkInDate} to ${r.checkOutDate}</td>
                     <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
                     <td>${(r.status === 'PENDING' || r.status === 'CONFIRMED') ? `<button class="btn" style="background:rgba(244, 67, 54, 0.4); color:white; padding:5px 10px; font-size:0.7rem; border: 1px solid rgba(255,255,255,0.2);" onclick="cancelBooking(${r.reservationId})">Cancel</button>` : '-'}</td>
@@ -278,7 +278,10 @@
             table.innerHTML = list.map(b => `
                 <tr>
                     <td>${b.billNumber}</td>
-                    <td>${new Date(b.issuedAt).toLocaleDateString()}</td>
+                    <td>
+                        <div style="font-weight: 500;">${b.reservation ? b.reservation.reservationNumber : 'Res ID: ' + b.reservationId}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${b.reservation?.room ? 'Room ' + b.reservation.room.roomNumber : ''}</div>
+                    </td>
                     <td>${b.totalAmount.toLocaleString()}</td>
                     <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${b.paymentStatus}</span></td>
                     <td>
