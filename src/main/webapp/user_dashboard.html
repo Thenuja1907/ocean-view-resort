@@ -104,6 +104,7 @@
                                 <th>Check In</th>
                                 <th>Check Out</th>
                                 <th>Status</th>
+                                <th>Payment</th>
                             </tr>
                         </thead>
                         <tbody id="recentReservationsTable">
@@ -240,8 +241,10 @@
                 const billResp = await fetch('api/bills');
                 const billData = await billResp.json();
                 const bills = billData.data || [];
+                window.allBills = bills; // Store globally for cross-referencing
                 document.getElementById('countUnpaid').textContent = bills.filter(b => b.paymentStatus === 'PENDING').length;
                 renderBills(bills);
+                renderReservations(reservations); // Re-render with bill info
             } catch (err) { console.error(err); }
         }
 
@@ -253,14 +256,20 @@
                 allTable.innerHTML = '<tr><td colspan="5" style="text-align:center;">No bookings found.</td></tr>';
                 return;
             }
-            recentTable.innerHTML = list.slice(0, 5).map(r => `
+            recentTable.innerHTML = list.slice(0, 5).map(r => {
+                const unpaidBill = window.allBills?.find(b => b.reservationId === r.reservationId && b.paymentStatus === 'PENDING');
+                return `
                 <tr>
-                    <td>${r.reservationNumber}</td>
+                    <td><strong>${r.reservationNumber}</strong></td>
                     <td>${r.checkInDate}</td>
                     <td>${r.checkOutDate}</td>
                     <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
+                    <td>
+                        ${unpaidBill ? `<button class="btn btn-primary" style="padding:5px 10px; font-size:0.7rem;" onclick="payBill(${unpaidBill.billId})">Pay LKR ${unpaidBill.totalAmount}</button>` : (r.status === 'CANCELLED' ? '-' : '<span style="color:var(--success); font-size:0.8rem;"><i class="fas fa-check-circle"></i> Paid</span>')}
+                    </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
             allTable.innerHTML = list.map(r => `
                 <tr>
                     <td>${r.reservationNumber}</td>
@@ -323,12 +332,16 @@
             const resp = await fetch('api/reservations', { method: 'POST', body: formData });
             const result = await resp.json();
             if (result.success) {
-                alert('Booking Successful! Moving to billing...');
+                alert('Booking Successful! Redirecting to billing for payment...');
                 closeBookingModal();
-                setTimeout(() => {
-                    showSection('sectionBills');
-                    loadData();
-                }, 1000);
+                showSection('sectionBills');
+                await loadData();
+
+                // Optional: Automatically trigger payment for the first pending bill
+                const firstPending = window.allBills?.find(b => b.paymentStatus === 'PENDING');
+                if (firstPending && confirm(`Would you like to pay for your new booking (Bill ${firstPending.billNumber}) now?`)) {
+                    payBill(firstPending.billId);
+                }
             }
             else { alert('Error: ' + result.message); }
         };

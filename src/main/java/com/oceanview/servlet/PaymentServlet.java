@@ -68,17 +68,23 @@ public class PaymentServlet extends HttpServlet {
             String callbackUrl = Config.get("paytm.callback_url");
             String paytmUrl = Config.get("paytm.url");
 
+            String txnAmount = bill.getTotalAmount().setScale(2, java.math.RoundingMode.HALF_UP).toPlainString();
+            String orderId = bill.getBillNumber() + "_" + System.currentTimeMillis();
+
             TreeMap<String, String> paytmParams = new TreeMap<>();
             paytmParams.put("MID", mid);
-            paytmParams.put("ORDER_ID", bill.getBillNumber());
+            paytmParams.put("ORDER_ID", orderId);
             paytmParams.put("CUST_ID", "CUST_" + bill.getReservationId());
             paytmParams.put("MOBILE_NO", "7777777777");
             paytmParams.put("EMAIL", "guest@example.com");
             paytmParams.put("CHANNEL_ID", "WEB");
-            paytmParams.put("TXN_AMOUNT", bill.getTotalAmount().toPlainString());
+            paytmParams.put("TXN_AMOUNT", txnAmount);
             paytmParams.put("WEBSITE", website);
             paytmParams.put("INDUSTRY_TYPE_ID", industryType);
             paytmParams.put("CALLBACK_URL", callbackUrl);
+
+            System.out.println("[Payment] Initiating: Bill=" + bill.getBillNumber() + ", OrderId=" + orderId
+                    + ", Amount=" + txnAmount);
 
             String checksum = PaytmChecksum.generateSignature(paytmParams, merchantKey);
 
@@ -123,21 +129,31 @@ public class PaymentServlet extends HttpServlet {
         }
 
         if (isValid && "TXN_SUCCESS".equals(req.getParameter("STATUS"))) {
-            String billNumber = req.getParameter("ORDER_ID");
+            String orderId = req.getParameter("ORDER_ID");
+            String billNumber = orderId.contains("_") ? orderId.split("_")[0] : orderId;
+
+            System.out.println("[Payment] Success: OrderId=" + orderId + ", Bill=" + billNumber);
+
             try {
                 Optional<Bill> billOpt = billingService.findByNumber(billNumber);
                 if (billOpt.isPresent()) {
                     billingService.recordPayment(billOpt.get().getBillId(), PaymentMethod.ONLINE);
                     resp.sendRedirect("/payment_success.html?billId=" + billOpt.get().getBillId());
                 } else {
+                    System.err.println("[Payment] Error: Bill not found for number " + billNumber);
                     resp.sendRedirect("/payment_error.html?error=BillNotFound");
                 }
             } catch (Exception e) {
-                resp.sendRedirect("/payment_error.html?error=" + e.getMessage());
+                e.printStackTrace();
+                resp.sendRedirect("/payment_error.html?error=" + java.net.URLEncoder.encode(e.getMessage(), "UTF-8"));
             }
         } else {
+            String respMsg = req.getParameter("RESPMSG");
+            String status = req.getParameter("STATUS");
+            System.err.println("[Payment] Failure: Status=" + status + ", Msg=" + respMsg);
             resp.sendRedirect(
-                    "/payment_error.html?status=" + req.getParameter("STATUS") + "&msg=" + req.getParameter("RESPMSG"));
+                    "/payment_error.html?status=" + status + "&msg="
+                            + java.net.URLEncoder.encode(respMsg != null ? respMsg : "Transaction Failed", "UTF-8"));
         }
     }
 }

@@ -138,11 +138,20 @@ async function loadRoomGrid() {
         const data = await resp.json();
         const rooms = data.data || [];
 
-        grid.innerHTML = rooms.map(room => `
-            <div class="room-node ${room.available ? 'available' : 'occupied'}" title="${room.roomType}">
+        grid.innerHTML = rooms.map(room => {
+            const activeRes = (window.allReservations || []).find(res =>
+                res.roomId === room.roomId &&
+                (res.status === 'CHECKED_IN' || res.status === 'CONFIRMED')
+            );
+            const statusText = room.available ? 'Available' : `Occupied by ${activeRes?.guest ? activeRes.guest.firstName : 'Guest'}`;
+
+            return `
+            <div class="room-node ${room.available ? 'available' : 'occupied'}" 
+                 title="${room.roomNumber}: ${statusText} (${room.roomType})">
                 ${room.roomNumber}
             </div>
-        `).join('');
+            `;
+        }).join('');
     } catch (err) { grid.innerHTML = 'Error'; }
 }
 
@@ -225,7 +234,17 @@ async function handleBooking(e) {
         if (res.success) {
             alert('Reservation successful! Res #: ' + res.data.reservationNumber);
             document.getElementById('bookingModal').classList.remove('active');
-            initDashboard();
+
+            // Switch to billing and ask to record payment
+            showSection('billing');
+            setTimeout(() => {
+                if (confirm("Would you like to record a payment for this reservation now?")) {
+                    fetch('api/bills').then(r => r.json()).then(data => {
+                        const newBill = (data.data || []).find(b => b.reservationId === res.data.reservationId);
+                        if (newBill) recordStaffPayment(newBill.billId);
+                    });
+                }
+            }, 500);
         } else {
             alert('Error: ' + res.message);
         }
@@ -290,24 +309,83 @@ function showSection(sectionId) {
     }
 }
 
+// Global cache for filtering
+window._allRoomsData = [];
+window._allResData = [];
+
 async function loadFullRooms() {
     const tbody = document.getElementById('roomListBody');
     if (!tbody) return;
     try {
-        const resp = await fetch('api/rooms');
-        const data = await resp.json();
-        const list = data.data || [];
-        tbody.innerHTML = list.map(r => `
-            <tr>
-                <td>${r.roomId}</td>
-                <td><strong>${r.roomNumber}</strong></td>
-                <td>${r.roomType}</td>
-                <td>${r.ratePerNight.toLocaleString()}</td>
-                <td><span class="status-badge ${r.available ? 'status-confirmed' : 'status-cancelled'}">${r.available ? 'Available' : 'Occupied'}</span></td>
-                <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
-            </tr>
-        `).join('');
-    } catch (err) { tbody.innerHTML = 'Error loading rooms'; }
+        const [respRooms, respRes] = await Promise.all([
+            fetch('api/rooms'),
+            fetch('api/reservations')
+        ]);
+        const rooms = (await respRooms.json()).data || [];
+        const reservations = (await respRes.json()).data || [];
+        window.allReservations = reservations;
+        window._allRoomsData = rooms;
+        window._allResData = reservations;
+
+        const avail = rooms.filter(r => r.available).length;
+        const occup = rooms.filter(r => !r.available).length;
+        const el1 = document.getElementById('roomCountAvailable');
+        const el2 = document.getElementById('roomCountOccupied');
+        if (el1) el1.textContent = avail;
+        if (el2) el2.textContent = occup;
+
+        renderRoomRows(rooms, reservations);
+    } catch (err) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Error loading rooms</td></tr>'; }
+}
+
+function renderRoomRows(rooms, reservations) {
+    const tbody = document.getElementById('roomListBody');
+    if (!tbody) return;
+    if (rooms.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No rooms found.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = rooms.map(r => {
+        const activeRes = reservations.find(res =>
+            res.roomId === r.roomId &&
+            (res.status === 'CHECKED_IN' || res.status === 'CONFIRMED' || res.status === 'PENDING')
+        );
+        const guestInfo = activeRes
+            ? `<div style="margin-top:4px;">
+                <div style="font-weight:500; color:var(--primary);">${activeRes.guest ? activeRes.guest.firstName + ' ' + activeRes.guest.lastName : 'Guest'}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);">${activeRes.reservationNumber} &bull; ${activeRes.checkInDate} → ${activeRes.checkOutDate}</div>
+                <span style="font-size:0.7rem; padding:2px 8px; border-radius:10px; background:rgba(252,196,25,0.15); color:var(--primary);">${activeRes.status}</span>
+               </div>`
+            : '<span style="color:var(--text-muted); font-size:0.85rem;">—</span>';
+
+        return `
+        <tr>
+            <td><strong>${r.roomNumber}</strong></td>
+            <td>${r.roomType}</td>
+            <td>${r.ratePerNight.toLocaleString()}</td>
+            <td>
+                <span class="status-badge ${r.available ? 'status-confirmed' : 'status-cancelled'}">
+                    ${r.available ? 'Available' : 'Occupied'}
+                </span>
+            </td>
+            <td>${guestInfo}</td>
+            <td>
+                ${r.available
+                ? `<button class="btn btn-sm btn-primary" onclick="openBookingForRoom(${r.roomId})" style="padding:5px 10px; font-size:0.75rem;"><i class="fas fa-calendar-plus"></i> Book</button>`
+                : `<button class="btn btn-sm btn-outline" style="padding:5px 10px; font-size:0.75rem; cursor:default;"><i class="fas fa-lock"></i> Reserved</button>`
+            }
+            </td>
+        </tr>
+        `;
+    }).join('');
+}
+
+function filterRooms(type) {
+    const rooms = window._allRoomsData;
+    const res = window._allResData;
+    if (type === 'available') renderRoomRows(rooms.filter(r => r.available), res);
+    else if (type === 'occupied') renderRoomRows(rooms.filter(r => !r.available), res);
+    else renderRoomRows(rooms, res);
 }
 
 async function loadFullReservations() {
@@ -334,6 +412,9 @@ async function loadFullReservations() {
     } catch (err) { tbody.innerHTML = 'Error loading reservations'; }
 }
 
+// Global billing cache
+window._allBillsData = [];
+
 async function loadFullBilling() {
     const tbody = document.getElementById('billListBody');
     if (!tbody) return;
@@ -341,23 +422,81 @@ async function loadFullBilling() {
         const resp = await fetch('api/bills');
         const data = await resp.json();
         const list = data.data || [];
-        tbody.innerHTML = list.map(b => `
-            <tr>
-                <td><strong>${b.billNumber}</strong></td>
-                <td>
-                    ${b.reservation ? b.reservation.reservationNumber : 'Res ID: ' + b.reservationId}
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">
-                        ${b.reservation?.guest ? b.reservation.guest.firstName + ' ' + b.reservation.guest.lastName : ''}
-                    </div>
-                </td>
-                <td>${b.totalAmount.toLocaleString()}</td>
-                <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${b.paymentStatus}</span></td>
-                <td>${b.paymentMethod || '-'}</td>
-                <td>${new Date(b.issuedAt).toLocaleString()}</td>
-                <td><button class="btn btn-sm btn-outline"><i class="fas fa-print"></i></button></td>
-            </tr>
-        `).join('');
-    } catch (err) { tbody.innerHTML = 'Error loading billing'; }
+        window._allBillsData = list;
+
+        // Update stat counters
+        const pending = list.filter(b => b.paymentStatus === 'PENDING');
+        const paid = list.filter(b => b.paymentStatus === 'PAID');
+        const el1 = document.getElementById('billCountPending');
+        const el2 = document.getElementById('billCountPaid');
+        if (el1) el1.textContent = pending.length;
+        if (el2) el2.textContent = paid.length;
+
+        renderBillRows(list);
+    } catch (err) { tbody.innerHTML = '<tr><td colspan="7">Error loading billing</td></tr>'; }
+}
+
+function renderBillRows(list) {
+    const tbody = document.getElementById('billListBody');
+    if (!tbody) return;
+    if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No bills found.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = list.map(b => {
+        const isPending = b.paymentStatus === 'PENDING';
+        const statusClass = isPending ? 'status-pending' : 'status-confirmed';
+        const actionBtn = isPending
+            ? `<button class="btn btn-primary" style="padding:5px 12px; font-size:0.75rem;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Record Pay</button>`
+            : `<span style="color:#4caf50; font-size:0.8rem;"><i class="fas fa-check-circle"></i> Settled</span>`;
+
+        return `
+        <tr>
+            <td><strong>${b.billNumber}</strong></td>
+            <td>
+                <div style="font-weight:500;">${b.reservation?.guest ? b.reservation.guest.firstName + ' ' + b.reservation.guest.lastName : '—'}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);">${b.reservation ? b.reservation.reservationNumber : 'Res ID: ' + b.reservationId}</div>
+            </td>
+            <td>${b.reservation?.room ? 'Room ' + b.reservation.room.roomNumber : '—'}</td>
+            <td><strong>LKR ${b.totalAmount.toLocaleString()}</strong></td>
+            <td><span class="status-badge ${statusClass}">${b.paymentStatus}</span></td>
+            <td>${b.paymentMethod || '—'}</td>
+            <td>${actionBtn}</td>
+        </tr>
+        `;
+    }).join('');
+}
+
+function filterBills(status) {
+    const list = window._allBillsData;
+    if (status === 'all') renderBillRows(list);
+    else renderBillRows(list.filter(b => b.paymentStatus === status));
+}
+
+async function recordStaffPayment(billId) {
+    const method = prompt("Enter Payment Method (CASH, CARD, BANK_TRANSFER):", "CASH");
+    if (!method) return;
+
+    try {
+        const resp = await fetch(`api/bills/${billId}?method=${method}`, { method: 'PUT' });
+        const res = await resp.json();
+        if (res.success) {
+            alert('Payment recorded successfully.');
+            loadFullBilling();
+            updateCounts();
+        } else {
+            alert('Error: ' + res.message);
+        }
+    } catch (err) { alert('Action failed'); }
+}
+
+function openBookingForRoom(roomId) {
+    const section = document.querySelector('[data-section="overview"]');
+    if (section) section.click();
+    document.getElementById('btnQuickBooking').click();
+    setTimeout(() => {
+        document.getElementById('roomSelect').value = roomId;
+    }, 500);
 }
 
 async function updateResStatus(id, action) {
