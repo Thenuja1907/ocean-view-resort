@@ -4,7 +4,7 @@ import com.oceanview.model.Bill;
 import com.oceanview.model.Bill.PaymentMethod;
 import com.oceanview.service.BillingService;
 import com.oceanview.util.Config;
-import com.paytm.pg.merchant.CheckSumServiceHelper;
+import com.paytm.pg.PaytmChecksum;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
@@ -80,8 +80,7 @@ public class PaymentServlet extends HttpServlet {
             paytmParams.put("INDUSTRY_TYPE_ID", industryType);
             paytmParams.put("CALLBACK_URL", callbackUrl);
 
-            String checksum = CheckSumServiceHelper.getCheckSumServiceHelper().genrateCheckSum(merchantKey,
-                    paytmParams);
+            String checksum = PaytmChecksum.generateSignature(paytmParams, merchantKey);
 
             StringBuilder html = new StringBuilder();
             html.append("<!DOCTYPE html><html><head><title>Redirecting to Paytm...</title></head>");
@@ -118,8 +117,7 @@ public class PaymentServlet extends HttpServlet {
         String paytmChecksum = req.getParameter("CHECKSUMHASH");
         boolean isValid = false;
         try {
-            isValid = CheckSumServiceHelper.getCheckSumServiceHelper().verifycheckSum(merchantKey, paytmParams,
-                    paytmChecksum);
+            isValid = PaytmChecksum.verifySignature(paytmParams, merchantKey, paytmChecksum);
         } catch (Exception e) {
             e.printStackTrace();
         }

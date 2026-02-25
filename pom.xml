@@ -105,11 +105,11 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Paytm PG SDK -->
+        <!-- Paytm Checksum SDK -->
         <dependency>
             <groupId>com.paytm.pg</groupId>
-            <artifactId>paytm-pg-sdk-java</artifactId>
-            <version>1.2.0</version>
+            <artifactId>paytm-checksum</artifactId>
+            <version>1.2.1</version>
         </dependency>
     </dependencies>
 
