@@ -79,6 +79,19 @@ public class BillDao {
         }
     }
 
+    public Optional<Bill> findByNumber(String billNumber) throws SQLException {
+        String sql = "SELECT * FROM bills WHERE bill_number = ?";
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, billNumber);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
+            }
+        } finally {
+            DatabaseConnection.getInstance().releaseConnection(conn);
+        }
+    }
+
     public List<Bill> findByGuestId(int guestId) throws SQLException {
         String sql = "SELECT b.* FROM bills b " +
                 "JOIN reservations r ON b.reservation_id = r.reservation_id " +

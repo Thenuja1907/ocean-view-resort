@@ -49,8 +49,11 @@ public class AppBootstrap implements ServletContextListener {
         AuthService authService = new AuthService(userDao, guestDao);
         GuestService guestService = new GuestService(guestDao);
         RoomService roomService = new RoomService(roomDao);
-        ReservationService reservationService = new ReservationService(reservationDao, roomDao, subject);
         BillingService billingService = new BillingService(billDao, reservationDao, roomDao);
+        ReservationService reservationService = new ReservationService(reservationDao, roomDao, subject);
+
+        // Register BillingObserver after BillingService is created
+        subject.addObserver(new BillingObserver(billingService));
 
         // ── Publish to context ────────────────────────────────────────────
         ctx.setAttribute("authService", authService);

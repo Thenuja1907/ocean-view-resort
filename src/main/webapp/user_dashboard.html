@@ -145,6 +145,7 @@
                                 <th>Date</th>
                                 <th>Total (LKR)</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="billsTable"></tbody>
@@ -273,15 +274,22 @@
 
         function renderBills(list) {
             const table = document.getElementById('billsTable');
-            if (list.length === 0) { table.innerHTML = '<tr><td colspan="4" style="text-align:center;">No billing history.</td></tr>'; return; }
+            if (list.length === 0) { table.innerHTML = '<tr><td colspan="5" style="text-align:center;">No billing history.</td></tr>'; return; }
             table.innerHTML = list.map(b => `
                 <tr>
                     <td>${b.billNumber}</td>
                     <td>${new Date(b.issuedAt).toLocaleDateString()}</td>
                     <td>${b.totalAmount.toLocaleString()}</td>
                     <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${b.paymentStatus}</span></td>
+                    <td>
+                        ${b.paymentStatus === 'PENDING' ? `<button class="btn btn-primary" style="padding:5px 10px; font-size:0.7rem;" onclick="payBill(${b.billId})">Pay Now</button>` : '-'}
+                    </td>
                 </tr>
             `).join('');
+        }
+
+        function payBill(billId) {
+            window.location.href = `api/payment/initiate?billId=${billId}`;
         }
 
         async function cancelBooking(id) {
@@ -310,8 +318,16 @@
             formData.append('numGuests', document.getElementById('numGuests').value);
             formData.append('specialRequests', 'Guest Self-Booking');
             const resp = await fetch('api/reservations', { method: 'POST', body: formData });
-            if (resp.ok) { alert('Booking Successful!'); closeBookingModal(); loadData(); }
-            else { const d = await resp.json(); alert('Error: ' + d.message); }
+            const result = await resp.json();
+            if (result.success) {
+                alert('Booking Successful! Moving to billing...');
+                closeBookingModal();
+                setTimeout(() => {
+                    showSection('sectionBills');
+                    loadData();
+                }, 1000);
+            }
+            else { alert('Error: ' + result.message); }
         };
 
         loadProfile(); loadData();

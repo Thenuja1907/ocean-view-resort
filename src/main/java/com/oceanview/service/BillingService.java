@@ -110,6 +110,10 @@ public class BillingService {
         return billDao.findByReservationId(reservationId);
     }
 
+    public Optional<Bill> findByNumber(String number) throws SQLException {
+        return billDao.findByNumber(number);
+    }
+
     public Optional<Bill> findById(int id) throws SQLException {
         return billDao.findById(id);
     }

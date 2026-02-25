@@ -105,6 +105,12 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Paytm PG SDK -->
+        <dependency>
+            <groupId>com.paytm.pg</groupId>
+            <artifactId>paytm-pg-sdk-java</artifactId>
+            <version>1.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
