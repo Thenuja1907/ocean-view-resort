@@ -69,12 +69,22 @@
         <div class="icon"><i class="fas fa-times-circle"></i></div>
         <h1>Payment Failed</h1>
         <p id="errorMessage">Sorry, we couldn't process your payment. Please try again later.</p>
-        <a href="user_dashboard.html" class="btn">Return to Dashboard</a>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <a href="user_dashboard.html" class="btn">Return to Dashboard</a>
+            <a id="simulateBtn" href="#" class="btn"
+                style="background:transparent; border:1px solid #475569; font-size:0.8rem;">Simulate Success (Demo)</a>
+        </div>
     </div>
     <script>
         const params = new URLSearchParams(window.location.search);
+        const billId = params.get('billId');
         if (params.has('msg')) {
             document.getElementById('errorMessage').textContent = params.get('msg');
+        }
+        if (billId) {
+            document.getElementById('simulateBtn').href = `/api/payment/initiate?billId=${billId}&simulate=true`;
+        } else {
+            document.getElementById('simulateBtn').style.display = 'none';
         }
     </script>
 </body>
