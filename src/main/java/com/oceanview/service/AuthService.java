@@ -36,16 +36,19 @@ public class AuthService {
 
         Optional<User> opt = userDao.findByUsername(username.trim());
         if (opt.isEmpty()) {
-            throw new SecurityException("Invalid username or password.");
+            log.warn("Login failed: User '{}' not found in database.", username);
+            throw new SecurityException("Invalid username or password (USER_NOT_FOUND).");
         }
 
         User user = opt.get();
         if (!user.isActive()) {
+            log.warn("Login failed: User '{}' is disabled.", username);
             throw new SecurityException("Account disabled.");
         }
 
         if (!PasswordUtil.verify(plainPassword, user.getPasswordHash())) {
-            throw new SecurityException("Invalid username or password.");
+            log.warn("Login failed: Password mismatch for user '{}'.", username);
+            throw new SecurityException("Invalid username or password (PASS_MISMATCH).");
         }
 
         userDao.updateLastLogin(user.getUserId());

@@ -485,7 +485,10 @@ function renderBillRows(list) {
                 <div style="font-weight:500;">${b.reservation?.guest ? b.reservation.guest.firstName + ' ' + b.reservation.guest.lastName : '—'}</div>
                 <div style="font-size:0.72rem; color:var(--text-muted);">${b.reservation ? b.reservation.reservationNumber : 'Res ID: ' + b.reservationId}</div>
             </td>
-            <td>${b.reservation?.room ? 'Room ' + b.reservation.room.roomNumber : '—'}</td>
+            <td>
+                <div style="font-weight:500;">Room ${b.reservation?.room?.roomNumber || '—'}</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">${b.numNights} Nights • ${b.numGuests || 1} Guests</div>
+            </td>
             <td><strong>LKR ${b.totalAmount.toLocaleString()}</strong></td>
             <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
             <td>${b.paymentMethod || '—'}</td>

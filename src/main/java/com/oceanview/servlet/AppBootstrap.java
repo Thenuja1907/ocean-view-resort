@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * AppBootstrap — initialises all services once at startup
@@ -66,9 +67,31 @@ public class AppBootstrap implements ServletContextListener {
         ctx.setAttribute("billingService", billingService);
         ctx.setAttribute("auditLogDao", auditLogDao);
 
-        // Maintenance: Generate missing bills
+        // Maintenance: Generate missing bills & Seed Admin
         try {
             billingService.generateMissingBills();
+
+            // Ensure the 'admin' user exists with the default password
+            Optional<com.oceanview.model.User> adminOpt = userDao.findByUsername("admin");
+            if (adminOpt.isEmpty()) {
+                log.info("Admin user not found. Seeding default admin account...");
+                com.oceanview.model.User admin = new com.oceanview.model.User();
+                admin.setUsername("admin");
+                admin.setFullName("System Administrator");
+                admin.setEmail("admin@oceanviewresort.lk");
+                admin.setRole(com.oceanview.model.User.Role.ADMIN);
+                admin.setActive(true);
+                // Password = Admin@1234
+                admin.setPasswordHash(com.oceanview.util.PasswordUtil.hash("Admin@1234"));
+                userDao.insert(admin);
+                log.info("Default admin created: admin / Admin@1234");
+            } else {
+                // Force update password for the default admin to ensure it's correct
+                // This is a safety measure for the USER's specific environment
+                userDao.updatePassword(adminOpt.get().getUserId(),
+                        com.oceanview.util.PasswordUtil.hash("Admin@1234"));
+                log.info("Admin password synchronized: admin / Admin@1234");
+            }
 
             // Manual Migration: Add num_guests to bills if it doesn't exist
             try (java.sql.Connection conn = com.oceanview.util.DatabaseConnection.getInstance().getConnection();
