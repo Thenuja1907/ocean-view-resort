@@ -54,7 +54,12 @@ public class BillDao {
     // ── READ ────────────────────────────────────────────────────────────────
 
     public Optional<Bill> findById(int id) throws SQLException {
-        String sql = "SELECT * FROM bills WHERE bill_id = ?";
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+                "FROM bills b " +
+                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "JOIN guests g ON r.guest_id = g.guest_id " +
+                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE b.bill_id = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -67,7 +72,12 @@ public class BillDao {
     }
 
     public Optional<Bill> findByReservationId(int reservationId) throws SQLException {
-        String sql = "SELECT * FROM bills WHERE reservation_id = ? ORDER BY issued_at DESC LIMIT 1";
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+                "FROM bills b " +
+                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "JOIN guests g ON r.guest_id = g.guest_id " +
+                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE b.reservation_id = ? ORDER BY b.issued_at DESC LIMIT 1";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, reservationId);
@@ -80,7 +90,12 @@ public class BillDao {
     }
 
     public Optional<Bill> findByNumber(String billNumber) throws SQLException {
-        String sql = "SELECT * FROM bills WHERE bill_number = ?";
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+                "FROM bills b " +
+                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "JOIN guests g ON r.guest_id = g.guest_id " +
+                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE b.bill_number = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, billNumber);

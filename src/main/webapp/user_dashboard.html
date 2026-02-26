@@ -284,7 +284,10 @@
         function renderBills(list) {
             const table = document.getElementById('billsTable');
             if (list.length === 0) { table.innerHTML = '<tr><td colspan="5" style="text-align:center;">No billing history.</td></tr>'; return; }
-            table.innerHTML = list.map(b => `
+            table.innerHTML = list.map(b => {
+                const isPending = b.paymentStatus === 'PENDING';
+                const statusLabel = isPending ? 'PAYABLE' : b.paymentStatus;
+                return `
                 <tr>
                     <td>${b.billNumber}</td>
                     <td>
@@ -292,12 +295,13 @@
                         <div style="font-size: 0.75rem; color: var(--text-muted);">${b.reservation?.room ? 'Room ' + b.reservation.room.roomNumber : ''}</div>
                     </td>
                     <td>${b.totalAmount.toLocaleString()}</td>
-                    <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${b.paymentStatus}</span></td>
+                    <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${statusLabel}</span></td>
                     <td>
                         ${b.paymentStatus === 'PENDING' ? `<button class="btn btn-primary" style="padding:5px 10px; font-size:0.7rem;" onclick="payBill(${b.billId})">Pay Now</button>` : '-'}
                     </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function payBill(billId) {

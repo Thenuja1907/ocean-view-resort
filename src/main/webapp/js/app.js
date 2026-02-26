@@ -446,6 +446,7 @@ function renderBillRows(list) {
     tbody.innerHTML = list.map(b => {
         const isPending = b.paymentStatus === 'PENDING';
         const statusClass = isPending ? 'status-pending' : 'status-confirmed';
+        const statusLabel = isPending ? 'PAYABLE' : b.paymentStatus;
         const actionBtn = isPending
             ? `<button class="btn btn-primary" style="padding:5px 12px; font-size:0.75rem;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Record Pay</button>`
             : `<span style="color:#4caf50; font-size:0.8rem;"><i class="fas fa-check-circle"></i> Settled</span>`;
@@ -459,7 +460,7 @@ function renderBillRows(list) {
             </td>
             <td>${b.reservation?.room ? 'Room ' + b.reservation.room.roomNumber : '—'}</td>
             <td><strong>LKR ${b.totalAmount.toLocaleString()}</strong></td>
-            <td><span class="status-badge ${statusClass}">${b.paymentStatus}</span></td>
+            <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
             <td>${b.paymentMethod || '—'}</td>
             <td>${actionBtn}</td>
         </tr>
