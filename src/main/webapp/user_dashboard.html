@@ -109,7 +109,7 @@
                         </thead>
                         <tbody id="recentReservationsTable">
                             <tr>
-                                <td colspan="4" style="text-align:center;">Loading...</td>
+                                <td colspan="5" style="text-align:center;">Loading...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -126,6 +126,8 @@
                                 <th>Booking #</th>
                                 <th>Room</th>
                                 <th>Dates</th>
+                                <th>Quantity</th>
+                                <th>Amount (LKR)</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -143,8 +145,8 @@
                         <thead>
                             <tr>
                                 <th>Bill #</th>
-                                <th>Reservation / Room</th>
-                                <th>Total (LKR)</th>
+                                <th>Reservation / Room / Guests</th>
+                                <th>Total (LKR) / Breakdown</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -190,6 +192,62 @@
         </div>
     </div>
 
+    <!-- Bill Detail Modal -->
+    <div class="modal" id="billDetailModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center; background: rgba(0,0,0,0.85);">
+        <div class="modal-content"
+            style="width: 100%; max-width: 450px; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="color: var(--primary);"><i class="fas fa-file-invoice"></i> Bill Receipt</h2>
+                <button onclick="document.getElementById('billDetailModal').style.display='none'"
+                    style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            </div>
+            <div id="billDetailContent" style="color: white; line-height: 1.6;"></div>
+            <div
+                style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed rgba(255,255,255,0.1); text-align: center;">
+                <button class="btn btn-primary" style="width: 100%;"
+                    onclick="document.getElementById('billDetailModal').style.display='none'">Close Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center; background: rgba(0,0,0,0.8);">
+        <div class="modal-content"
+            style="width: 100%; max-width: 400px; text-align: center; border-radius: 15px; position:relative;">
+            <button onclick="document.getElementById('paymentModal').style.display='none'"
+                style="position: absolute; right: 20px; top: 15px; background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            <h2 style="color: var(--primary); margin-bottom: 0.5rem;">Secure Checkout</h2>
+            <p style="margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-muted);">Choose your preferred payment
+                method.</p>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button class="btn"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid var(--primary); color: white; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px;"
+                    onclick="processPayment('VISA')">
+                    <i class="fab fa-cc-visa" style="color: #1a1aff; font-size: 1.2rem;"></i> VISA Card
+                </button>
+                <button class="btn"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid var(--primary); color: white; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px;"
+                    onclick="processPayment('MASTERCARD')">
+                    <i class="fab fa-cc-mastercard" style="color: #eb001b; font-size: 1.2rem;"></i> MASTERCARD
+                </button>
+                <button class="btn btn-primary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px;"
+                    onclick="processPayment('ONLINE')">
+                    <i class="fas fa-globe" style="font-size: 1.2rem;"></i> Paytm Online Pay
+                </button>
+                <div style="margin-top: 1rem;">
+                    <button class="btn"
+                        style="background: rgba(255,255,255,0.05); border: 1px dashed var(--text-muted); color: var(--text-muted); font-size: 0.75rem; width: 100%; border-radius: 8px; padding: 10px;"
+                        onclick="processPayment('ONLINE', true)">
+                        Skip Gateway (Simulate Success)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const navLinks = document.querySelectorAll('.nav-link');
         const sections = document.querySelectorAll('.tab-content');
@@ -211,6 +269,23 @@
             document.getElementById('pageTitle').textContent =
                 sectionId === 'sectionOverview' ? 'Dashboard Overview' :
                     (sectionId === 'sectionReservations' ? 'My Stays' : 'Billing History');
+
+            // Handle Header Action Button
+            const mainActionBtn = document.querySelector('.content-header .actions .btn');
+            if (mainActionBtn) {
+                if (sectionId === 'sectionBills') {
+                    mainActionBtn.innerHTML = '<i class="fas fa-receipt"></i> Pay Bill';
+                    mainActionBtn.style.background = 'var(--secondary)';
+                    mainActionBtn.onclick = () => {
+                        alert('Select "Pay Bill" on any pending invoice below to process payment.');
+                        document.getElementById('billsTable').scrollIntoView({ behavior: 'smooth' });
+                    };
+                } else {
+                    mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> New Booking';
+                    mainActionBtn.style.background = 'var(--primary)';
+                    mainActionBtn.onclick = () => openBookingModal();
+                }
+            }
         }
 
         document.getElementById('logoutBtn').onclick = async () => {
@@ -236,15 +311,16 @@
                 const active = reservations.filter(r => r.status !== 'CANCELLED' && r.status !== 'CHECKED_OUT');
                 document.getElementById('countActive').textContent = active.length;
                 document.getElementById('countTotal').textContent = reservations.length;
-                renderReservations(reservations);
 
                 const billResp = await fetch('api/bills');
                 const billData = await billResp.json();
                 const bills = billData.data || [];
                 window.allBills = bills; // Store globally for cross-referencing
+
                 document.getElementById('countUnpaid').textContent = bills.filter(b => b.paymentStatus === 'PENDING').length;
+
                 renderBills(bills);
-                renderReservations(reservations); // Re-render with bill info
+                renderReservations(reservations);
             } catch (err) { console.error(err); }
         }
 
@@ -252,33 +328,61 @@
             const recentTable = document.getElementById('recentReservationsTable');
             const allTable = document.getElementById('allReservationsTable');
             if (list.length === 0) {
-                recentTable.innerHTML = '<tr><td colspan="4" style="text-align:center;">No bookings found.</td></tr>';
-                allTable.innerHTML = '<tr><td colspan="5" style="text-align:center;">No bookings found.</td></tr>';
+                recentTable.innerHTML = '<tr><td colspan="5" style="text-align:center;">No bookings found.</td></tr>';
+                allTable.innerHTML = '<tr><td colspan="7" style="text-align:center;">No bookings found.</td></tr>';
                 return;
             }
+
+            // Overview Table
             recentTable.innerHTML = list.slice(0, 5).map(r => {
-                const unpaidBill = window.allBills?.find(b => b.reservationId === r.reservationId && b.paymentStatus === 'PENDING');
+                const bill = window.allBills?.find(b => b.reservationId === r.reservationId);
+                const isUnpaid = bill && bill.paymentStatus === 'PENDING';
+
                 return `
                 <tr>
-                    <td><strong>${r.reservationNumber}</strong></td>
+                    <td>
+                        <div style="font-weight:600;">${r.reservationNumber}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">${r.room ? r.room.roomType : '—'}</div>
+                    </td>
                     <td>${r.checkInDate}</td>
                     <td>${r.checkOutDate}</td>
                     <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
                     <td>
-                        ${unpaidBill ? `<button class="btn btn-primary" style="padding:5px 10px; font-size:0.7rem;" onclick="payBill(${unpaidBill.billId})">Pay LKR ${unpaidBill.totalAmount}</button>` : (r.status === 'CANCELLED' ? '-' : '<span style="color:var(--success); font-size:0.8rem;"><i class="fas fa-check-circle"></i> Paid</span>')}
+                        ${isUnpaid ? `
+                            <div style="display:flex; flex-direction:column; gap:4px;">
+                                <button class="btn btn-primary" style="padding:4px 8px; font-size:0.7rem;" onclick="payBill(${bill.billId})">
+                                    <i class="fas fa-wallet"></i> Pay LKR ${bill.totalAmount.toLocaleString()}
+                                </button>
+                                <a href="#" style="font-size:0.65rem; color:var(--primary); text-decoration:none;" onclick="showBillDetail(${bill.billId}); event.preventDefault();">Breakdown Details</a>
+                            </div>
+                        ` : (r.status === 'CANCELLED' ? '-' : '<span style="color:var(--success); font-size:0.75rem;"><i class="fas fa-check-circle"></i> Paid</span>')}
                     </td>
                 </tr>
                 `;
             }).join('');
-            allTable.innerHTML = list.map(r => `
+
+            // Full Reservations Table (My Stays)
+            allTable.innerHTML = list.map(r => {
+                const bill = window.allBills?.find(b => b.reservationId === r.reservationId);
+                const amountDisp = bill ? `LKR ${bill.totalAmount.toLocaleString()}` : '—';
+
+                return `
                 <tr>
-                    <td>${r.reservationNumber}</td>
+                    <td><strong>${r.reservationNumber}</strong></td>
                     <td>${r.room ? 'Room ' + r.room.roomNumber : 'Room ID: ' + r.roomId}</td>
                     <td>${r.checkInDate} to ${r.checkOutDate}</td>
+                    <td><div style="text-align:center;">${r.numGuests} Guest(s)</div></td>
+                    <td><strong>${amountDisp}</strong></td>
                     <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
-                    <td>${(r.status === 'PENDING' || r.status === 'CONFIRMED') ? `<button class="btn" style="background:rgba(244, 67, 54, 0.4); color:white; padding:5px 10px; font-size:0.7rem; border: 1px solid rgba(255,255,255,0.2);" onclick="cancelBooking(${r.reservationId})">Cancel</button>` : '-'}</td>
+                    <td>
+                        <div style="display:flex; gap:5px;">
+                            ${(r.status === 'PENDING' || r.status === 'CONFIRMED') ? `<button class="btn" style="background:rgba(244, 67, 54, 0.4); color:white; padding:5px 10px; font-size:0.7rem; border: 1px solid rgba(255,255,255,0.2);" onclick="cancelBooking(${r.reservationId})">Cancel</button>` : '-'}
+                            ${bill ? `<button class="btn btn-sm btn-outline" style="padding:5px 10px; font-size:0.7rem;" onclick="showBillDetail(${bill.billId})"><i class="fas fa-file-invoice"></i></button>` : ''}
+                        </div>
+                    </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function renderBills(list) {
@@ -292,9 +396,12 @@
                     <td>${b.billNumber}</td>
                     <td>
                         <div style="font-weight: 500;">${b.reservation ? b.reservation.reservationNumber : 'Res ID: ' + b.reservationId}</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">${b.reservation?.room ? 'Room ' + b.reservation.room.roomNumber : ''}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${b.reservation?.room ? 'Room ' + b.reservation.room.roomNumber : ''} ${b.numGuests ? '(' + b.numGuests + ' Guests)' : ''}</div>
                     </td>
-                    <td>${b.totalAmount.toLocaleString()}</td>
+                    <td>
+                         <div style="font-weight: 600;">LKR ${b.totalAmount.toLocaleString()}</div>
+                         <a href="#" style="font-size: 0.7rem; color: var(--primary); text-decoration:none;" onclick="showBillDetail(${b.billId}); event.preventDefault();">View Receipt</a>
+                    </td>
                     <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${statusLabel}</span></td>
                     <td>
                         ${b.paymentStatus === 'PENDING' ? `<button class="btn btn-primary" style="padding:5px 10px; font-size:0.7rem;" onclick="payBill(${b.billId})">Pay Now</button>` : '-'}
@@ -304,8 +411,50 @@
             }).join('');
         }
 
+        let _currentBillId = null;
+
         function payBill(billId) {
-            window.location.href = `api/payment/initiate?billId=${billId}`;
+            _currentBillId = billId;
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        async function processPayment(method, simulate = false) {
+            if (method === 'ONLINE') {
+                const url = simulate ? `api/payment/initiate?billId=${_currentBillId}&simulate=true` : `api/payment/initiate?billId=${_currentBillId}`;
+                window.location.href = url;
+            } else {
+                try {
+                    const resp = await fetch(`api/bills/${_currentBillId}?method=${method}`, { method: 'PUT' });
+                    const res = await resp.json();
+                    if (res.success) {
+                        alert(`Successfully paid via ${method}!`);
+                        document.getElementById('paymentModal').style.display = 'none';
+                        loadData();
+                    } else { alert('Error: ' + res.message); }
+                } catch (err) { alert('Payment failed'); }
+            }
+        }
+
+        function showBillDetail(billId) {
+            const bill = window.allBills.find(b => b.billId === billId);
+            if (!bill) return;
+            const content = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; margin-bottom: 2rem;">
+                    <span style="color: var(--text-muted);">Bill Number:</span> <span style="text-align: right; font-weight: 500;">${bill.billNumber}</span>
+                    <span style="color: var(--text-muted);">Reservation:</span> <span style="text-align: right;">${bill.reservation?.reservationNumber || 'N/A'}</span>
+                    <span style="color: var(--text-muted);">Room Number:</span> <span style="text-align: right;">Room ${bill.reservation?.room?.roomNumber || 'N/A'}</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Room Rate (per head)</span><span>LKR ${bill.roomRate.toLocaleString()}</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Stay Duration</span><span>${bill.numNights} Night(s)</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Number of Persons</span><span>× ${bill.numGuests || 1}</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px; font-weight: 500;"><span>Base Room Charges</span><span>LKR ${bill.roomCharges.toLocaleString()}</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px; color: #94a3b8; font-size: 0.8rem;"><span>Taxes (${bill.taxPercentage}%)</span><span>LKR ${bill.taxAmount.toLocaleString()}</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid var(--primary); font-size: 1.2rem; font-weight: 600; color: var(--primary);"><span>Total Due</span><span>LKR ${bill.totalAmount.toLocaleString()}</span></div>
+                </div>
+            `;
+            document.getElementById('billDetailContent').innerHTML = content;
+            document.getElementById('billDetailModal').style.display = 'flex';
         }
 
         async function cancelBooking(id) {
@@ -342,7 +491,7 @@
                 await loadData();
 
                 // Optional: Automatically trigger payment for the first pending bill
-                const firstPending = window.allBills?.find(b => b.paymentStatus === 'PENDING');
+                const firstPending = window.allBills?.find(b => b.reservationId === result.data.reservationId);
                 if (firstPending && confirm(`Would you like to pay for your new booking (Bill ${firstPending.billNumber}) now?`)) {
                     payBill(firstPending.billId);
                 }
