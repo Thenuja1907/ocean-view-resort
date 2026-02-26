@@ -69,14 +69,18 @@ public class BillingService {
                         "Room not found for reservation: " + reservationId));
 
         int nights = (int) res.getNumNights();
-        // Allow same-day reservations by charging at least 1 night or handling 0 nights
         if (nights < 0)
             throw new IllegalStateException("Check-out cannot be before check-in.");
         if (nights == 0)
-            nights = 1; // Default to 1 night for same-day stays
+            nights = 1;
 
+        int guests = res.getNumGuests() > 0 ? res.getNumGuests() : 1;
         BigDecimal rate = room.getRatePerNight();
-        BigDecimal roomCharges = rate.multiply(BigDecimal.valueOf(nights));
+
+        // roomCharges = rate * nights * guests (assuming per person per night charge as
+        // per user request)
+        BigDecimal roomCharges = rate.multiply(BigDecimal.valueOf(nights)).multiply(BigDecimal.valueOf(guests));
+
         BigDecimal taxAmount = roomCharges.multiply(taxPercentage)
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
         BigDecimal total = roomCharges.add(taxAmount)
@@ -87,6 +91,7 @@ public class BillingService {
         bill.setBillNumber(generateBillNumber());
         bill.setReservationId(reservationId);
         bill.setNumNights(nights);
+        bill.setNumGuests(guests);
         bill.setRoomRate(rate);
         bill.setRoomCharges(roomCharges);
         bill.setTaxPercentage(taxPercentage);

@@ -21,6 +21,7 @@ public class Bill {
     private String billNumber; // e.g. BILL-2024-000001
     private int reservationId;
     private int numNights;
+    private int numGuests;
     private BigDecimal roomRate;
     private BigDecimal roomCharges; // numNights × roomRate
     private BigDecimal taxPercentage; // e.g. 10.00 = 10%
@@ -76,6 +77,14 @@ public class Bill {
 
     public void setNumNights(int numNights) {
         this.numNights = numNights;
+    }
+
+    public int getNumGuests() {
+        return numGuests;
+    }
+
+    public void setNumGuests(int numGuests) {
+        this.numGuests = numGuests;
     }
 
     public BigDecimal getRoomRate() {

@@ -18,28 +18,29 @@ public class BillDao {
     // ── CREATE ──────────────────────────────────────────────────────────────
 
     public Bill insert(Bill bill) throws SQLException {
-        String sql = "INSERT INTO bills (bill_number, reservation_id, num_nights, room_rate, " +
+        String sql = "INSERT INTO bills (bill_number, reservation_id, num_nights, num_guests, room_rate, " +
                 "room_charges, tax_percentage, tax_amount, service_charge, discount_amount, " +
                 "total_amount, payment_status, payment_method, notes) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, bill.getBillNumber());
             ps.setInt(2, bill.getReservationId());
             ps.setInt(3, bill.getNumNights());
-            ps.setBigDecimal(4, bill.getRoomRate());
-            ps.setBigDecimal(5, bill.getRoomCharges());
-            ps.setBigDecimal(6, bill.getTaxPercentage());
-            ps.setBigDecimal(7, bill.getTaxAmount());
-            ps.setBigDecimal(8, bill.getServiceCharge());
-            ps.setBigDecimal(9, bill.getDiscountAmount());
-            ps.setBigDecimal(10, bill.getTotalAmount());
-            ps.setString(11, bill.getPaymentStatus().name());
+            ps.setInt(4, bill.getNumGuests());
+            ps.setBigDecimal(5, bill.getRoomRate());
+            ps.setBigDecimal(6, bill.getRoomCharges());
+            ps.setBigDecimal(7, bill.getTaxPercentage());
+            ps.setBigDecimal(8, bill.getTaxAmount());
+            ps.setBigDecimal(9, bill.getServiceCharge());
+            ps.setBigDecimal(10, bill.getDiscountAmount());
+            ps.setBigDecimal(11, bill.getTotalAmount());
+            ps.setString(12, bill.getPaymentStatus().name());
             if (bill.getPaymentMethod() != null)
-                ps.setString(12, bill.getPaymentMethod().name());
+                ps.setString(13, bill.getPaymentMethod().name());
             else
-                ps.setNull(12, Types.VARCHAR);
-            ps.setString(13, bill.getNotes());
+                ps.setNull(13, Types.VARCHAR);
+            ps.setString(14, bill.getNotes());
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next())
@@ -176,6 +177,12 @@ public class BillDao {
         b.setBillNumber(rs.getString("bill_number"));
         b.setReservationId(rs.getInt("reservation_id"));
         b.setNumNights(rs.getInt("num_nights"));
+        // Try to read num_guests, default to 1 if not exists/null
+        try {
+            b.setNumGuests(rs.getInt("num_guests"));
+        } catch (Exception e) {
+            b.setNumGuests(1);
+        }
         b.setRoomRate(rs.getBigDecimal("room_rate"));
         b.setRoomCharges(rs.getBigDecimal("room_charges"));
         b.setTaxPercentage(rs.getBigDecimal("tax_percentage"));

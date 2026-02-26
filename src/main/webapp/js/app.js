@@ -300,13 +300,27 @@ function showSection(sectionId) {
     const activeSection = document.getElementById(sectionId);
     if (activeSection) activeSection.classList.add('active');
 
-    document.getElementById('sectionTitle').textContent =
-        sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+    const titleEl = document.getElementById('sectionTitle');
+    titleEl.textContent = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
 
-    // Hide Quick Booking when on Billing section
-    const headerActions = document.querySelector('.header-actions');
-    if (headerActions) {
-        headerActions.style.display = (sectionId === 'billing') ? 'none' : 'flex';
+    // Update Quick Actions button based on context
+    const mainActionBtn = document.getElementById('btnQuickBooking');
+    if (mainActionBtn) {
+        if (sectionId === 'billing') {
+            mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay Bills';
+            mainActionBtn.style.background = 'var(--secondary)'; // Different color for distinction
+            mainActionBtn.onclick = () => {
+                alert('Select "Pay Bill" on any pending invoice below to process payment.');
+                document.getElementById('billListBody').scrollIntoView({ behavior: 'smooth' });
+            };
+        } else {
+            mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> Quick Booking';
+            mainActionBtn.style.background = 'var(--primary)';
+            mainActionBtn.onclick = () => {
+                document.getElementById('bookingModal').classList.add('active');
+                prepareBookingForm();
+            };
+        }
     }
 
     if (sectionId === 'guests') {
@@ -461,7 +475,7 @@ function renderBillRows(list) {
         const statusClass = isPending ? 'status-pending' : 'status-confirmed';
         const statusLabel = isPending ? 'PAYABLE' : b.paymentStatus;
         const actionBtn = isPending
-            ? `<button class="btn btn-primary" style="padding:5px 12px; font-size:0.75rem;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Record Pay</button>`
+            ? `<button class="btn btn-primary" style="padding:5px 12px; font-size:0.75rem;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Pay Bill</button>`
             : `<span style="color:#4caf50; font-size:0.8rem;"><i class="fas fa-check-circle"></i> Settled</span>`;
 
         return `
