@@ -36,6 +36,11 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- ── Listeners ────────────────────────────────────────────────────────── -->
+    <listener>
+        <listener-class>com.oceanview.servlet.AppBootstrap</listener-class>
+    </listener>
+
     <!-- ── Error pages ───────────────────────────────────────────────────── -->
     <error-page>
         <error-code>404</error-code>
