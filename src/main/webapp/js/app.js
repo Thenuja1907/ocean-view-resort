@@ -67,6 +67,13 @@ function initEventListeners() {
         guestForm.addEventListener('submit', handleAddGuest);
     }
 
+    // Payment Modal Control
+    const payModal = document.getElementById('paymentModal');
+    const btnClosePay = document.getElementById('btnClosePaymentModal');
+    if (btnClosePay) {
+        btnClosePay.onclick = () => payModal.style.display = 'none';
+    }
+
     // Logout
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
@@ -296,6 +303,12 @@ function showSection(sectionId) {
     document.getElementById('sectionTitle').textContent =
         sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
 
+    // Hide Quick Booking when on Billing section
+    const headerActions = document.querySelector('.header-actions');
+    if (headerActions) {
+        headerActions.style.display = (sectionId === 'billing') ? 'none' : 'flex';
+    }
+
     if (sectionId === 'guests') {
         loadGuestList();
     } else if (sectionId === 'overview') {
@@ -474,15 +487,23 @@ function filterBills(status) {
     else renderBillRows(list.filter(b => b.paymentStatus === status));
 }
 
-async function recordStaffPayment(billId) {
-    const method = prompt("Enter Payment Method (CASH, CARD, BANK_TRANSFER):", "CASH");
-    if (!method) return;
+let _pendingBillId = null;
+
+function recordStaffPayment(billId) {
+    _pendingBillId = billId;
+    document.getElementById('paymentModal').style.display = 'flex';
+}
+
+async function processSettle(method) {
+    if (!_pendingBillId) return;
 
     try {
-        const resp = await fetch(`api/bills/${billId}?method=${method}`, { method: 'PUT' });
+        const resp = await fetch(`api/bills/${_pendingBillId}?method=${method}`, { method: 'PUT' });
         const res = await resp.json();
         if (res.success) {
-            alert('Payment recorded successfully.');
+            alert(`Success! Payment settled via ${method}.`);
+            document.getElementById('paymentModal').style.display = 'none';
+            _pendingBillId = null;
             loadFullBilling();
             updateCounts();
         } else {

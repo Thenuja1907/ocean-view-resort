@@ -297,6 +297,37 @@
         </div>
     </div>
 
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center; background: rgba(0,0,0,0.8);">
+        <div class="modal-content"
+            style="width: 100%; max-width: 400px; text-align: center; border-radius: 15px; position:relative;">
+            <button id="btnClosePaymentModal"
+                style="position: absolute; right: 20px; top: 15px; background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            <h2 style="color: var(--primary); margin-bottom: 0.5rem;">Settle Bill</h2>
+            <p style="margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-muted);">Select method to complete
+                payment.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button class="btn"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid #475569; color: white; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;"
+                    onclick="processSettle('VISA')">
+                    <i class="fab fa-cc-visa" style="color: #1a1aff; font-size: 1.2rem;"></i> VISA Card
+                </button>
+                <button class="btn"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid #475569; color: white; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;"
+                    onclick="processSettle('MASTERCARD')">
+                    <i class="fab fa-cc-mastercard" style="color: #eb001b; font-size: 1.2rem;"></i> MASTERCARD
+                </button>
+                <button class="btn"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid #475569; color: white; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;"
+                    onclick="processSettle('CASH')">
+                    <i class="fas fa-money-bill-wave" style="color: #4caf50; font-size: 1.2rem;"></i> CASH Payment
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/app.js"></script>
     <style>
         .content-section {
