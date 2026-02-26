@@ -69,6 +69,15 @@ public class AppBootstrap implements ServletContextListener {
         // Maintenance: Generate missing bills
         try {
             billingService.generateMissingBills();
+
+            // Manual Migration: Add num_guests to bills if it doesn't exist
+            try (java.sql.Connection conn = com.oceanview.util.DatabaseConnection.getInstance().getConnection();
+                    java.sql.Statement st = conn.createStatement()) {
+                st.executeUpdate(
+                        "ALTER TABLE bills ADD COLUMN IF NOT EXISTS num_guests INT DEFAULT 1 AFTER num_nights");
+            } catch (Exception e) {
+                log.warn("Migration notice: {}", e.getMessage());
+            }
         } catch (SQLException e) {
             log.error("Startup maintenance failed: {}", e.getMessage());
         }
