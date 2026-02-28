@@ -28,6 +28,10 @@
             <id>paytm</id>
             <url>https://artifactory.paytm.in/artifactory/libs-release-local</url>
         </repository>
+        <repository>
+            <id>paytm-pg</id>
+            <url>https://artifactory.paytm.in/artifactory/libs-release</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -115,8 +119,8 @@
         <!-- Paytm Payment SDK (using Artifactory) -->
         <dependency>
             <groupId>com.paytm.pg</groupId>
-            <artifactId>paytm-pg-sdk-java</artifactId>
-            <version>1.2.0</version>
+            <artifactId>paytm-checksum</artifactId>
+            <version>1.2.1</version>
         </dependency>
     </dependencies>
 

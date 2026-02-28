@@ -168,9 +168,9 @@ public class ReservationServlet extends HttpServlet {
                     resp.getWriter().write(JsonUtil.error("Permission denied."));
                     return;
                 }
-                if (!"cancel".equals(action)) {
+                if (!"cancel".equals(action) && !"confirm".equals(action)) {
                     resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    resp.getWriter().write(JsonUtil.error("Guests can only cancel bookings."));
+                    resp.getWriter().write(JsonUtil.error("Guests can only cancel or confirm bookings."));
                     return;
                 }
             }

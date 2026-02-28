@@ -309,6 +309,10 @@ function showSection(sectionId) {
         if (sectionId === 'billing') {
             mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay bill';
             mainActionBtn.className = 'btn btn-secondary';
+            mainActionBtn.style.color = '#ffffff';
+            mainActionBtn.style.borderRadius = '50px';
+            mainActionBtn.style.padding = '8px 24px';
+            mainActionBtn.style.width = 'fit-content';
             mainActionBtn.onclick = () => {
                 alert('Select "Pay bill" on any pending invoice below to process payment.');
                 document.getElementById('billListBody').scrollIntoView({ behavior: 'smooth' });
@@ -316,6 +320,7 @@ function showSection(sectionId) {
         } else {
             mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> Quick Booking';
             mainActionBtn.className = 'btn btn-primary';
+            mainActionBtn.style.color = ''; // Reset to default
             mainActionBtn.onclick = () => {
                 document.getElementById('bookingModal').classList.add('active');
                 prepareBookingForm();
@@ -475,8 +480,8 @@ function renderBillRows(list) {
         const statusClass = isPending ? 'status-pending' : 'status-confirmed';
         const statusLabel = isPending ? 'PAYABLE' : b.paymentStatus;
         const actionBtn = isPending
-            ? `<button class="btn btn-secondary" style="padding:5px 12px; font-size:0.75rem; color:#ffffff !important;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Pay bill</button>`
-            : `<span style="color:#4caf50; font-size:0.8rem;"><i class="fas fa-check-circle"></i> Settled</span>`;
+            ? `<button class="btn btn-secondary" style="padding:6px 16px; font-size:0.75rem; border-radius: 50px;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Pay bill</button>`
+            : `<span style="color:#4caf50; font-size:0.8rem; font-weight:600;"><i class="fas fa-check-circle"></i> Settled</span>`;
 
         return `
         <tr>
