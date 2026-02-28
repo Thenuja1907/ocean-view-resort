@@ -308,14 +308,14 @@ function showSection(sectionId) {
     if (mainActionBtn) {
         if (sectionId === 'billing') {
             mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay Bills';
-            mainActionBtn.style.background = 'var(--secondary)'; // Different color for distinction
+            mainActionBtn.className = 'btn btn-secondary';
             mainActionBtn.onclick = () => {
                 alert('Select "Pay Bill" on any pending invoice below to process payment.');
                 document.getElementById('billListBody').scrollIntoView({ behavior: 'smooth' });
             };
         } else {
             mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> Quick Booking';
-            mainActionBtn.style.background = 'var(--primary)';
+            mainActionBtn.className = 'btn btn-primary';
             mainActionBtn.onclick = () => {
                 document.getElementById('bookingModal').classList.add('active');
                 prepareBookingForm();

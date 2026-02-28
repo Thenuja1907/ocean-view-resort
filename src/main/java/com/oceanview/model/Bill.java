@@ -14,7 +14,7 @@ public class Bill {
     }
 
     public enum PaymentMethod {
-        CASH, VISA, MASTERCARD, ONLINE, BANK_TRANSFER
+        CASH, VISA, MASTERCARD, AMEX, ONLINE, BANK_TRANSFER
     }
 
     private int billId;
