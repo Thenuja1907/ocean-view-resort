@@ -326,12 +326,16 @@ textarea:focus {
 
 .btn-secondary {
     background: var(--secondary);
-    color: white !important;
+    color: #ffffff !important;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.btn-secondary i {
+    color: #ffffff !important;
+}
+
 .btn-secondary:hover {
-    background: #000a4d;
+    background: #000c2b;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 

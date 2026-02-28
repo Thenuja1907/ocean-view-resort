@@ -307,10 +307,10 @@ function showSection(sectionId) {
     const mainActionBtn = document.getElementById('btnQuickBooking');
     if (mainActionBtn) {
         if (sectionId === 'billing') {
-            mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay Bills';
+            mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay bill';
             mainActionBtn.className = 'btn btn-secondary';
             mainActionBtn.onclick = () => {
-                alert('Select "Pay Bill" on any pending invoice below to process payment.');
+                alert('Select "Pay bill" on any pending invoice below to process payment.');
                 document.getElementById('billListBody').scrollIntoView({ behavior: 'smooth' });
             };
         } else {
