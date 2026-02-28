@@ -308,8 +308,8 @@ function showSection(sectionId) {
     if (mainActionBtn) {
         if (sectionId === 'billing') {
             mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay bill';
-            mainActionBtn.className = 'btn btn-secondary';
-            mainActionBtn.style.color = '#ffffff';
+            mainActionBtn.className = 'btn btn-primary';
+            mainActionBtn.style.color = '';
             mainActionBtn.style.borderRadius = '50px';
             mainActionBtn.style.padding = '8px 24px';
             mainActionBtn.style.width = 'fit-content';
@@ -480,7 +480,7 @@ function renderBillRows(list) {
         const statusClass = isPending ? 'status-pending' : 'status-confirmed';
         const statusLabel = isPending ? 'PAYABLE' : b.paymentStatus;
         const actionBtn = isPending
-            ? `<button class="btn btn-secondary" style="padding:6px 16px; font-size:0.75rem; border-radius: 50px;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Pay bill</button>`
+            ? `<button class="btn btn-primary" style="padding:8px 20px; font-size:0.75rem; border-radius: 50px;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Pay bill</button>`
             : `<span style="color:#4caf50; font-size:0.8rem; font-weight:600;"><i class="fas fa-check-circle"></i> Settled</span>`;
 
         return `
