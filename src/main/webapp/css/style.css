@@ -1,8 +1,8 @@
 :root {
-    --primary: #fcc419;
-    /* High-quality Yellow from image */
+    --primary: #FFC107;
+    /* User Requested Vibrant Yellow */
     --secondary: #000428;
-    --accent: #fcc419;
+    --accent: #FFC107;
     --text-white: #ffffff;
     --text-muted: rgba(255, 255, 255, 0.7);
     --glass-bg: rgba(255, 255, 255, 0.08);
