@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS bills (
     discount_amount   DECIMAL(10,2)  NOT NULL DEFAULT 0.00,
     total_amount      DECIMAL(10,2)  NOT NULL,
     payment_status    ENUM('PENDING','PARTIAL','PAID','REFUNDED') NOT NULL DEFAULT 'PENDING',
-    payment_method    ENUM('CASH','CARD','BANK_TRANSFER','ONLINE') NULL,
+    payment_method    ENUM('CASH','CARD','VISA','MASTERCARD','AMEX','BANK_TRANSFER','ONLINE') NULL,
     issued_at         DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     paid_at           DATETIME       NULL,
     notes             TEXT           NULL,
