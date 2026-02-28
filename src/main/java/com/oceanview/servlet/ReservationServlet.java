@@ -111,7 +111,10 @@ public class ReservationServlet extends HttpServlet {
 
             if ("guest".equals(userType)) {
                 guestId = ((com.oceanview.model.Guest) actor).getGuestId();
-                bookedByUserId = 1; // Default to Admin for guest self-bookings
+                // Dynamically find 'admin' user to avoid FK issues
+                com.oceanview.dao.UserDao userDao = (com.oceanview.dao.UserDao) getServletContext()
+                        .getAttribute("userDao");
+                bookedByUserId = userDao.findByUsername("admin").map(com.oceanview.model.User::getUserId).orElse(1);
             } else {
                 guestId = Integer.parseInt(req.getParameter("guestId"));
                 bookedByUserId = ((com.oceanview.model.User) actor).getUserId();

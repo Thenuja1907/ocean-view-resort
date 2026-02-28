@@ -56,7 +56,8 @@ public class AppBootstrap implements ServletContextListener {
         BillingService billingService = new BillingService(billDao, reservationDao, roomDao);
         ReservationService reservationService = new ReservationService(reservationDao, roomDao, subject);
 
-        // Register BillingObserver after BillingService is created
+        // Link dependencies
+        billingService.setReservationService(reservationService);
         subject.addObserver(new BillingObserver(billingService));
 
         // ── Publish to context ────────────────────────────────────────────
@@ -66,6 +67,7 @@ public class AppBootstrap implements ServletContextListener {
         ctx.setAttribute("reservationService", reservationService);
         ctx.setAttribute("billingService", billingService);
         ctx.setAttribute("auditLogDao", auditLogDao);
+        ctx.setAttribute("userDao", userDao); // Added for ID lookups
 
         // Maintenance: Generate missing bills & Seed Admin
         try {

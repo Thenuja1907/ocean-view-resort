@@ -76,9 +76,14 @@ public class ReservationService {
         reservationDao.insert(res);
         roomDao.setAvailability(roomId, false);
 
-        subject.notifyObservers(new ReservationEvent(EventType.CREATED, res, actorIp));
+        // Reload to get joined details (Guest name, Room #, etc.) for the
+        // Observer/AuditLog
+        Reservation detailedRes = reservationDao.findById(res.getReservationId())
+                .orElse(res);
+
+        subject.notifyObservers(new ReservationEvent(EventType.CREATED, detailedRes, actorIp));
         log.info("Reservation {} created.", number);
-        return res;
+        return detailedRes;
     }
 
     // ── STATUS TRANSITIONS ──────────────────────────────────────────────────
@@ -110,11 +115,13 @@ public class ReservationService {
             throw new IllegalArgumentException("Reservation not found: " + reservationId);
 
         Reservation res = opt.get();
+        String oldStatus = res.getStatus().name();
+
         res.setStatus(newStatus);
         reservationDao.updateStatus(reservationId, newStatus);
 
         subject.notifyObservers(new ReservationEvent(eventType, res, actorIp));
-        log.info("Reservation {} → {}", res.getReservationNumber(), newStatus);
+        log.info("Reservation {} transition: {} -> {}", res.getReservationNumber(), oldStatus, newStatus);
         return res;
     }
 

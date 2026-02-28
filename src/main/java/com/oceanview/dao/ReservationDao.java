@@ -46,7 +46,11 @@ public class ReservationDao {
     // ── READ ────────────────────────────────────────────────────────────────
 
     public Optional<Reservation> findById(int id) throws SQLException {
-        String sql = "SELECT * FROM reservations WHERE reservation_id = ?";
+        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, rm.room_number, rm.room_type " +
+                "FROM reservations r " +
+                "JOIN guests g ON r.guest_id = g.guest_id " +
+                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE r.reservation_id = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);

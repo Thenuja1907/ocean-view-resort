@@ -33,6 +33,7 @@ public class BillingService {
     private final BillDao billDao;
     private final ReservationDao reservationDao;
     private final RoomDao roomDao;
+    private ReservationService reservationService;
 
     public BillingService(BillDao billDao,
             ReservationDao reservationDao,
@@ -40,6 +41,10 @@ public class BillingService {
         this.billDao = billDao;
         this.reservationDao = reservationDao;
         this.roomDao = roomDao;
+    }
+
+    public void setReservationService(ReservationService reservationService) {
+        this.reservationService = reservationService;
     }
 
     /**
@@ -110,14 +115,25 @@ public class BillingService {
 
     /** Records a payment against an existing bill and confirms the reservation. */
     public void recordPayment(int billId, PaymentMethod method) throws SQLException {
+        recordPayment(billId, method, "0.0.0.0");
+    }
+
+    public void recordPayment(int billId, PaymentMethod method, String ipAddress) throws SQLException {
         billDao.updatePayment(billId, PaymentStatus.PAID, method);
 
         Optional<Bill> opt = billDao.findById(billId);
         if (opt.isPresent()) {
-            reservationDao.updateStatus(opt.get().getReservationId(), com.oceanview.model.Reservation.Status.CONFIRMED);
+            int resId = opt.get().getReservationId();
+            if (reservationService != null) {
+                // Use service to trigger Observer/AuditLog events
+                reservationService.confirm(resId, ipAddress);
+            } else {
+                // Fallback to direct DAO if service not linked
+                reservationDao.updateStatus(resId, com.oceanview.model.Reservation.Status.CONFIRMED);
+            }
         }
 
-        log.info("Payment recorded for bill {} via {}. Reservation confirmed.", billId, method);
+        log.info("Payment recorded for bill {} via {}. Total confirmation flow triggered.", billId, method);
     }
 
     public Optional<Bill> findByReservationId(int reservationId) throws SQLException {

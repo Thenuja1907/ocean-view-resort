@@ -24,10 +24,22 @@ public class AuditLogObserver implements ReservationObserver {
     @Override
     public void onReservationEvent(ReservationEvent event) {
         try {
-            String details = String.format("Res: %s, Room: %d, Guests: %d, Status: %s",
+            String guestName = (event.getReservation().getGuest() != null)
+                    ? event.getReservation().getGuest().getFirstName() + " "
+                            + event.getReservation().getGuest().getLastName()
+                    : "Unknown Guest";
+            String guestEmail = (event.getReservation().getGuest() != null)
+                    ? event.getReservation().getGuest().getEmail()
+                    : "";
+            String roomNum = (event.getReservation().getRoom() != null)
+                    ? event.getReservation().getRoom().getRoomNumber()
+                    : String.valueOf(event.getReservation().getRoomId());
+
+            String details = String.format("Res: %s | Guest: %s (%s) | Room: %s | Status: %s",
                     event.getReservation().getReservationNumber(),
-                    event.getReservation().getRoomId(),
-                    event.getReservation().getNumGuests(),
+                    guestName,
+                    guestEmail,
+                    roomNum,
                     event.getReservation().getStatus());
 
             AuditLog entry = new AuditLog(
@@ -35,7 +47,7 @@ public class AuditLogObserver implements ReservationObserver {
                     event.getType().name(),
                     "RESERVATION",
                     event.getReservation().getReservationId(),
-                    null,
+                    null, // Could be improved if we pass oldStatus
                     details,
                     event.getActorIp());
             auditLogDao.insert(entry);

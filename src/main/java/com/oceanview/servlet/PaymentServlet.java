@@ -67,7 +67,7 @@ public class PaymentServlet extends HttpServlet {
             // SIMULATION MODE: Bypass Paytm for testing
             if (simulate) {
                 System.out.println("[Payment] SIMULATING Success for Bill=" + bill.getBillNumber());
-                billingService.recordPayment(billId, PaymentMethod.ONLINE);
+                billingService.recordPayment(billId, PaymentMethod.ONLINE, req.getRemoteAddr());
                 resp.sendRedirect("/payment_success.html?billId=" + billId);
                 return;
             }
@@ -159,7 +159,7 @@ public class PaymentServlet extends HttpServlet {
                 Optional<Bill> billOpt = billingService.findByNumber(billNumber);
                 if (billOpt.isPresent()) {
                     int bId = billOpt.get().getBillId();
-                    billingService.recordPayment(bId, PaymentMethod.ONLINE);
+                    billingService.recordPayment(bId, PaymentMethod.ONLINE, req.getRemoteAddr());
                     resp.sendRedirect("/payment_success.html?billId=" + bId);
                 } else {
                     System.err.println("[Payment] Error: Bill not found for number " + billNumber);
