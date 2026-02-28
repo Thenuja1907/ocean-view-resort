@@ -475,7 +475,7 @@ function renderBillRows(list) {
         const statusClass = isPending ? 'status-pending' : 'status-confirmed';
         const statusLabel = isPending ? 'PAYABLE' : b.paymentStatus;
         const actionBtn = isPending
-            ? `<button class="btn btn-primary" style="padding:5px 12px; font-size:0.75rem;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Pay Bill</button>`
+            ? `<button class="btn btn-secondary" style="padding:5px 12px; font-size:0.75rem; color:#ffffff !important;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Pay bill</button>`
             : `<span style="color:#4caf50; font-size:0.8rem;"><i class="fas fa-check-circle"></i> Settled</span>`;
 
         return `

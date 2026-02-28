@@ -108,10 +108,16 @@ public class BillingService {
         return bill;
     }
 
-    /** Records a payment against an existing bill. */
+    /** Records a payment against an existing bill and confirms the reservation. */
     public void recordPayment(int billId, PaymentMethod method) throws SQLException {
         billDao.updatePayment(billId, PaymentStatus.PAID, method);
-        log.info("Payment recorded for bill {} via {}", billId, method);
+
+        Optional<Bill> opt = billDao.findById(billId);
+        if (opt.isPresent()) {
+            reservationDao.updateStatus(opt.get().getReservationId(), com.oceanview.model.Reservation.Status.CONFIRMED);
+        }
+
+        log.info("Payment recorded for bill {} via {}. Reservation confirmed.", billId, method);
     }
 
     public Optional<Bill> findByReservationId(int reservationId) throws SQLException {
