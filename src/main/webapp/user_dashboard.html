@@ -223,33 +223,33 @@
                 method.</p>
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <button class="btn btn-secondary"
-                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important; border-radius: 50px;"
                     onclick="processPayment('VISA')">
                     <i class="fab fa-cc-visa" style="color: #1a1aff; font-size: 1.2rem;"></i> VISA Card
                 </button>
                 <button class="btn btn-secondary"
-                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important; border-radius: 50px;"
                     onclick="processPayment('MASTERCARD')">
                     <i class="fab fa-cc-mastercard" style="color: #eb001b; font-size: 1.2rem;"></i> MASTERCARD
                 </button>
                 <button class="btn btn-secondary"
-                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important; border-radius: 50px;"
                     onclick="processPayment('AMEX')">
                     <i class="fab fa-cc-amex" style="color: #007bc1; font-size: 1.2rem;"></i> AMEX Card
                 </button>
                 <button class="btn btn-secondary"
-                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important; border-radius: 50px;"
                     onclick="processPayment('CASH')">
                     <i class="fas fa-money-bill-wave" style="color: #4caf50; font-size: 1.2rem;"></i> Cash Payment
                 </button>
-                <button class="btn btn-primary"
-                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px;"
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important; border-radius: 50px;"
                     onclick="processPayment('ONLINE')">
                     <i class="fas fa-globe" style="font-size: 1.2rem;"></i> Paytm Online Pay
                 </button>
                 <div style="margin-top: 1rem;">
                     <button class="btn"
-                        style="background: rgba(255,255,255,0.05); border: 1px dashed var(--text-muted); color: var(--text-muted); font-size: 0.75rem; width: 100%; border-radius: 8px; padding: 10px;"
+                        style="background: rgba(255,255,255,0.05); border: 1px dashed var(--text-muted); color: var(--text-muted); font-size: 0.75rem; width: 100%; border-radius: 50px; padding: 10px;"
                         onclick="processPayment('ONLINE', true)">
                         Skip Gateway (Simulate Success)
                     </button>
@@ -287,6 +287,8 @@
                     mainActionBtn.innerHTML = '<i class="fas fa-receipt"></i> Pay bill';
                     mainActionBtn.className = 'btn btn-secondary';
                     mainActionBtn.style.color = '#ffffff'; // Force white visibility
+                    mainActionBtn.style.borderRadius = '50px';
+                    mainActionBtn.style.width = 'fit-content';
                     mainActionBtn.onclick = () => {
                         alert('Select "Pay bill" on any pending invoice below to process payment.');
                         document.getElementById('billsTable').scrollIntoView({ behavior: 'smooth' });
@@ -295,6 +297,8 @@
                     mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> New Booking';
                     mainActionBtn.className = 'btn btn-primary';
                     mainActionBtn.style.color = ''; // Reset to default
+                    mainActionBtn.style.borderRadius = '50px';
+                    mainActionBtn.style.width = 'fit-content';
                     mainActionBtn.onclick = () => openBookingModal();
                 }
             }
@@ -361,11 +365,11 @@
                     <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
                     <td>
                         ${isUnpaid ? `
-                            <div style="display:flex; flex-direction:column; gap:4px;">
-                                <button class="btn btn-primary" style="padding:4px 8px; font-size:0.7rem;" onclick="payBill(${bill.billId})">
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <button class="btn btn-secondary" style="padding:8px 20px; font-size:0.75rem; width:fit-content; border-radius:50px; color:#ffffff !important;" onclick="payBill(${bill.billId})">
                                     <i class="fas fa-wallet"></i> Pay LKR ${bill.totalAmount.toLocaleString()}
                                 </button>
-                                <a href="#" style="font-size:0.65rem; color:var(--primary); text-decoration:none;" onclick="showBillDetail(${bill.billId}); event.preventDefault();">Breakdown Details</a>
+                                <a href="#" style="font-size:0.75rem; color:var(--primary); text-decoration:none; margin-left: 10px;" onclick="showBillDetail(${bill.billId}); event.preventDefault();">Breakdown Details</a>
                             </div>
                         ` : (r.status === 'CANCELLED' ? '-' : '<span style="color:var(--success); font-size:0.75rem;"><i class="fas fa-check-circle"></i> Paid</span>')}
                     </td>
@@ -387,10 +391,10 @@
                     <td><strong>${amountDisp}</strong></td>
                     <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
                     <td>
-                        <div style="display:flex; gap:5px;">
-                            ${r.status === 'PENDING' ? `<button class="btn btn-secondary" style="background:#4caf50; color:white; padding:5px 10px; font-size:0.7rem; border: 1px solid rgba(255,255,255,0.2);" onclick="updateResStatus(${r.reservationId}, 'confirm')">Confirm</button>` : ''}
-                            ${(r.status === 'PENDING' || r.status === 'CONFIRMED') ? `<button class="btn" style="background:rgba(244, 67, 54, 0.4); color:white; padding:5px 10px; font-size:0.7rem; border: 1px solid rgba(255,255,255,0.2);" onclick="cancelBooking(${r.reservationId})">Cancel</button>` : '-'}
-                            ${bill ? `<button class="btn btn-sm btn-outline" style="padding:5px 10px; font-size:0.7rem;" onclick="showBillDetail(${bill.billId})"><i class="fas fa-file-invoice"></i></button>` : ''}
+                        <div style="display:flex; gap:8px;">
+                            ${r.status === 'PENDING' ? `<button class="btn btn-secondary" style="background:#4caf50; color:white; padding:8px 20px; font-size:0.75rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 50px;" onclick="updateResStatus(${r.reservationId}, 'confirm')">Confirm</button>` : ''}
+                            ${(r.status === 'PENDING' || r.status === 'CONFIRMED') ? `<button class="btn" style="background:rgba(244, 67, 54, 0.4); color:white; padding:8px 20px; font-size:0.75rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 50px;" onclick="cancelBooking(${r.reservationId})">Cancel</button>` : '-'}
+                            ${bill ? `<button class="btn btn-sm btn-outline" style="padding:8px 20px; font-size:0.75rem; border-radius: 50px;" onclick="showBillDetail(${bill.billId})"><i class="fas fa-file-invoice"></i></button>` : ''}
                         </div>
                     </td>
                 </tr>
@@ -417,7 +421,7 @@
                     </td>
                     <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${statusLabel}</span></td>
                     <td>
-                        ${b.paymentStatus === 'PENDING' ? `<button class="btn btn-secondary" style="padding:5px 10px; font-size:0.7rem; color:#ffffff !important;" onclick="payBill(${b.billId})">Pay bill</button>` : '-'}
+                        ${b.paymentStatus === 'PENDING' ? `<button class="btn btn-secondary" style="padding:8px 24px; font-size:0.7rem; color:#ffffff !important; border-radius: 50px; width: fit-content;" onclick="payBill(${b.billId})">Pay bill</button>` : '-'}
                     </td>
                 </tr>
                 `;
