@@ -274,15 +274,15 @@
             const mainActionBtn = document.querySelector('.content-header .actions .btn');
             if (mainActionBtn) {
                 if (sectionId === 'sectionBills') {
-                    mainActionBtn.innerHTML = '<i class="fas fa-receipt"></i> Pay Bill';
-                    mainActionBtn.style.background = 'var(--secondary)';
+                    mainActionBtn.innerHTML = '<i class="fas fa-receipt"></i> Pay bill';
+                    mainActionBtn.className = 'btn btn-secondary';
                     mainActionBtn.onclick = () => {
-                        alert('Select "Pay Bill" on any pending invoice below to process payment.');
+                        alert('Select "Pay bill" on any pending invoice below to process payment.');
                         document.getElementById('billsTable').scrollIntoView({ behavior: 'smooth' });
                     };
                 } else {
                     mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> New Booking';
-                    mainActionBtn.style.background = 'var(--primary)';
+                    mainActionBtn.className = 'btn btn-primary';
                     mainActionBtn.onclick = () => openBookingModal();
                 }
             }
