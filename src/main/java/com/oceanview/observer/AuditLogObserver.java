@@ -24,13 +24,19 @@ public class AuditLogObserver implements ReservationObserver {
     @Override
     public void onReservationEvent(ReservationEvent event) {
         try {
+            String details = String.format("Res: %s, Room: %d, Guests: %d, Status: %s",
+                    event.getReservation().getReservationNumber(),
+                    event.getReservation().getRoomId(),
+                    event.getReservation().getNumGuests(),
+                    event.getReservation().getStatus());
+
             AuditLog entry = new AuditLog(
                     event.getReservation().getBookedBy(),
                     event.getType().name(),
                     "RESERVATION",
                     event.getReservation().getReservationId(),
                     null,
-                    event.getReservation().getStatus().name(),
+                    details,
                     event.getActorIp());
             auditLogDao.insert(entry);
             log.info("Audit log written: {}", event);
