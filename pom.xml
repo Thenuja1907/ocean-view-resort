@@ -122,6 +122,22 @@
             <artifactId>paytm-checksum</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <!-- Embedded Jetty runtime for local execution -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>12.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>12.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>12.0.5</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -180,6 +196,15 @@
                         <contextPath>/</contextPath>
                     </webApp>
                     <scan>-1</scan>
+                </configuration>
+            </plugin>
+            <!-- Exec plugin to run the ServerStarter main class -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>com.oceanview.util.ServerStarter</mainClass>
                 </configuration>
             </plugin>
         </plugins>
