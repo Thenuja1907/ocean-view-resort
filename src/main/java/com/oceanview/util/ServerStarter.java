@@ -1,11 +1,9 @@
 package com.oceanview.util;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.webapp.WebAppContext;
-
 /**
- * Simple embedded Jetty starter for local development.
- * Run with: mvn compile exec:java -Dexec.mainClass=com.oceanview.util.ServerStarter
+ * ServerStarter — attempts to start an embedded Jetty server if Jetty is
+ * available on the classpath. If Jetty is not present, prints instructions
+ * so the WAR can be deployed to a servlet container instead.
  */
 public class ServerStarter {
     public static void main(String[] args) throws Exception {
@@ -19,18 +17,27 @@ public class ServerStarter {
 
         String webappDir = "src/main/webapp";
 
-        Server server = new Server(port);
+        try {
+            // Try to load Jetty classes reflectively to avoid a hard compile-time
+            // dependency on Jetty (some environments may not provide it).
+            Class<?> serverClass = Class.forName("org.eclipse.jetty.server.Server");
+            Class<?> webAppCtxClass = Class.forName("org.eclipse.jetty.webapp.WebAppContext");
 
-        WebAppContext context = new WebAppContext();
-        context.setContextPath("/");
-        context.setDescriptor(webappDir + "/WEB-INF/web.xml");
-        context.setResourceBase(webappDir);
-        context.setParentLoaderPriority(true);
+            Object server = serverClass.getConstructor(int.class).newInstance(port);
+            Object context = webAppCtxClass.getConstructor().newInstance();
 
-        server.setHandler(context);
+            webAppCtxClass.getMethod("setContextPath", String.class).invoke(context, "/");
+            webAppCtxClass.getMethod("setDescriptor", String.class).invoke(context, webappDir + "/WEB-INF/web.xml");
+            webAppCtxClass.getMethod("setResourceBase", String.class).invoke(context, webappDir);
+            webAppCtxClass.getMethod("setParentLoaderPriority", boolean.class).invoke(context, true);
 
-        server.start();
-        System.out.println("Server started: http://localhost:" + port + "/");
-        server.join();
+            serverClass.getMethod("setHandler", Class.forName("org.eclipse.jetty.server.Handler")).invoke(server, context);
+            serverClass.getMethod("start").invoke(server);
+            System.out.println("Server started: http://localhost:" + port + "/");
+            serverClass.getMethod("join").invoke(server);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Jetty libraries not found on classpath.");
+            System.out.println("Build produced a WAR in target/; deploy it to a servlet container or add Jetty dependencies.");
+        }
     }
 }

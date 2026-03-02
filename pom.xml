@@ -23,14 +23,11 @@
         <mockito.version>5.6.0</mockito.version>
     </properties>
     
+    <!-- Use Eclipse releases repository for Jetty 12 artifacts and fall back to Central -->
     <repositories>
         <repository>
-            <id>paytm</id>
-            <url>https://artifactory.paytm.in/artifactory/libs-release-local</url>
-        </repository>
-        <repository>
-            <id>paytm-pg</id>
-            <url>https://artifactory.paytm.in/artifactory/libs-release</url>
+            <id>eclipse-releases</id>
+            <url>https://repo.eclipse.org/content/groups/releases/</url>
         </repository>
     </repositories>
 
@@ -122,22 +119,9 @@
             <artifactId>paytm-checksum</artifactId>
             <version>1.2.1</version>
         </dependency>
-        <!-- Embedded Jetty runtime for local execution -->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>12.0.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>12.0.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
-            <version>12.0.5</version>
-        </dependency>
+        <!-- Embedded Jetty runtime removed from dependencies to allow local build
+             without requiring Jetty 12 artifacts. For local development add Jetty
+             to your IDE or set up a container; the WAR will still be produced. -->
     </dependencies>
 
     <build>
@@ -188,17 +172,8 @@
             </plugin>
             <!-- Cargo plugin — deploys to a local Tomcat 10.1 instance -->
             <!-- Run with: mvn package cargo:run                         -->
-            <plugin>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-maven-plugin</artifactId>
-                <version>12.0.5</version>
-                <configuration>
-                    <webApp>
-                        <contextPath>/</contextPath>
-                    </webApp>
-                    <scan>-1</scan>
-                </configuration>
-            </plugin>
+            <!-- Jetty Maven plugin removed to avoid resolving Jetty 12 artifacts during CI/build.
+                 Use your IDE or external server for running the WAR locally. -->
             <!-- Exec plugin to run the ServerStarter main class -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
