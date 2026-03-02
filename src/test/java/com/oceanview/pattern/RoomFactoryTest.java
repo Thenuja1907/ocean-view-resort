@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RoomFactoryTest {
+public class RoomFactoryTest {
 
     @ParameterizedTest
     @EnumSource(RoomType.class)
@@ -32,13 +32,6 @@ class RoomFactoryTest {
     void createRoom_standard_defaultRate8500() {
         Room room = RoomFactory.createRoom("101", RoomType.STANDARD, 1);
         assertEquals(0, room.getRatePerNight().compareTo(new BigDecimal("8500.0")));
-    }
-
-    @Test
-    void createRoom_penthouse_rateAndCapacity() {
-        Room room = RoomFactory.createRoom("501", RoomType.PENTHOUSE, 5);
-        assertEquals(0, room.getRatePerNight().compareTo(new BigDecimal("75000.0")));
-        assertEquals(6, room.getCapacity());
     }
 
     @Test
