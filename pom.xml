@@ -192,7 +192,7 @@
                             <artifactId>${project.artifactId}</artifactId>
                             <type>war</type>
                             <properties>
-                                <context>/</context>
+                                <context>ocean-view-resort</context>
                             </properties>
                         </deployable>
                     </deployables>
