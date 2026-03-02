@@ -366,7 +366,7 @@
                     <td>
                         ${isUnpaid ? `
                             <div style="display:flex; flex-direction:column; gap:8px;">
-                                <button class="btn btn-secondary" style="padding:10px 28px; font-size:0.875rem; width:fit-content; border-radius:50px; color:#ffffff !important;" onclick="payBill(${bill.billId})">
+                                <button class="btn btn-secondary" style="padding:8px 20px; font-size:0.75rem; width:fit-content; border-radius:50px; color:#ffffff !important;" onclick="payBill(${bill.billId})">
                                     <i class="fas fa-wallet"></i> Pay LKR ${bill.totalAmount.toLocaleString()}
                                 </button>
                                 <a href="#" style="font-size:0.75rem; color:var(--primary); text-decoration:none; margin-left: 10px;" onclick="showBillDetail(${bill.billId}); event.preventDefault();">Breakdown Details</a>
@@ -421,7 +421,7 @@
                     </td>
                     <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${statusLabel}</span></td>
                     <td>
-                        ${b.paymentStatus === 'PENDING' ? `<button class="btn btn-secondary" style="padding:10px 28px; font-size:0.875rem; color:#ffffff !important; border-radius: 50px; width: fit-content;" onclick="payBill(${b.billId})">Pay bill</button>` : '-'}
+                        ${b.paymentStatus === 'PENDING' ? `<button class="btn btn-secondary" style="padding:8px 24px; font-size:0.7rem; color:#ffffff !important; border-radius: 50px; width: fit-content;" onclick="payBill(${b.billId})">Pay bill</button>` : '-'}
                     </td>
                 </tr>
                 `;
