@@ -2,9 +2,7 @@ package com.oceanview.service;
 
 import com.oceanview.dao.GuestDao;
 import com.oceanview.model.Guest;
-import com.oceanview.util.PasswordUtil;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -21,8 +19,12 @@ class GuestServiceTest {
 
         GuestService svc = new GuestService(dao);
         Guest g = new Guest();
-        g.setFirstName("A"); g.setLastName("B"); g.setEmail("a@example.com");
-        g.setContactNumber("1234567890"); g.setAddress("X"); g.setIdNumber("ID");
+        g.setFirstName("A");
+        g.setLastName("B");
+        g.setEmail("a@example.com");
+        g.setContactNumber("1234567890");
+        g.setAddress("X");
+        g.setIdNumber("ID");
         g.setPasswordHash("secret");
 
         assertThrows(IllegalArgumentException.class, () -> svc.registerGuest(g));
@@ -36,8 +38,12 @@ class GuestServiceTest {
 
         GuestService svc = new GuestService(dao);
         Guest g = new Guest();
-        g.setFirstName("John"); g.setLastName("Doe"); g.setEmail("JOHN@EXAMPLE.COM ");
-        g.setContactNumber("1234567890"); g.setAddress("Addr"); g.setIdNumber("ID123");
+        g.setFirstName("John");
+        g.setLastName("Doe");
+        g.setEmail("JOHN@EXAMPLE.COM ");
+        g.setContactNumber("1234567890");
+        g.setAddress("Addr");
+        g.setIdNumber("ID123");
         g.setPasswordHash("plainPass");
 
         Guest inserted = svc.registerGuest(g);

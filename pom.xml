@@ -172,15 +172,30 @@
             </plugin>
             <!-- Cargo plugin — deploys to a local Tomcat 10.1 instance -->
             <!-- Run with: mvn package cargo:run                         -->
-            <!-- Jetty Maven plugin removed to avoid resolving Jetty 12 artifacts during CI/build.
-                 Use your IDE or external server for running the WAR locally. -->
-            <!-- Exec plugin to run the ServerStarter main class -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven3-plugin</artifactId>
+                <version>1.10.11</version>
                 <configuration>
-                    <mainClass>com.oceanview.util.ServerStarter</mainClass>
+                    <container>
+                        <containerId>tomcat10x</containerId>
+                        <type>embedded</type>
+                    </container>
+                    <configuration>
+                        <properties>
+                            <cargo.servlet.port>8080</cargo.servlet.port>
+                        </properties>
+                    </configuration>
+                    <deployables>
+                        <deployable>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <type>war</type>
+                            <properties>
+                                <context>/</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
                 </configuration>
             </plugin>
         </plugins>
