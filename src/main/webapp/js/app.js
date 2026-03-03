@@ -186,11 +186,71 @@ async function loadGuestList() {
                 <td>${g.idNumber} (${g.idType})</td>
                 <td>${g.nationality}</td>
                 <td>
-                    <button class="btn btn-sm btn-outline" title="Edit Guest"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline" title="Edit Guest" onclick="openEditGuest(${g.guestId})"><i class="fas fa-edit"></i></button>
                 </td>
             </tr>
         `).join('');
     } catch (err) { tbody.innerHTML = '<tr><td colspan="7">Error loading guests.</td></tr>'; }
+}
+
+// ── GUEST EDIT ───────────────────────────────────────────────────────────────
+
+async function openEditGuest(guestId) {
+    try {
+        const resp = await fetch(`api/guests/${guestId}`);
+        const result = await resp.json();
+        if (!result.success) { alert('Could not load guest details.'); return; }
+        const g = result.data;
+
+        document.getElementById('editGuestId').value = g.guestId;
+        document.getElementById('editGuestFirst').value = g.firstName || '';
+        document.getElementById('editGuestLast').value = g.lastName || '';
+        document.getElementById('editGuestEmail').value = g.email || '';
+        document.getElementById('editGuestPhone').value = g.contactNumber || '';
+        document.getElementById('editGuestNationality').value = g.nationality || '';
+        document.getElementById('editGuestAddress').value = g.address || '';
+        document.getElementById('editGuestIdType').value = g.idType || 'NIC';
+        document.getElementById('editGuestIdNum').value = g.idNumber || '';
+        document.getElementById('editGuestPassword').value = '';
+
+        const modal = document.getElementById('editGuestModal');
+        modal.style.display = 'flex';
+    } catch (err) {
+        alert('Error loading guest: ' + err.message);
+    }
+}
+
+async function saveGuestEdit(e) {
+    e.preventDefault();
+    const guestId = document.getElementById('editGuestId').value;
+    const formData = new URLSearchParams();
+    formData.append('firstName', document.getElementById('editGuestFirst').value);
+    formData.append('lastName', document.getElementById('editGuestLast').value);
+    formData.append('email', document.getElementById('editGuestEmail').value);
+    formData.append('contactNumber', document.getElementById('editGuestPhone').value);
+    formData.append('nationality', document.getElementById('editGuestNationality').value);
+    formData.append('address', document.getElementById('editGuestAddress').value);
+    formData.append('idType', document.getElementById('editGuestIdType').value);
+    formData.append('idNumber', document.getElementById('editGuestIdNum').value);
+    const pwd = document.getElementById('editGuestPassword').value;
+    if (pwd) formData.append('password', pwd);
+
+    try {
+        const resp = await fetch(`api/guests/${guestId}`, {
+            method: 'PUT',
+            body: formData
+        });
+        const result = await resp.json();
+        if (result.success) {
+            document.getElementById('editGuestModal').style.display = 'none';
+            alert('Guest updated successfully!');
+            loadGuestList();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (err) {
+        alert('Network error: ' + err.message);
+    }
 }
 
 // ── FORM LOGIC ───────────────────────────────────────────────────────────

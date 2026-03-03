@@ -405,7 +405,111 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=1.1"></script>
+    <!-- Edit Guest Modal -->
+    <div id="editGuestModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center; background: rgba(0,0,0,0.75);">
+        <div class="modal-content"
+            style="width: 100%; max-width: 650px; background: rgba(20,20,20,0.97); border: 1px solid rgba(255,193,7,0.2); border-radius: 20px; padding: 3rem; color: white; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                <h2 style="color: var(--primary); font-size: 1.6rem; letter-spacing: 0.5px;">Edit Guest</h2>
+                <button id="btnCloseEditGuest"
+                    style="background: none; border: none; font-size: 2rem; color: rgba(255,255,255,0.6); cursor: pointer;">&times;</button>
+            </div>
+            <form id="editGuestForm">
+                <input type="hidden" id="editGuestId">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">First
+                            Name</label>
+                        <input type="text" id="editGuestFirst" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Last
+                            Name</label>
+                        <input type="text" id="editGuestLast" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                </div>
+                <div style="margin-bottom:1.5rem;">
+                    <label
+                        style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Email
+                        Address</label>
+                    <input type="email" id="editGuestEmail" required
+                        style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Contact
+                            Number</label>
+                        <input type="text" id="editGuestPhone" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Nationality</label>
+                        <input type="text" id="editGuestNationality" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                </div>
+                <div style="margin-bottom:1.5rem;">
+                    <label style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Home
+                        Address</label>
+                    <textarea id="editGuestAddress" required
+                        style="width:100%; height:70px; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white; resize:none;"></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">ID
+                            Type</label>
+                        <select id="editGuestIdType"
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                            <option value="NIC">NIC</option>
+                            <option value="PASSPORT">Passport</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">ID
+                            Number</label>
+                        <input type="text" id="editGuestIdNum" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                </div>
+                <div style="margin-bottom:2rem;">
+                    <label style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">New
+                        Password <span style="color:var(--text-muted); font-size:0.7rem;">(leave blank to keep
+                            current)</span></label>
+                    <input type="password" id="editGuestPassword" placeholder="Leave blank to keep unchanged"
+                        style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                </div>
+                <button type="submit"
+                    style="width:100%; padding:1rem; background:#FFC107; color:#000; font-weight:700; font-size:1rem; border:none; border-radius:10px; cursor:pointer;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js?v=1.2"></script>
+    <!-- Wire up Edit Guest modal events -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const editModal = document.getElementById('editGuestModal');
+            document.getElementById('btnCloseEditGuest').addEventListener('click', () => {
+                editModal.style.display = 'none';
+            });
+            document.getElementById('editGuestForm').addEventListener('submit', saveGuestEdit);
+            // Close if clicking outside modal
+            editModal.addEventListener('click', (e) => {
+                if (e.target === editModal) editModal.style.display = 'none';
+            });
+        });
+    </script>
     <style>
         .content-section {
             display: none;
