@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ── INITIALISATION ───────────────────────────────────────────────────────
 
+const mainActionBtn = document.getElementById('btnQuickBooking');
+
 async function initDashboard() {
     await updateCounts();
     await loadRecentReservations();
@@ -128,7 +130,10 @@ async function loadRecentReservations() {
         tbody.innerHTML = list.map(r => `
             <tr>
                 <td><strong>${r.reservationNumber}</strong></td>
-                <td>${r.guest ? r.guest.firstName + ' ' + r.guest.lastName : 'Guest ID: ' + r.guestId}</td>
+                <td>
+                    <div style="font-weight:600;">${r.guest ? r.guest.firstName + ' ' + r.guest.lastName : 'Guest ID: ' + r.guestId}</div>
+                    ${r.guest ? `<div style="font-size:0.72rem; color:var(--text-muted);">${r.guest.email} • ${r.guest.contactNumber}</div>` : ''}
+                </td>
                 <td>${r.room ? 'Room ' + r.room.roomNumber : 'Room ID: ' + r.roomId}</td>
                 <td>${r.checkInDate}</td>
                 <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
@@ -437,7 +442,10 @@ async function loadFullReservations() {
         tbody.innerHTML = list.map(r => `
             <tr>
                 <td><strong>${r.reservationNumber}</strong></td>
-                <td>${r.guest ? r.guest.firstName + ' ' + r.guest.lastName : 'ID: ' + r.guestId}</td>
+                <td>
+                    <div style="font-weight:600;">${r.guest ? r.guest.firstName + ' ' + r.guest.lastName : 'ID: ' + r.guestId}</div>
+                    ${r.guest ? `<div style="font-size:0.72rem; color:var(--text-muted);">${r.guest.email} • ${r.guest.contactNumber}</div>` : ''}
+                </td>
                 <td>${r.room ? 'Room ' + r.room.roomNumber : 'ID: ' + r.roomId}</td>
                 <td>${r.checkInDate}</td>
                 <td>${r.checkOutDate}</td>

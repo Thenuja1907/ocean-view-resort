@@ -63,7 +63,11 @@ public class ReservationDao {
     }
 
     public Optional<Reservation> findByNumber(String number) throws SQLException {
-        String sql = "SELECT * FROM reservations WHERE reservation_number = ?";
+        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number " +
+                "FROM reservations r " +
+                "JOIN guests g ON r.guest_id = g.guest_id " +
+                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE r.reservation_number = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, number);
@@ -76,7 +80,7 @@ public class ReservationDao {
     }
 
     public List<Reservation> findAll() throws SQLException {
-        String sql = "SELECT r.*, g.first_name, g.last_name, rm.room_number " +
+        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number " +
                 "FROM reservations r " +
                 "JOIN guests g ON r.guest_id = g.guest_id " +
                 "JOIN rooms rm ON r.room_id = rm.room_id " +
@@ -94,7 +98,7 @@ public class ReservationDao {
     }
 
     public List<Reservation> findByStatus(Status status) throws SQLException {
-        String sql = "SELECT r.*, g.first_name, g.last_name, rm.room_number " +
+        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number " +
                 "FROM reservations r " +
                 "JOIN guests g ON r.guest_id = g.guest_id " +
                 "JOIN rooms rm ON r.room_id = rm.room_id " +
@@ -198,6 +202,11 @@ public class ReservationDao {
             g.setGuestId(r.getGuestId());
             g.setFirstName(rs.getString("first_name"));
             g.setLastName(rs.getString("last_name"));
+            try {
+                g.setEmail(rs.getString("email"));
+                g.setContactNumber(rs.getString("contact_number"));
+            } catch (SQLException ignored) {
+            }
             r.setGuest(g);
 
             com.oceanview.model.Room rm = new com.oceanview.model.Room();
