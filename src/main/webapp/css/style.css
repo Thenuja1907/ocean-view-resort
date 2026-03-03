@@ -1,14 +1,15 @@
 :root {
     --primary: #FFC107;
-    /* User Requested Vibrant Yellow */
+    --primary-rgb: 255, 193, 7;
     --secondary: #000428;
     --accent: #FFC107;
     --text-white: #ffffff;
-    --text-muted: rgba(255, 255, 255, 0.7);
-    --glass-bg: rgba(255, 255, 255, 0.08);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.15);
-    --glass-blur: blur(25px);
-    --sidebar-width: 260px;
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --glass-blur: blur(20px);
+    --sidebar-width: 280px;
+    --card-bg: rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -20,13 +21,13 @@
 body {
     font-family: 'Poppins', sans-serif;
     color: var(--text-white);
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
         url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1920&q=80');
-    /* Professional resort at night */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* ── SHARED GLASS CLASSES ────────────────────────────────────────────────── */
@@ -105,7 +106,7 @@ body {
 .nav-link:hover,
 .nav-link.active {
     color: var(--primary);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(var(--primary-rgb), 0.08);
     border-left-color: var(--primary);
 }
 
@@ -166,27 +167,29 @@ body {
 }
 
 .stat-card i {
-    width: 60px;
-    height: 60px;
-    background: rgba(252, 196, 25, 0.2);
-    border-radius: 15px;
+    width: 50px;
+    height: 50px;
+    background: rgba(var(--primary-rgb), 0.15);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     color: var(--primary);
 }
 
 .stat-info .label {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
+    font-weight: 400;
 }
 
 .stat-info .value {
     display: block;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 600;
     color: white;
+    margin-top: 2px;
 }
 
 /* ── TABLES ────────────────────────────────────────────────── */
@@ -223,36 +226,37 @@ body {
 }
 
 .status-badge {
-    padding: 6px 16px;
-    border-radius: 50px;
-    font-size: 0.75rem;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.7rem;
     font-weight: 600;
+    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .status-pending {
-    background: rgba(255, 152, 0, 0.2);
-    color: #ff9800;
+    background: rgba(255, 193, 7, 0.15);
+    color: #FFC107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
 }
 
 .status-confirmed {
-    background: rgba(76, 175, 80, 0.2);
-    color: #4caf50;
+    background: rgba(46, 213, 115, 0.15);
+    color: #2ed573;
+    border: 1px solid rgba(46, 213, 115, 0.3);
 }
 
-.status-cancelled {
-    background: rgba(244, 67, 54, 0.2);
-    color: #f44336;
+.status-cancelled,
+.status-occupied {
+    background: rgba(255, 71, 87, 0.15);
+    color: #ff4757;
+    border: 1px solid rgba(255, 71, 87, 0.3);
 }
 
 .status-checked_out {
-    background: rgba(158, 158, 158, 0.2);
-    color: #9e9e9e;
-}
-
-.status-partial {
-    background: rgba(33, 150, 243, 0.2);
-    color: #2196f3;
+    background: rgba(164, 176, 190, 0.15);
+    color: #a4b0be;
+    border: 1px solid rgba(164, 176, 190, 0.3);
 }
 
 /* ── FORMS & BUTTONS ────────────────────────────────────────────────────── */
@@ -571,23 +575,29 @@ textarea:focus {
 /* ── ROOM GRID NODES ─────────────────────────────────────────────────────── */
 
 .room-node {
-    padding: 0.75rem;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 0.8rem;
-    font-weight: 600;
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
     cursor: default;
-    transition: transform 0.2s;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .room-node:hover {
-    transform: scale(1.08);
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .room-node.available {
-    background: rgba(76, 175, 80, 0.2);
-    border: 1px solid rgba(76, 175, 80, 0.4);
-    color: #4caf50;
+    border: 1.5px solid rgba(46, 213, 115, 0.4);
+    color: #2ed573;
+    background: rgba(46, 213, 115, 0.05);
 }
 
 .room-node.occupied {
