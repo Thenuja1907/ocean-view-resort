@@ -398,18 +398,22 @@
                     <td>${r.checkOutDate}</td>
                     <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
                     <td>
-                        ${isUnpaid ? `
-                            <div style="display:flex; flex-direction:column; gap:6px;">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            ${isUnpaid ? `
                                 <button class="btn" style="background:#0b1426; color:#fff; border:none; padding:8px 16px; font-size:0.7rem; width:fit-content; border-radius:50px; font-weight:500; display:flex; align-items:center; gap:8px;" onclick="payBill(${bill.billId})">
                                     <i class="far fa-credit-card" style="color:#ffffff; font-size:0.8rem;"></i> Pay LKR ${bill.totalAmount.toLocaleString()}
                                 </button>
                                 <a href="#" style="font-size:0.7rem; color:var(--primary); text-decoration:none; margin-left:12px;" onclick="showBillDetail(${bill.billId}); event.preventDefault();">Breakdown Details</a>
+                            ` : (bill && bill.paymentStatus === 'PAID' ? '<span style="color:white; font-size:0.75rem;"><i class="fas fa-check-circle" style="color:#fff;"></i> Paid</span>' : (r.status === 'CANCELLED' ? '-' : `
+                                <button class="btn" style="background:#0b1426; color:#fff; border:none; padding:8px 16px; font-size:0.7rem; width:fit-content; border-radius:50px; font-weight:500; display:flex; align-items:center; gap:8px;" onclick="payBillDirectly(${r.reservationId})">
+                                    <i class="far fa-credit-card" style="color:#ffffff; font-size:0.8rem;"></i> Pay bill
+                                </button>
+                            `))}
+                            <div style="display:flex; gap:5px; margin-top:2px;">
+                                ${r.status === 'PENDING' ? `<button style="background:#28a745; color:white; padding:4px 12px; font-size:0.68rem; border:none; border-radius:50px; cursor:pointer;" onclick="updateResStatus(${r.reservationId},'confirm')">✓ Confirm</button>` : ''}
+                                ${(r.status === 'PENDING' || r.status === 'CONFIRMED') ? `<button style="background:#dc3545; color:white; padding:4px 12px; font-size:0.68rem; border:none; border-radius:50px; cursor:pointer;" onclick="cancelBooking(${r.reservationId})">✕ Cancel</button>` : ''}
                             </div>
-                        ` : (bill && bill.paymentStatus === 'PAID' ? '<span style="color:white; font-size:0.75rem;"><i class="fas fa-check-circle" style="color:#fff;"></i> Paid</span>' : (r.status === 'CANCELLED' ? '-' : `
-                            <button class="btn" style="background:#0b1426; color:#fff; border:none; padding:8px 16px; font-size:0.7rem; width:fit-content; border-radius:50px; font-weight:500; display:flex; align-items:center; gap:8px;" onclick="payBillDirectly(${r.reservationId})">
-                                <i class="far fa-credit-card" style="color:#ffffff; font-size:0.8rem;"></i> Pay bill
-                            </button>
-                        `))}
+                        </div>
                     </td>
                 </tr>
                 `;

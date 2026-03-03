@@ -524,9 +524,19 @@ async function loadFullReservations() {
                 </td>
                 <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
                 <td>
-                    <div style="display:flex; gap:5px;">
-                        <button class="btn btn-sm btn-outline" title="View Details"><i class="fas fa-eye"></i></button>
-                        ${r.status === 'PENDING' ? `<button class="btn btn-sm btn-primary" style="padding:4px 8px; font-size:0.7rem;" onclick="updateResStatus(${r.reservationId},'confirm')">Confirm</button>` : ''}
+                    <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                        ${r.status === 'PENDING' ? `
+                            <button class="btn btn-sm" style="background:#28a745; color:white; border:none; padding:4px 10px; font-size:0.7rem; border-radius:50px;" onclick="updateResStatus(${r.reservationId},'confirm')">Confirm</button>
+                            <button class="btn btn-sm" style="background:#dc3545; color:white; border:none; padding:4px 10px; font-size:0.7rem; border-radius:50px;" onclick="updateResStatus(${r.reservationId},'cancel')">Cancel</button>
+                        ` : ''}
+                        ${r.status === 'CONFIRMED' ? `
+                            <button class="btn btn-sm" style="background:#17a2b8; color:white; border:none; padding:4px 10px; font-size:0.7rem; border-radius:50px;" onclick="updateResStatus(${r.reservationId},'checkin')">Check-In</button>
+                            <button class="btn btn-sm" style="background:#dc3545; color:white; border:none; padding:4px 10px; font-size:0.7rem; border-radius:50px;" onclick="updateResStatus(${r.reservationId},'cancel')">Cancel</button>
+                        ` : ''}
+                        ${r.status === 'CHECKED_IN' ? `
+                            <button class="btn btn-sm" style="background:#FFC107; color:#000; border:none; padding:4px 10px; font-size:0.7rem; border-radius:50px; font-weight:700;" onclick="updateResStatus(${r.reservationId},'checkout')">Check-Out</button>
+                        ` : ''}
+                        ${r.status === 'CANCELLED' || r.status === 'CHECKED_OUT' ? `<span style="color:var(--text-muted); font-size:0.75rem;">—</span>` : ''}
                     </div>
                 </td>
             </tr>
