@@ -48,8 +48,8 @@ public class ReservationDao {
     public Optional<Reservation> findById(int id) throws SQLException {
         String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number, rm.room_type " +
                 "FROM reservations r " +
-                "JOIN guests g ON r.guest_id = g.guest_id " +
-                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "WHERE r.reservation_id = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -65,8 +65,8 @@ public class ReservationDao {
     public Optional<Reservation> findByNumber(String number) throws SQLException {
         String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number " +
                 "FROM reservations r " +
-                "JOIN guests g ON r.guest_id = g.guest_id " +
-                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "WHERE r.reservation_number = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -82,8 +82,8 @@ public class ReservationDao {
     public List<Reservation> findAll() throws SQLException {
         String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number " +
                 "FROM reservations r " +
-                "JOIN guests g ON r.guest_id = g.guest_id " +
-                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "ORDER BY r.created_at DESC";
         List<Reservation> list = new ArrayList<>();
         Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -100,8 +100,8 @@ public class ReservationDao {
     public List<Reservation> findByStatus(Status status) throws SQLException {
         String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number " +
                 "FROM reservations r " +
-                "JOIN guests g ON r.guest_id = g.guest_id " +
-                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "WHERE r.status = ? ORDER BY r.check_in_date";
         List<Reservation> list = new ArrayList<>();
         Connection conn = DatabaseConnection.getInstance().getConnection();

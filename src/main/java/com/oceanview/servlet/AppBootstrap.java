@@ -95,11 +95,15 @@ public class AppBootstrap implements ServletContextListener {
                 log.info("Admin password synchronized: admin / Admin@1234");
             }
 
-            // Manual Migration: Add num_guests to bills if it doesn't exist
+            // Manual Migration: Ensure bills table has required columns and proper types
             try (java.sql.Connection conn = com.oceanview.util.DatabaseConnection.getInstance().getConnection();
                     java.sql.Statement st = conn.createStatement()) {
+                // Add num_guests if missing
                 st.executeUpdate(
                         "ALTER TABLE bills ADD COLUMN IF NOT EXISTS num_guests INT DEFAULT 1 AFTER num_nights");
+                // Fix payment_method truncation (ENUM to VARCHAR)
+                st.executeUpdate("ALTER TABLE bills MODIFY COLUMN payment_method VARCHAR(50) NULL");
+                log.info("Database migrations (num_guests, payment_method) applied successfully.");
             } catch (Exception e) {
                 log.warn("Migration notice: {}", e.getMessage());
             }
