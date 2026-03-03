@@ -385,7 +385,7 @@
 
             // Overview Table
             recentTable.innerHTML = list.slice(0, 5).map(r => {
-                const bill = window.allBills?.find(b => b.reservationId === r.reservationId);
+                const bill = window.allBills?.find(b => b.reservationId == r.reservationId);
                 const isUnpaid = bill && bill.paymentStatus === 'PENDING';
 
                 return `
@@ -405,7 +405,11 @@
                                 </button>
                                 <a href="#" style="font-size:0.7rem; color:var(--primary); text-decoration:none; margin-left:12px;" onclick="showBillDetail(${bill.billId}); event.preventDefault();">Breakdown Details</a>
                             </div>
-                        ` : (bill && bill.paymentStatus === 'PAID' ? '<span style="color:white; font-size:0.75rem;"><i class="fas fa-check-circle" style="color:#fff;"></i> Paid</span>' : (r.status === 'CANCELLED' ? '-' : '<span style="color:var(--text-muted); font-size:0.75rem;">Processing...</span>'))}
+                        ` : (bill && bill.paymentStatus === 'PAID' ? '<span style="color:white; font-size:0.75rem;"><i class="fas fa-check-circle" style="color:#fff;"></i> Paid</span>' : (r.status === 'CANCELLED' ? '-' : `
+                            <button class="btn" style="background:#0b1426; color:#fff; border:none; padding:8px 16px; font-size:0.7rem; width:fit-content; border-radius:50px; font-weight:500; display:flex; align-items:center; gap:8px;" onclick="payBillDirectly(${r.reservationId})">
+                                <i class="far fa-credit-card" style="color:#ffffff; font-size:0.8rem;"></i> Pay bill
+                            </button>
+                        `))}
                     </td>
                 </tr>
                 `;
@@ -413,8 +417,8 @@
 
             // Full Reservations Table (My Stays)
             allTable.innerHTML = list.map(r => {
-                const bill = window.allBills?.find(b => b.reservationId === r.reservationId);
-                const amountDisp = bill ? `LKR ${bill.totalAmount.toLocaleString()}` : '—';
+                const bill = window.allBills?.find(b => b.reservationId == r.reservationId);
+                const amountDisp = bill ? `LKR ${bill.totalAmount.toLocaleString()}` : 'Processing...';
 
                 return `
                 <tr>
@@ -422,7 +426,7 @@
                     <td>${r.room ? 'Room ' + r.room.roomNumber : 'Room ID: ' + r.roomId}</td>
                     <td>${r.checkInDate} to ${r.checkOutDate}</td>
                     <td>${r.numGuests} Guest(s)</td>
-                    <td><strong>LKR ${bill ? bill.totalAmount.toLocaleString() : '—'}</strong></td>
+                    <td><strong>${amountDisp}</strong></td>
                     <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
                     <td>
                         <div style="display:flex; gap:8px; align-items:center;">
@@ -468,12 +472,33 @@
 
         function payBill(billId) {
             _currentBillId = billId;
-            const bill = window.allBills?.find(b => b.billId === billId);
+            const bill = window.allBills?.find(b => b.billId == billId);
             if (bill) {
                 document.getElementById('checkoutAmountDisplay').style.display = 'block';
                 document.getElementById('paymentTotalValue').textContent = bill.totalAmount.toLocaleString();
             }
             document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        async function payBillDirectly(resId) {
+            let bill = window.allBills?.find(b => b.reservationId == resId);
+            if (!bill) {
+                try {
+                    const resp = await fetch(`api/bills/reservation/${resId}`);
+                    const res = await resp.json();
+                    if (res.success && res.data) {
+                        bill = res.data;
+                        if (!window.allBills) window.allBills = [];
+                        window.allBills.push(bill);
+                    }
+                } catch (e) { console.error("Error fetching bill directly", e); }
+            }
+            if (bill) {
+                payBill(bill.billId);
+            } else {
+                alert('Invoice is still processing. Please refresh in a few seconds.');
+                loadData();
+            }
         }
 
         async function processPayment(method, simulate = false) {
