@@ -495,21 +495,7 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=1.2"></script>
-    <!-- Wire up Edit Guest modal events -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const editModal = document.getElementById('editGuestModal');
-            document.getElementById('btnCloseEditGuest').addEventListener('click', () => {
-                editModal.style.display = 'none';
-            });
-            document.getElementById('editGuestForm').addEventListener('submit', saveGuestEdit);
-            // Close if clicking outside modal
-            editModal.addEventListener('click', (e) => {
-                if (e.target === editModal) editModal.style.display = 'none';
-            });
-        });
-    </script>
+    <script src="js/app.js?v=1.4"></script>
     <style>
         .content-section {
             display: none;

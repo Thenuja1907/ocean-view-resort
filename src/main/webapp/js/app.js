@@ -68,6 +68,25 @@ function initEventListeners() {
         btnClosePay.onclick = () => payModal.style.display = 'none';
     }
 
+    // Edit Guest Modal Control
+    const editGuestModal = document.getElementById('editGuestModal');
+    const btnCloseEditGuest = document.getElementById('btnCloseEditGuest');
+    const editGuestForm = document.getElementById('editGuestForm');
+
+    if (btnCloseEditGuest) {
+        btnCloseEditGuest.addEventListener('click', () => {
+            editGuestModal.style.display = 'none';
+        });
+    }
+    if (editGuestForm) {
+        editGuestForm.addEventListener('submit', saveGuestEdit);
+    }
+    if (editGuestModal) {
+        editGuestModal.addEventListener('click', (e) => {
+            if (e.target === editGuestModal) editGuestModal.style.display = 'none';
+        });
+    }
+
     // Logout
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
@@ -169,24 +188,25 @@ async function loadGuestList() {
     if (!tbody) return;
     try {
         const resp = await fetch('api/guests');
-        const data = await resp.json();
-        const list = data.data || [];
+        const guests = (await resp.json()).data || [];
 
-        if (list.length === 0) {
+        if (guests.length === 0) {
             tbody.innerHTML = '<tr><td colspan="7">No guests registered.</td></tr>';
             return;
         }
 
-        tbody.innerHTML = list.map(g => `
+        tbody.innerHTML = guests.map(g => `
             <tr>
                 <td>${g.guestId}</td>
                 <td>${g.firstName} ${g.lastName}</td>
                 <td>${g.email}</td>
                 <td>${g.contactNumber}</td>
-                <td>${g.idNumber} (${g.idType})</td>
+                <td>${g.idNumber}<br><span style="font-size:0.7rem; color:var(--text-muted);">${g.idType}</span></td>
                 <td>${g.nationality}</td>
                 <td>
-                    <button class="btn btn-sm btn-outline" title="Edit Guest" onclick="openEditGuest(${g.guestId})"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline" title="Edit Guest" onclick="openEditGuest(${g.guestId})" style="padding:6px 12px;">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
                 </td>
             </tr>
         `).join('');
@@ -679,8 +699,24 @@ async function updateResStatus(id, action) {
     if (!confirm(`Are you sure you want to ${action} this reservation?`)) return;
     try {
         const resp = await fetch(`api/reservations/${id}/${action}`, { method: 'PUT' });
-        if (resp.ok) { loadFullReservations(); updateCounts(); }
-    } catch (err) { alert('Action failed'); }
+        const result = await resp.json();
+        if (resp.ok && result.success) {
+            alert(`Reservation ${action} successful!`);
+            // Reload whichever section is currently active
+            const activeSection = document.querySelector('.content-section.active');
+            if (activeSection) {
+                const sectionId = activeSection.id;
+                if (sectionId === 'guests') { loadGuestList(); updateCounts(); }
+                else if (sectionId === 'reservations') { loadFullReservations(); updateCounts(); }
+                else { loadFullReservations(); updateCounts(); }
+            } else {
+                loadFullReservations(); updateCounts();
+            }
+            await loadRoomGrid(); // Always refresh room grid
+        } else {
+            alert('Error: ' + (result.message || 'Action failed'));
+        }
+    } catch (err) { alert('Network error: ' + err.message); }
 }
 
 async function logout() {
