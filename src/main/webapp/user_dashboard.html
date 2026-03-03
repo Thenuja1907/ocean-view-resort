@@ -556,10 +556,7 @@
 
                     const newBill = window.allBills?.find(b => b.reservationId === result.data.reservationId);
                     if (newBill) {
-                        showSection('sectionBills');
                         payBill(newBill.billId);
-                    } else {
-                        showSection('sectionReservations');
                     }
                 } else {
                     alert('Error: ' + result.message);
