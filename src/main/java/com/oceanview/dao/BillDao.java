@@ -55,7 +55,8 @@ public class BillDao {
     // ── READ ────────────────────────────────────────────────────────────────
 
     public Optional<Bill> findById(int id) throws SQLException {
-        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
                 "FROM bills b " +
                 "JOIN reservations r ON b.reservation_id = r.reservation_id " +
                 "JOIN guests g ON r.guest_id = g.guest_id " +
@@ -73,7 +74,8 @@ public class BillDao {
     }
 
     public Optional<Bill> findByReservationId(int reservationId) throws SQLException {
-        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
                 "FROM bills b " +
                 "JOIN reservations r ON b.reservation_id = r.reservation_id " +
                 "JOIN guests g ON r.guest_id = g.guest_id " +
@@ -91,7 +93,8 @@ public class BillDao {
     }
 
     public Optional<Bill> findByNumber(String billNumber) throws SQLException {
-        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
                 "FROM bills b " +
                 "JOIN reservations r ON b.reservation_id = r.reservation_id " +
                 "JOIN guests g ON r.guest_id = g.guest_id " +
@@ -109,7 +112,8 @@ public class BillDao {
     }
 
     public List<Bill> findByGuestId(int guestId) throws SQLException {
-        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
                 "FROM bills b " +
                 "JOIN reservations r ON b.reservation_id = r.reservation_id " +
                 "JOIN guests g ON r.guest_id = g.guest_id " +
@@ -131,7 +135,8 @@ public class BillDao {
     }
 
     public List<Bill> findAll() throws SQLException {
-        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, rm.room_number " +
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
                 "FROM bills b " +
                 "JOIN reservations r ON b.reservation_id = r.reservation_id " +
                 "JOIN guests g ON r.guest_id = g.guest_id " +
@@ -211,6 +216,11 @@ public class BillDao {
             com.oceanview.model.Guest g = new com.oceanview.model.Guest();
             g.setFirstName(rs.getString("first_name"));
             g.setLastName(rs.getString("last_name"));
+            try {
+                g.setEmail(rs.getString("email"));
+                g.setContactNumber(rs.getString("contact_number"));
+            } catch (SQLException ignored) {
+            }
             res.setGuest(g);
 
             com.oceanview.model.Room rm = new com.oceanview.model.Room();

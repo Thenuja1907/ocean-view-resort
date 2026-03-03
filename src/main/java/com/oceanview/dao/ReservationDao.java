@@ -46,7 +46,7 @@ public class ReservationDao {
     // ── READ ────────────────────────────────────────────────────────────────
 
     public Optional<Reservation> findById(int id) throws SQLException {
-        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, rm.room_number, rm.room_type " +
+        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number, rm.room_type " +
                 "FROM reservations r " +
                 "JOIN guests g ON r.guest_id = g.guest_id " +
                 "JOIN rooms rm ON r.room_id = rm.room_id " +

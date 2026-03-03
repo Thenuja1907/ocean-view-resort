@@ -314,17 +314,22 @@ function showSection(sectionId) {
     // Update Quick Actions button based on context
     if (mainActionBtn) {
         if (sectionId === 'billing') {
-            mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay bill';
+            mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay Bill';
             mainActionBtn.style.background = '#FFC107';
             mainActionBtn.style.color = '#000';
             mainActionBtn.style.border = 'none';
             mainActionBtn.style.borderRadius = '50px';
             mainActionBtn.style.padding = '8px 24px';
-            mainActionBtn.style.fontWeight = '600';
+            mainActionBtn.style.fontWeight = '700';
             mainActionBtn.style.width = 'fit-content';
             mainActionBtn.onclick = () => {
-                alert('Select "Pay bill" on any pending invoice below to process payment.');
-                document.getElementById('billListBody').scrollIntoView({ behavior: 'smooth' });
+                const billSection = document.getElementById('billing');
+                if (billSection) {
+                    billSection.scrollIntoView({ behavior: 'smooth' });
+                    // Provide a nice hint
+                    const firstBill = document.querySelector('#billListBody tr:first-child');
+                    if (firstBill) firstBill.style.boxShadow = '0 0 15px rgba(255, 193, 7, 0.3)';
+                }
             };
         } else {
             mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> Quick Booking';
