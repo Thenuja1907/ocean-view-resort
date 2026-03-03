@@ -58,9 +58,9 @@ public class BillDao {
         String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
                 +
                 "FROM bills b " +
-                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
-                "JOIN guests g ON r.guest_id = g.guest_id " +
-                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "WHERE b.bill_id = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -77,9 +77,9 @@ public class BillDao {
         String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
                 +
                 "FROM bills b " +
-                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
-                "JOIN guests g ON r.guest_id = g.guest_id " +
-                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "WHERE b.reservation_id = ? ORDER BY b.issued_at DESC LIMIT 1";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -96,9 +96,9 @@ public class BillDao {
         String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
                 +
                 "FROM bills b " +
-                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
-                "JOIN guests g ON r.guest_id = g.guest_id " +
-                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "WHERE b.bill_number = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -115,9 +115,9 @@ public class BillDao {
         String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
                 +
                 "FROM bills b " +
-                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
-                "JOIN guests g ON r.guest_id = g.guest_id " +
-                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "WHERE r.guest_id = ? " +
                 "ORDER BY b.issued_at DESC";
         List<Bill> list = new ArrayList<>();
@@ -138,9 +138,9 @@ public class BillDao {
         String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
                 +
                 "FROM bills b " +
-                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
-                "JOIN guests g ON r.guest_id = g.guest_id " +
-                "JOIN rooms rm ON r.room_id = rm.room_id " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "ORDER BY b.issued_at DESC";
         List<Bill> list = new ArrayList<>();
         Connection conn = DatabaseConnection.getInstance().getConnection();
