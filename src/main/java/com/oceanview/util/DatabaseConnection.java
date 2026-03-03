@@ -62,7 +62,22 @@ public class DatabaseConnection {
 
         this.pool = new ArrayBlockingQueue<>(POOL_SIZE);
         initPool();
+        runMigrations();
         log.info("DatabaseConnection pool initialized with {} connections.", POOL_SIZE);
+    }
+
+    /**
+     * Minimal migration to ensure schema compatibility.
+     * Fixes 'payment_method' truncation issues by ensuring it's VARCHAR(50).
+     */
+    private void runMigrations() {
+        try (Connection conn = createConnection();
+                java.sql.Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("ALTER TABLE bills MODIFY COLUMN payment_method VARCHAR(50) NULL");
+            log.info("Migration: 'bills.payment_method' updated to VARCHAR(50).");
+        } catch (SQLException e) {
+            log.warn("Auto-migration result: {} (this is usually fine if already updated)", e.getMessage());
+        }
     }
 
     private void initPool() {

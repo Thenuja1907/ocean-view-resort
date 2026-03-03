@@ -29,15 +29,7 @@ function initEventListeners() {
 
     // Booking Modal Control
     const bookingModal = document.getElementById('bookingModal');
-    const btnBooking = document.getElementById('btnQuickBooking');
     const btnCloseBooking = document.querySelector('.close-modal');
-
-    if (btnBooking) {
-        btnBooking.addEventListener('click', () => {
-            bookingModal.classList.add('active');
-            prepareBookingForm();
-        });
-    }
 
     if (btnCloseBooking) {
         btnCloseBooking.addEventListener('click', () => bookingModal.classList.remove('active'));
@@ -99,8 +91,10 @@ async function updateCounts() {
         const respRes = await fetch('api/reservations');
         const resJson = await respRes.json();
         const resList = resJson.data || [];
+        window.allReservations = resList; // Expose globally for components
+
         document.getElementById('countActive').textContent =
-            resList.filter(r => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN').length;
+            resList.filter(r => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN' || r.status === 'PENDING').length;
 
         // Check-in count (Today local date)
         const now = new Date();
@@ -153,12 +147,15 @@ async function loadRoomGrid() {
         grid.innerHTML = rooms.map(room => {
             const activeRes = (window.allReservations || []).find(res =>
                 res.roomId === room.roomId &&
-                (res.status === 'CHECKED_IN' || res.status === 'CONFIRMED')
+                (res.status === 'CHECKED_IN' || res.status === 'CONFIRMED' || res.status === 'PENDING')
             );
-            const statusText = room.available ? 'Available' : `Occupied by ${activeRes?.guest ? activeRes.guest.firstName : 'Guest'}`;
+            const statusText = activeRes
+                ? `Occupied by ${activeRes?.guest ? activeRes.guest.firstName + ' ' + activeRes.guest.lastName : 'Guest'} (${activeRes.guest?.email || 'No Email'})`
+                : 'Available';
+            const nodeClass = activeRes ? 'occupied' : 'available';
 
             return `
-            <div class="room-node ${room.available ? 'available' : 'occupied'}" 
+            <div class="room-node ${nodeClass}" 
                  title="${room.roomNumber}: ${statusText} (${room.roomType})">
                 ${room.roomNumber}
             </div>
@@ -213,7 +210,7 @@ async function prepareBookingForm() {
         const gSelect = document.getElementById('guestSelect');
         const rSelect = document.getElementById('roomSelect');
 
-        gSelect.innerHTML = guests.map(g => `<option value="${g.guestId}">${g.firstName} ${g.lastName}</option>`).join('');
+        gSelect.innerHTML = guests.map(g => `<option value="${g.guestId}">${g.firstName} ${g.lastName} (${g.email || 'No Email'})</option>`).join('');
         rSelect.innerHTML = rooms.map(r => `<option value="${r.roomId}">${r.roomNumber} (${r.roomType})</option>`).join('');
 
         const inDate = new Date();
@@ -250,9 +247,11 @@ async function handleBooking(e) {
             // Switch to billing and ask to record payment
             showSection('billing');
 
-            // Reload all data to ensure we have the latest bills
-            await loadFullBilling();
+            // Reload all data to ensure we have the latest bills and reservations
             await updateCounts();
+            await loadRecentReservations();
+            await loadFullBilling();
+            await loadRoomGrid();
 
             setTimeout(() => {
                 if (confirm("Reservation created! Would you like to record a payment for this now?")) {
@@ -313,7 +312,7 @@ function showSection(sectionId) {
 
     // Update Quick Actions button based on context
     if (mainActionBtn) {
-        if (sectionId === 'billing') {
+        if (sectionId === 'billing' || sectionId === 'reservations') {
             mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay Bill';
             mainActionBtn.style.background = '#FFC107';
             mainActionBtn.style.color = '#000';
@@ -323,21 +322,24 @@ function showSection(sectionId) {
             mainActionBtn.style.fontWeight = '700';
             mainActionBtn.style.width = 'fit-content';
             mainActionBtn.onclick = () => {
-                const billSection = document.getElementById('billing');
-                if (billSection) {
-                    billSection.scrollIntoView({ behavior: 'smooth' });
-                    // Provide a nice hint
-                    const firstBill = document.querySelector('#billListBody tr:first-child');
-                    if (firstBill) firstBill.style.boxShadow = '0 0 15px rgba(255, 193, 7, 0.3)';
+                const targetId = sectionId === 'billing' ? 'billListBody' : 'resListBody';
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                    // Highlight the first pending item
+                    const firstItem = targetEl.querySelector('tr');
+                    if (firstItem) firstItem.style.boxShadow = '0 0 15px rgba(255, 193, 7, 0.3)';
+                }
+                if (sectionId === 'reservations') {
+                    alert('To pay a bill, please use the "Billing" section or click "Pay Bill" on a specific invoice.');
                 }
             };
         } else {
             mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> Quick Booking';
-            mainActionBtn.style.background = ''; // Reset to default
-            mainActionBtn.style.color = '';
-            mainActionBtn.style.border = '';
-            mainActionBtn.style.borderRadius = '';
-            mainActionBtn.style.fontWeight = '';
+            mainActionBtn.style.background = '#FFC107'; // Ensure visibility
+            mainActionBtn.style.color = '#000';
+            mainActionBtn.style.fontWeight = '600';
+            mainActionBtn.style.borderRadius = '50px';
             mainActionBtn.onclick = () => {
                 document.getElementById('bookingModal').classList.add('active');
                 prepareBookingForm();
@@ -401,7 +403,8 @@ function renderRoomRows(rooms, reservations) {
         );
         const guestInfo = activeRes
             ? `<div style="margin-top:4px;">
-                <div style="font-weight:500; color:var(--primary);">${activeRes.guest ? activeRes.guest.firstName + ' ' + activeRes.guest.lastName : 'Guest'}</div>
+                <div style="font-weight:600; color:var(--primary);">${activeRes.guest ? activeRes.guest.firstName + ' ' + activeRes.guest.lastName : 'Guest'}</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">${activeRes.guest ? activeRes.guest.email + ' &bull; ' + activeRes.guest.contactNumber : ''}</div>
                 <div style="font-size:0.72rem; color:var(--text-muted);">${activeRes.reservationNumber} &bull; ${activeRes.checkInDate} → ${activeRes.checkOutDate}</div>
                 <span style="font-size:0.7rem; padding:2px 8px; border-radius:10px; background:rgba(252,196,25,0.15); color:var(--primary);">${activeRes.status}</span>
                </div>`
@@ -451,13 +454,20 @@ async function loadFullReservations() {
                     <div style="font-weight:600;">${r.guest ? r.guest.firstName + ' ' + r.guest.lastName : 'ID: ' + r.guestId}</div>
                     ${r.guest ? `<div style="font-size:0.72rem; color:var(--text-muted);">${r.guest.email} • ${r.guest.contactNumber}</div>` : ''}
                 </td>
-                <td>${r.room ? 'Room ' + r.room.roomNumber : 'ID: ' + r.roomId}</td>
-                <td>${r.checkInDate}</td>
-                <td>${r.checkOutDate}</td>
+                <td>
+                    <div style="font-weight:500;">${r.room ? 'Room ' + r.room.roomNumber : 'ID: ' + r.roomId}</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted);">${r.numGuests} Guests</div>
+                </td>
+                <td style="font-size:0.85rem;">${r.checkInDate}<br><span style="color:var(--text-muted);">to</span><br>${r.checkOutDate}</td>
+                <td style="max-width:200px; font-size:0.75rem; color:var(--text-muted); font-style:italic;">
+                    ${r.specialRequests || '—'}
+                </td>
                 <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-outline" title="View Details"><i class="fas fa-eye"></i></button>
-                    ${r.status === 'PENDING' ? `<button class="btn btn-sm btn-primary" onclick="updateResStatus(${r.reservationId},'confirm')">Confirm</button>` : ''}
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn btn-sm btn-outline" title="View Details"><i class="fas fa-eye"></i></button>
+                        ${r.status === 'PENDING' ? `<button class="btn btn-sm btn-primary" style="padding:4px 8px; font-size:0.7rem;" onclick="updateResStatus(${r.reservationId},'confirm')">Confirm</button>` : ''}
+                    </div>
                 </td>
             </tr>
         `).join('');
@@ -507,7 +517,8 @@ function renderBillRows(list) {
         <tr>
             <td><strong>${b.billNumber}</strong></td>
             <td>
-                <div style="font-weight:500;">${b.reservation?.guest ? b.reservation.guest.firstName + ' ' + b.reservation.guest.lastName : '—'}</div>
+                <div style="font-weight:600;">${b.reservation?.guest ? b.reservation.guest.firstName + ' ' + b.reservation.guest.lastName : '—'}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);">${b.reservation?.guest ? b.reservation.guest.email + ' &bull; ' + b.reservation.guest.contactNumber : ''}</div>
                 <div style="font-size:0.72rem; color:var(--text-muted);">${b.reservation ? b.reservation.reservationNumber : 'Res ID: ' + b.reservationId}</div>
             </td>
             <td>
@@ -536,7 +547,8 @@ function showBillDetail(billId) {
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; margin-bottom: 2rem;">
             <span style="color: var(--text-muted);">Bill Number:</span> <span style="text-align: right; font-weight: 500;">${bill.billNumber}</span>
             <span style="color: var(--text-muted);">Reservation:</span> <span style="text-align: right;">${bill.reservation?.reservationNumber || 'N/A'}</span>
-            <span style="color: var(--text-muted);">Guest Name:</span> <span style="text-align: right;">${bill.reservation?.guest ? bill.reservation.guest.firstName + ' ' + bill.reservation.guest.lastName : 'N/A'}</span>
+            <span style="color: var(--text-muted);">Guest Name:</span> <span style="text-align: right; font-weight:600;">${bill.reservation?.guest ? bill.reservation.guest.firstName + ' ' + bill.reservation.guest.lastName : 'N/A'}</span>
+            <span style="color: var(--text-muted);">Contact:</span> <span style="text-align: right;">${bill.reservation?.guest ? bill.reservation.guest.email + ' • ' + bill.reservation.guest.contactNumber : 'N/A'}</span>
             <span style="color: var(--text-muted);">Room Number:</span> <span style="text-align: right;">Room ${bill.reservation?.room?.roomNumber || 'N/A'}</span>
         </div>
         <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
