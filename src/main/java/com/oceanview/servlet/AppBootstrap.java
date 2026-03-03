@@ -96,14 +96,24 @@ public class AppBootstrap implements ServletContextListener {
             }
 
             // Manual Migration: Ensure bills table has required columns and proper types
-            try (java.sql.Connection conn = com.oceanview.util.DatabaseConnection.getInstance().getConnection();
-                    java.sql.Statement st = conn.createStatement()) {
+            try (java.sql.Connection conn = com.oceanview.util.DatabaseConnection.getInstance().getConnection()) {
+                java.sql.DatabaseMetaData meta = conn.getMetaData();
+
                 // Add num_guests if missing
-                st.executeUpdate(
-                        "ALTER TABLE bills ADD COLUMN IF NOT EXISTS num_guests INT DEFAULT 1 AFTER num_nights");
+                try (java.sql.ResultSet rs = meta.getColumns(null, null, "bills", "num_guests")) {
+                    if (!rs.next()) {
+                        try (java.sql.Statement st = conn.createStatement()) {
+                            st.executeUpdate("ALTER TABLE bills ADD COLUMN num_guests INT DEFAULT 1 AFTER num_nights");
+                            log.info("Migration: Added column 'num_guests' to bills table.");
+                        }
+                    }
+                }
+
                 // Fix payment_method truncation (ENUM to VARCHAR)
-                st.executeUpdate("ALTER TABLE bills MODIFY COLUMN payment_method VARCHAR(50) NULL");
-                log.info("Database migrations (num_guests, payment_method) applied successfully.");
+                try (java.sql.Statement st = conn.createStatement()) {
+                    st.executeUpdate("ALTER TABLE bills MODIFY COLUMN payment_method VARCHAR(50) NULL");
+                    log.info("Migration: payment_method column modified to VARCHAR(50).");
+                }
             } catch (Exception e) {
                 log.warn("Migration notice: {}", e.getMessage());
             }
