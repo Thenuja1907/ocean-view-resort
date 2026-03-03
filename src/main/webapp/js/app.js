@@ -244,14 +244,17 @@ async function handleBooking(e) {
 
             // Switch to billing and ask to record payment
             showSection('billing');
+
+            // Reload all data to ensure we have the latest bills
+            await loadFullBilling();
+            await updateCounts();
+
             setTimeout(() => {
-                if (confirm("Would you like to record a payment for this reservation now?")) {
-                    fetch('api/bills').then(r => r.json()).then(data => {
-                        const newBill = (data.data || []).find(b => b.reservationId === res.data.reservationId);
-                        if (newBill) recordStaffPayment(newBill.billId);
-                    });
+                if (confirm("Reservation created! Would you like to record a payment for this now?")) {
+                    const newBill = (window._allBillsData || []).find(b => b.reservationId === res.data.reservationId);
+                    if (newBill) recordStaffPayment(newBill.billId);
                 }
-            }, 500);
+            }, 600);
         } else {
             alert('Error: ' + res.message);
         }
@@ -304,14 +307,15 @@ function showSection(sectionId) {
     titleEl.textContent = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
 
     // Update Quick Actions button based on context
-    const mainActionBtn = document.getElementById('btnQuickBooking');
     if (mainActionBtn) {
         if (sectionId === 'billing') {
             mainActionBtn.innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Pay bill';
-            mainActionBtn.className = 'btn btn-primary';
-            mainActionBtn.style.color = '';
+            mainActionBtn.style.background = '#FFC107';
+            mainActionBtn.style.color = '#000';
+            mainActionBtn.style.border = 'none';
             mainActionBtn.style.borderRadius = '50px';
             mainActionBtn.style.padding = '8px 24px';
+            mainActionBtn.style.fontWeight = '600';
             mainActionBtn.style.width = 'fit-content';
             mainActionBtn.onclick = () => {
                 alert('Select "Pay bill" on any pending invoice below to process payment.');
@@ -319,8 +323,11 @@ function showSection(sectionId) {
             };
         } else {
             mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> Quick Booking';
-            mainActionBtn.className = 'btn btn-primary';
-            mainActionBtn.style.color = ''; // Reset to default
+            mainActionBtn.style.background = ''; // Reset to default
+            mainActionBtn.style.color = '';
+            mainActionBtn.style.border = '';
+            mainActionBtn.style.borderRadius = '';
+            mainActionBtn.style.fontWeight = '';
             mainActionBtn.onclick = () => {
                 document.getElementById('bookingModal').classList.add('active');
                 prepareBookingForm();
@@ -480,7 +487,7 @@ function renderBillRows(list) {
         const statusClass = isPending ? 'status-pending' : 'status-confirmed';
         const statusLabel = isPending ? 'PAYABLE' : b.paymentStatus;
         const actionBtn = isPending
-            ? `<button class="btn btn-primary" style="padding:8px 20px; font-size:0.75rem; border-radius: 50px;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Pay bill</button>`
+            ? `<button class="btn" style="background:#FFC107; color:#000; border:none; padding:8px 20px; font-size:0.75rem; border-radius: 50px; font-weight:600;" onclick="recordStaffPayment(${b.billId})"><i class="fas fa-cash-register"></i> Pay bill</button>`
             : `<span style="color:#4caf50; font-size:0.8rem; font-weight:600;"><i class="fas fa-check-circle"></i> Settled</span>`;
 
         return `
@@ -497,10 +504,40 @@ function renderBillRows(list) {
             <td><strong>LKR ${b.totalAmount.toLocaleString()}</strong></td>
             <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
             <td>${b.paymentMethod || '—'}</td>
-            <td>${actionBtn}</td>
+            <td>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    ${actionBtn}
+                    <button class="btn btn-sm btn-outline" style="border-radius: 50px; padding: 5px 12px; font-size: 0.7rem;" onclick="showBillDetail(${b.billId})" title="View Receipt"><i class="fas fa-receipt"></i></button>
+                </div>
+            </td>
         </tr>
         `;
     }).join('');
+}
+
+function showBillDetail(billId) {
+    const bill = (window._allBillsData || []).find(b => b.billId === billId);
+    if (!bill) return;
+
+    const content = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; margin-bottom: 2rem;">
+            <span style="color: var(--text-muted);">Bill Number:</span> <span style="text-align: right; font-weight: 500;">${bill.billNumber}</span>
+            <span style="color: var(--text-muted);">Reservation:</span> <span style="text-align: right;">${bill.reservation?.reservationNumber || 'N/A'}</span>
+            <span style="color: var(--text-muted);">Guest Name:</span> <span style="text-align: right;">${bill.reservation?.guest ? bill.reservation.guest.firstName + ' ' + bill.reservation.guest.lastName : 'N/A'}</span>
+            <span style="color: var(--text-muted);">Room Number:</span> <span style="text-align: right;">Room ${bill.reservation?.room?.roomNumber || 'N/A'}</span>
+        </div>
+        <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Room Rate</span><span>LKR ${bill.roomRate.toLocaleString()}</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Stay Duration</span><span>${bill.numNights} Night(s)</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Number of Persons</span><span>× ${bill.numGuests || 1}</span></div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px; font-weight: 500;"><span>Base Charges</span><span>LKR ${bill.roomCharges.toLocaleString()}</span></div>
+            <div style="display: flex; justify-content: space-between; margin-top: 5px; color: #94a3b8; font-size: 0.8rem;"><span>Taxes (${bill.taxPercentage}%)</span><span>LKR ${bill.taxAmount.toLocaleString()}</span></div>
+            <div style="display: flex; justify-content: space-between; margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid var(--primary); font-size: 1.2rem; font-weight: 600; color: var(--primary);"><span>Total Amount</span><span>LKR ${bill.totalAmount.toLocaleString()}</span></div>
+            <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.9rem; color: #4caf50;"><span>Payment Status</span><span>${bill.paymentStatus} ${bill.paymentMethod ? '(' + bill.paymentMethod + ')' : ''}</span></div>
+        </div>
+    `;
+    document.getElementById('billDetailContent').innerHTML = content;
+    document.getElementById('billDetailModal').style.display = 'flex';
 }
 
 function filterBills(status) {
