@@ -7,459 +7,561 @@
     <title>Guest Portal - Ocean View Resort</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2ecc71;
-            --secondary: #27ae60;
-            --bg: #f4f7f6;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 0;
-            color: #2c3e50;
-        }
-
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .logo i {
-            color: var(--primary);
-            margin-right: 10px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: none;
-            font-weight: 500;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            border: 1px solid #ddd;
-            background: white;
-        }
-
-        .btn-outline:hover {
-            background: #f8f9fa;
-        }
-
-        .btn-danger {
-            background: #ff7675;
-            color: white;
-        }
-
-        .welcome-hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 3rem;
-            border-radius: 24px;
-            margin-bottom: 2rem;
-            box-shadow: 0 15px 35px rgba(46, 204, 113, 0.2);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 20px;
-            box-shadow: var(--card-shadow);
-            text-align: center;
-        }
-
-        .stat-card i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .stat-card .value {
-            font-size: 1.8rem;
-            font-weight: 600;
-            display: block;
-        }
-
-        .stat-card .label {
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            text-transform: uppercase;
-        }
-
-        .tab-nav {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 1rem;
-        }
-
-        .tab-link {
-            text-decoration: none;
-            color: #7f8c8d;
-            font-weight: 500;
-            padding: 5px 15px;
-            border-radius: 50px;
-            transition: 0.3s;
-        }
-
-        .tab-link.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .content-section {
-            display: none;
-        }
-
-        .content-section.active {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .data-list {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .card-item {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--card-shadow);
-        }
-
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-confirmed {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .status-pending {
-            background: #fff8e1;
-            color: #f39c12;
-        }
-
-        .status-cancelled {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .status-checkedin {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-sizing: border-box;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <div class="dashboard-container">
-        <header>
-            <div class="logo"><i class="fas fa-umbrella-beach"></i> Ocean View</div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-primary" onclick="openBookingModal()"><i class="fas fa-plus"></i> New
-                    Booking</button>
-                <button class="btn btn-outline" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-umbrella-beach"></i>
+                <span>Ocean View</span>
             </div>
-        </header>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" data-section="sectionOverview">
+                    <i class="fas fa-th-large"></i> <span>Overview</span>
+                </a>
+                <a href="#" class="nav-link" data-section="sectionReservations">
+                    <i class="fas fa-calendar-alt"></i> <span>My Stays</span>
+                </a>
+                <a href="#" class="nav-link" data-section="sectionBills">
+                    <i class="fas fa-file-invoice-dollar"></i> <span>Billing</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="details">
+                        <span class="name" id="sidebarGuestName"
+                            style="color: var(--primary); font-weight: 500;">Guest</span>
+                        <span class="role" style="font-size: 0.7rem; color: var(--text-muted); display: block;">Valued
+                            Guest</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn"
+                    style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
 
-        <div class="welcome-hero">
-            <h1>Aloha, <span id="guestName">Guest</span>!</h1>
-            <p>Ready for another tropical escape? View your bookings and bills below.</p>
-        </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1 id="pageTitle">Dashboard Overview</h1>
+                <div class="actions">
+                    <button class="btn" onclick="openBookingModal()"
+                        style="background: #FFC107; color: #000; font-weight: 600; border: none; border-radius: 50px; padding: 10px 25px;">
+                        <i class="fas fa-plus"></i> New Booking
+                    </button>
+                </div>
+            </header>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-calendar-check"></i>
-                <span class="value" id="countActive">0</span>
-                <span class="label">Upcoming Stays</span>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-history"></i>
-                <span class="value" id="countTotal">0</span>
-                <span class="label">Total Visits</span>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-wallet"></i>
-                <span class="value" id="countUnpaid">0</span>
-                <span class="label">Unpaid Bills</span>
-            </div>
-        </div>
+            <!-- Overview Section -->
+            <div id="sectionOverview" class="tab-content section-active">
+                <div class="card"
+                    style="margin-bottom: 3rem; background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(252,196,25,0.05) 100%);">
+                    <h2 style="color: var(--primary); font-size: 2.2rem; margin-bottom: 0.5rem;">Hello, <span
+                            id="welcomeName">Guest</span>!</h2>
+                    <p style="color: var(--text-muted); font-size: 1.1rem;">Your tropical paradise awaits. Manage your
+                        stay details below.</p>
+                </div>
 
-        <nav class="tab-nav">
-            <a href="#" class="tab-link active" data-section="sectionReservations">Reservations</a>
-            <a href="#" class="tab-link" data-section="sectionBills">Bills & Payments</a>
-        </nav>
+                <div class="stats-grid">
+                    <div class="stat-card"
+                        style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 15px; padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem;">
+                        <div
+                            style="background: rgba(252,196,25,0.2); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-calendar-alt" style="color: #FFC107; font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="label"
+                                style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 2px;">Upcoming
+                                Stays</span>
+                            <span class="value" id="countActive"
+                                style="display: block; font-size: 1.8rem; font-weight: 600; color: white;">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card"
+                        style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 15px; padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem;">
+                        <div
+                            style="background: rgba(252,196,25,0.2); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-history" style="color: #FFC107; font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="label"
+                                style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 2px;">Total
+                                Visits</span>
+                            <span class="value" id="countTotal"
+                                style="display: block; font-size: 1.8rem; font-weight: 600; color: white;">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card"
+                        style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 15px; padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem;">
+                        <div
+                            style="background: rgba(252,196,25,0.2); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-wallet" style="color: #FFC107; font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="label"
+                                style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 2px;">Unpaid
+                                Bills</span>
+                            <span class="value" id="countUnpaid"
+                                style="display: block; font-size: 1.8rem; font-weight: 600; color: white;">0</span>
+                        </div>
+                    </div>
+                </div>
 
-        <section id="sectionReservations" class="content-section active">
-            <div id="reservationsList" class="data-list">
-                <div class="card-item">Loading your paradise plans...</div>
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary);">Recent Plans</h3>
+                        <a href="#" onclick="showSection('sectionReservations')"
+                            style="color: var(--primary); font-size: 0.8rem; text-decoration: none;">View All</a>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Booking #</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                                <th>Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentReservationsTable">
+                            <tr>
+                                <td colspan="5" style="text-align:center;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </section>
 
-        <section id="sectionBills" class="content-section">
-            <div id="billsList" class="data-list">
-                <div class="card-item">Fetching your billing history...</div>
+            <!-- Stays Section -->
+            <div id="sectionReservations" class="tab-content" style="display:none;">
+                <div class="card">
+                    <h3 style="color: var(--primary); margin-bottom: 2rem;">My Reservations</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Booking #</th>
+                                <th>Room</th>
+                                <th>Dates</th>
+                                <th>Quantity</th>
+                                <th>Amount (LKR)</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allReservationsTable"></tbody>
+                    </table>
+                </div>
             </div>
-        </section>
+
+            <!-- Billing Section -->
+            <div id="sectionBills" class="tab-content" style="display:none;">
+                <div class="card">
+                    <h3 style="color: var(--primary); margin-bottom: 2rem;">Billing History</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Bill #</th>
+                                <th>Reservation / Room / Guests</th>
+                                <th>Total (LKR) / Breakdown</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Booking Modal -->
+    <!-- Modals -->
     <div class="modal" id="bookingModal">
         <div class="modal-content">
-            <h2 style="margin-top: 0;">Plan Your Getaway</h2>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2.5rem;">
+                <h2 style="color: var(--primary);">Plan Your Next Booking</h2>
+                <button onclick="closeBookingModal()"
+                    style="background: none; border: none; font-size: 2rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            </div>
             <form id="bookingForm">
-                <div class="form-group">
-                    <label>Select Room</label>
-                    <select id="roomSelect" required>
-                        <option value="">Checking availability...</option>
-                    </select>
+                <div style="margin-bottom: 1.5rem;">
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">Select
+                        Your Haven</label>
+                    <select id="roomSelect" required></select>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Check-in</label>
-                        <input type="date" id="checkIn" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Check-out</label>
-                        <input type="date" id="checkOut" required>
-                    </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div><label
+                            style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">Check-in
+                            Date</label><input type="date" id="checkIn" required></div>
+                    <div><label
+                            style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">Check-out
+                            Date</label><input type="date" id="checkOut" required></div>
                 </div>
-                <div class="form-group">
-                    <label>Guests</label>
+                <div style="margin-bottom: 2rem;">
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">Number
+                        of Guests</label>
                     <input type="number" id="numGuests" value="2" min="1" required>
                 </div>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1rem;">
-                    <button type="button" class="btn btn-outline" onclick="closeBookingModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Book Now</button>
-                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Confirm Booking</button>
             </form>
         </div>
     </div>
 
+    <!-- Bill Detail Modal -->
+    <div class="modal" id="billDetailModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center; background: rgba(0,0,0,0.85);">
+        <div class="modal-content"
+            style="width: 100%; max-width: 450px; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="color: var(--primary);"><i class="fas fa-file-invoice"></i> Bill Receipt</h2>
+                <button onclick="document.getElementById('billDetailModal').style.display='none'"
+                    style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            </div>
+            <div id="billDetailContent" style="color: white; line-height: 1.6;"></div>
+            <div
+                style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed rgba(255,255,255,0.1); text-align: center;">
+                <button class="btn btn-primary" style="width: 100%;"
+                    onclick="document.getElementById('billDetailModal').style.display='none'">Close Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="paymentModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1020; align-items: center; justify-content: center; background: rgba(0,0,0,0.9);">
+        <div class="modal-content"
+            style="width: 100%; max-width: 420px; text-align: center; border-radius: 15px; position:relative; background: #111827; border: 1px solid rgba(255,255,255,0.1); padding: 3rem 2rem;">
+            <button onclick="document.getElementById('paymentModal').style.display='none'"
+                style="position: absolute; right: 20px; top: 15px; background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            <h2 style="color: #FFC107; margin-bottom: 0.5rem; font-weight: 600;">Secure Checkout</h2>
+            <p style="margin-bottom: 2.5rem; font-size: 0.85rem; color: #9ca3af;">Choose your preferred payment method.
+            </p>
+
+            <div id="checkoutAmountDisplay"
+                style="margin-bottom: 2rem; font-size: 1.2rem; font-weight: 600; color: white; display: none;">
+                Total Due: <span style="color: #FFC107;">LKR <span id="paymentTotalValue">0</span></span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <button class="btn"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 15px; background: #0b0f1a; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; font-weight: 500; cursor: pointer; transition: all 0.3s;"
+                    onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0b0f1a'"
+                    onclick="processPayment('VISA')">
+                    <i class="fab fa-cc-visa" style="color: #fff; font-size: 1.2rem;"></i> VISA Card
+                </button>
+                <button class="btn"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 15px; background: #0b0f1a; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; font-weight: 500; cursor: pointer; transition: all 0.3s;"
+                    onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0b0f1a'"
+                    onclick="processPayment('MASTERCARD')">
+                    <i class="fab fa-cc-mastercard" style="color: #fff; font-size: 1.2rem;"></i> MASTERCARD
+                </button>
+                <button class="btn"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 15px; background: #0b0f1a; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; font-weight: 500; cursor: pointer; transition: all 0.3s;"
+                    onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0b0f1a'"
+                    onclick="processPayment('AMEX')">
+                    <i class="fab fa-cc-amex" style="color: #fff; font-size: 1.2rem;"></i> AMEX Card
+                </button>
+                <button class="btn"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 15px; background: #0b0f1a; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; font-weight: 500; cursor: pointer; transition: all 0.3s;"
+                    onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0b0f1a'"
+                    onclick="processPayment('CASH')">
+                    <i class="fas fa-money-bill-wave" style="color: #fff; font-size: 1.2rem;"></i> Cash Payment
+                </button>
+                <button class="btn"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 15px; background: #0b0f1a; color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; font-weight: 500; cursor: pointer; transition: all 0.3s;"
+                    onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0b0f1a'"
+                    onclick="processPayment('ONLINE')">
+                    <i class="fas fa-globe" style="font-size: 1.2rem; color: #fff;"></i> Paytm Online Pay
+                </button>
+                <div style="margin-top: 1.5rem;">
+                    <button class="btn"
+                        style="background: transparent; border: 1px dashed rgba(255,255,255,0.3); color: #9ca3af; font-size: 0.75rem; width: 100%; border-radius: 10px; padding: 12px; cursor: pointer;"
+                        onclick="processPayment('ONLINE', true)">
+                        Skip Gateway (Simulate Success)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Tab Navigation
-        document.querySelectorAll('.tab-link').forEach(link => {
-            link.onclick = (e) => {
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.tab-content');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
                 e.preventDefault();
-                document.querySelectorAll('.tab-link, .content-section').forEach(el => el.classList.remove('active'));
-                link.classList.add('active');
-                document.getElementById(link.dataset.section).classList.add('active');
-            };
+                showSection(link.dataset.section);
+            });
         });
+
+        function showSection(sectionId) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            sections.forEach(s => s.style.display = 'none');
+            const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+            const section = document.getElementById(sectionId);
+            if (section) section.style.display = 'block';
+            document.getElementById('pageTitle').textContent =
+                sectionId === 'sectionOverview' ? 'Dashboard Overview' :
+                    (sectionId === 'sectionReservations' ? 'My Stays' : 'Billing History');
+
+            // Handle Header Action Button
+            const mainActionBtn = document.querySelector('.content-header .actions .btn');
+            if (mainActionBtn) {
+                if (sectionId === 'sectionBills') {
+                    mainActionBtn.innerHTML = '<i class="fas fa-receipt"></i> Pay bill';
+                    mainActionBtn.className = 'btn btn-secondary';
+                    mainActionBtn.style.color = '#ffffff'; // Force white visibility
+                    mainActionBtn.style.borderRadius = '50px';
+                    mainActionBtn.style.width = 'fit-content';
+                    mainActionBtn.onclick = () => {
+                        alert('Select "Pay bill" on any pending invoice below to process payment.');
+                        document.getElementById('billsTable').scrollIntoView({ behavior: 'smooth' });
+                    };
+                } else {
+                    mainActionBtn.innerHTML = '<i class="fas fa-plus"></i> New Booking';
+                    mainActionBtn.style.background = '#FFC107';
+                    mainActionBtn.style.color = '#000';
+                    mainActionBtn.style.fontWeight = '600';
+                    mainActionBtn.style.border = 'none';
+                    mainActionBtn.style.borderRadius = '50px';
+                    mainActionBtn.style.width = 'fit-content';
+                    mainActionBtn.onclick = () => openBookingModal();
+                }
+            }
+        }
 
         document.getElementById('logoutBtn').onclick = async () => {
             await fetch('api/auth/logout');
             window.location.href = 'index.html';
         };
 
+        async function loadProfile() {
+            const resp = await fetch('api/auth/profile');
+            if (resp.status === 401) return window.location.href = 'user_login.html';
+            const data = await resp.json();
+            if (data.success) {
+                document.getElementById('sidebarGuestName').textContent = data.data.firstName;
+                document.getElementById('welcomeName').textContent = data.data.firstName;
+            }
+        }
+
         async function loadData() {
             try {
-                // Load Profile
-                const profResp = await fetch('api/auth/profile');
-                if (profResp.status === 401) return window.location.href = 'user_login.html';
-                const profData = await profResp.json();
-                if (profData.success) {
-                    const guest = profData.data;
-                    document.getElementById('guestName').textContent = guest.firstName;
-                }
-
-                // Load Reservations
                 const resResp = await fetch('api/reservations');
                 const resData = await resResp.json();
                 const reservations = resData.data || [];
-
-                // Filter Active vs Historical
                 const active = reservations.filter(r => r.status !== 'CANCELLED' && r.status !== 'CHECKED_OUT');
                 document.getElementById('countActive').textContent = active.length;
                 document.getElementById('countTotal').textContent = reservations.length;
 
-                renderReservations(reservations);
-
-                // Load Bills
                 const billResp = await fetch('api/bills');
                 const billData = await billResp.json();
                 const bills = billData.data || [];
-                const unpaid = bills.filter(b => b.paymentStatus === 'PENDING').length;
-                document.getElementById('countUnpaid').textContent = unpaid;
+                window.allBills = bills; // Store globally for cross-referencing
+
+                document.getElementById('countUnpaid').textContent = bills.filter(b => b.paymentStatus === 'PENDING').length;
 
                 renderBills(bills);
-
+                renderReservations(reservations);
             } catch (err) { console.error(err); }
         }
 
         function renderReservations(list) {
-            const container = document.getElementById('reservationsList');
+            const recentTable = document.getElementById('recentReservationsTable');
+            const allTable = document.getElementById('allReservationsTable');
             if (list.length === 0) {
-                container.innerHTML = '<div class="card-item" style="justify-content: center; opacity: 0.6;">No reservations found. Start your journey today!</div>';
+                recentTable.innerHTML = '<tr><td colspan="5" style="text-align:center;">No bookings found.</td></tr>';
+                allTable.innerHTML = '<tr><td colspan="7" style="text-align:center;">No bookings found.</td></tr>';
                 return;
             }
 
-            container.innerHTML = list.map(r => `
-                <div class="card-item">
-                    <div>
-                        <div style="font-weight: 600; font-size: 1.1rem; color: #2c3e50;">${r.reservationNumber}</div>
-                        <div style="font-size: 0.85rem; color: #7f8c8d;">${r.checkInDate} to ${r.checkOutDate}</div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 1.5rem;">
-                        <span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span>
-                        ${r.status === 'PENDING' || r.status === 'CONFIRMED' ?
-                    `<button class="btn btn-outline btn-danger" onclick="cancelBooking(${r.reservationId})" style="padding: 5px 10px; font-size: 0.75rem;">Cancel</button>` : ''}
-                    </div>
-                </div>
-            `).join('');
+            // Overview Table
+            recentTable.innerHTML = list.slice(0, 5).map(r => {
+                const bill = window.allBills?.find(b => b.reservationId == r.reservationId);
+                const isUnpaid = bill && bill.paymentStatus === 'PENDING';
+
+                return `
+                <tr>
+                    <td>
+                        <div style="font-weight:600;">${r.reservationNumber}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">${r.room ? r.room.roomType : '—'}</div>
+                    </td>
+                    <td>${r.checkInDate}</td>
+                    <td>${r.checkOutDate}</td>
+                    <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
+                    <td>
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            ${isUnpaid ? `
+                                <button class="btn" style="background:#0b1426; color:#fff; border:none; padding:8px 16px; font-size:0.7rem; width:fit-content; border-radius:50px; font-weight:500; display:flex; align-items:center; gap:8px;" onclick="payBill(${bill.billId})">
+                                    <i class="far fa-credit-card" style="color:#ffffff; font-size:0.8rem;"></i> Pay LKR ${bill.totalAmount.toLocaleString()}
+                                </button>
+                                <a href="#" style="font-size:0.7rem; color:var(--primary); text-decoration:none; margin-left:12px;" onclick="showBillDetail(${bill.billId}); event.preventDefault();">Breakdown Details</a>
+                            ` : (bill && bill.paymentStatus === 'PAID' ? '<span style="color:white; font-size:0.75rem;"><i class="fas fa-check-circle" style="color:#fff;"></i> Paid</span>' : (r.status === 'CANCELLED' ? '-' : `
+                                <button class="btn" style="background:#0b1426; color:#fff; border:none; padding:8px 16px; font-size:0.7rem; width:fit-content; border-radius:50px; font-weight:500; display:flex; align-items:center; gap:8px;" onclick="payBillDirectly(${r.reservationId})">
+                                    <i class="far fa-credit-card" style="color:#ffffff; font-size:0.8rem;"></i> Pay bill
+                                </button>
+                            `))}
+                            <div style="display:flex; gap:5px; margin-top:2px;">
+                                ${r.status === 'PENDING' ? `<button style="background:#28a745; color:white; padding:4px 12px; font-size:0.68rem; border:none; border-radius:50px; cursor:pointer;" onclick="updateResStatus(${r.reservationId},'confirm')">✓ Confirm</button>` : ''}
+                                ${(r.status === 'PENDING' || r.status === 'CONFIRMED') ? `<button style="background:#dc3545; color:white; padding:4px 12px; font-size:0.68rem; border:none; border-radius:50px; cursor:pointer;" onclick="cancelBooking(${r.reservationId})">✕ Cancel</button>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+
+            // Full Reservations Table (My Stays)
+            allTable.innerHTML = list.map(r => {
+                const bill = window.allBills?.find(b => b.reservationId == r.reservationId);
+                const amountDisp = bill ? `LKR ${bill.totalAmount.toLocaleString()}` : 'Processing...';
+
+                return `
+                <tr>
+                    <td><strong>${r.reservationNumber}</strong></td>
+                    <td>${r.room ? 'Room ' + r.room.roomNumber : 'Room ID: ' + r.roomId}</td>
+                    <td>${r.checkInDate} to ${r.checkOutDate}</td>
+                    <td>${r.numGuests} Guest(s)</td>
+                    <td><strong>${amountDisp}</strong></td>
+                    <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
+                    <td>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            ${r.status === 'PENDING' ? `<button class="btn" style="background:#28a745; color:white; padding:6px 15px; font-size:0.7rem; border-radius: 50px; border:none;" onclick="updateResStatus(${r.reservationId}, 'confirm')">Confirm</button>` : ''}
+                            ${(r.status === 'PENDING' || r.status === 'CONFIRMED') ? `<button class="btn" style="background:#dc3545; color:white; padding:6px 15px; font-size:0.7rem; border-radius: 50px; border:none;" onclick="cancelBooking(${r.reservationId})">Cancel</button>` : ''}
+                            ${bill ? `<button class="btn btn-sm" style="background:rgba(255,255,255,0.1); color:white; border-radius: 5px; width:30px; height:30px; display:flex; align-items:center; justify-content:center; padding:0;" onclick="showBillDetail(${bill.billId})" title="View Details">B</button>` : ''}
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
         }
 
         function renderBills(list) {
-            const container = document.getElementById('billsList');
-            if (list.length === 0) {
-                container.innerHTML = '<div class="card-item" style="justify-content: center; opacity: 0.6;">No billing records found.</div>';
-                return;
-            }
-
-            container.innerHTML = list.map(b => `
-                <div class="card-item">
-                    <div>
-                        <div style="font-weight: 600;">Bill #${b.billNumber}</div>
-                        <div style="font-size: 0.85rem; color: #7f8c8d;">Total: LKR ${b.totalAmount.toFixed(2)}</div>
-                    </div>
-                    <div>
-                        <span class="status-badge status-${b.paymentStatus.toLowerCase()}">${b.paymentStatus}</span>
-                    </div>
-                </div>
-            `).join('');
+            const table = document.getElementById('billsTable');
+            if (list.length === 0) { table.innerHTML = '<tr><td colspan="5" style="text-align:center;">No billing history.</td></tr>'; return; }
+            table.innerHTML = list.map(b => {
+                const isPending = b.paymentStatus === 'PENDING';
+                const statusLabel = isPending ? 'PAYABLE' : b.paymentStatus;
+                return `
+                <tr>
+                    <td>${b.billNumber}</td>
+                    <td>
+                        <div style="font-weight: 500;">${b.reservation ? b.reservation.reservationNumber : 'Res ID: ' + b.reservationId}</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted);">${b.reservation?.room ? 'Room ' + b.reservation.room.roomNumber : ''} (${b.numGuests || 1} Guests)</div>
+                    </td>
+                    <td>
+                         <div style="font-weight: 600;">LKR ${b.totalAmount.toLocaleString()}</div>
+                         <a href="#" style="font-size: 0.7rem; color: #fcbc05; text-decoration:none;" onclick="showBillDetail(${b.billId}); event.preventDefault();">View Receipt</a>
+                    </td>
+                    <td><span class="status-badge status-${b.paymentStatus.toLowerCase()}">${statusLabel}</span></td>
+                    <td>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            ${b.paymentStatus === 'PENDING' ? `<button class="btn" style="background:#0b1426; color:#fff; border:none; padding:6px 20px; font-size:0.7rem; border-radius: 50px; font-weight:500;" onclick="payBill(${b.billId})">Pay bill</button>` : '<span style="color:var(--text-muted); font-size:0.75rem;">-</span>'}
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
         }
 
-        async function cancelBooking(id) {
-            if (!confirm('Are you sure you want to cancel this booking?')) return;
-            const resp = await fetch(`api/reservations/${id}/cancel`, { method: 'PUT' });
-            if (resp.ok) {
-                alert('Booking cancelled successfully.');
+        let _currentBillId = null;
+
+        function payBill(billId) {
+            _currentBillId = billId;
+            const bill = window.allBills?.find(b => b.billId == billId);
+            if (bill) {
+                document.getElementById('checkoutAmountDisplay').style.display = 'block';
+                document.getElementById('paymentTotalValue').textContent = bill.totalAmount.toLocaleString();
+            }
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        async function payBillDirectly(resId) {
+            let bill = window.allBills?.find(b => b.reservationId == resId);
+            if (!bill) {
+                try {
+                    const resp = await fetch(`api/bills/reservation/${resId}`);
+                    const res = await resp.json();
+                    if (res.success && res.data) {
+                        bill = res.data;
+                        if (!window.allBills) window.allBills = [];
+                        window.allBills.push(bill);
+                    }
+                } catch (e) { console.error("Error fetching bill directly", e); }
+            }
+            if (bill) {
+                payBill(bill.billId);
+            } else {
+                alert('Invoice is still processing. Please refresh in a few seconds.');
                 loadData();
             }
         }
 
-        // Modal Logic
-        function openBookingModal() {
-            document.getElementById('bookingModal').classList.add('active');
-            loadRooms();
-        }
-        function closeBookingModal() {
-            document.getElementById('bookingModal').classList.remove('active');
+        async function processPayment(method, simulate = false) {
+            if (method === 'ONLINE') {
+                const url = simulate ? `api/payment/initiate?billId=${_currentBillId}&simulate=true` : `api/payment/initiate?billId=${_currentBillId}`;
+                window.location.href = url;
+            } else {
+                try {
+                    const resp = await fetch(`api/bills/${_currentBillId}?method=${method}`, { method: 'PUT' });
+                    const res = await resp.json();
+                    if (res.success) {
+                        alert(`Successfully paid via ${method}!`);
+                        document.getElementById('paymentModal').style.display = 'none';
+                        loadData();
+                    } else { alert('Error: ' + res.message); }
+                } catch (err) { alert('Payment failed'); }
+            }
         }
 
-        async function loadRooms() {
+        function showBillDetail(billId) {
+            const bill = window.allBills.find(b => b.billId === billId);
+            if (!bill) return;
+            const content = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; margin-bottom: 2rem;">
+                    <span style="color: var(--text-muted);">Bill Number:</span> <span style="text-align: right; font-weight: 500;">${bill.billNumber}</span>
+                    <span style="color: var(--text-muted);">Reservation:</span> <span style="text-align: right;">${bill.reservation?.reservationNumber || 'N/A'}</span>
+                    <span style="color: var(--text-muted);">Room Number:</span> <span style="text-align: right;">Room ${bill.reservation?.room?.roomNumber || 'N/A'}</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Room Rate (per head)</span><span>LKR ${bill.roomRate.toLocaleString()}</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Stay Duration</span><span>${bill.numNights} Night(s)</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);"><span>Number of Persons</span><span>× ${bill.numGuests || 1}</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px; font-weight: 500;"><span>Base Room Charges</span><span>LKR ${bill.roomCharges.toLocaleString()}</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px; color: #94a3b8; font-size: 0.8rem;"><span>Taxes (${bill.taxPercentage}%)</span><span>LKR ${bill.taxAmount.toLocaleString()}</span></div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid var(--primary); font-size: 1.2rem; font-weight: 600; color: var(--primary);"><span>Total Due</span><span>LKR ${bill.totalAmount.toLocaleString()}</span></div>
+                </div>
+            `;
+            document.getElementById('billDetailContent').innerHTML = content;
+            document.getElementById('billDetailModal').style.display = 'flex';
+        }
+
+        async function updateResStatus(id, action) {
+            const resp = await fetch(`api/reservations/${id}/${action}`, { method: 'PUT' });
+            if (resp.ok) { alert('Status updated successfully.'); loadData(); }
+        }
+
+        async function cancelBooking(id) {
+            if (!confirm('Cancel this booking?')) return;
+            const resp = await fetch(`api/reservations/${id}/cancel`, { method: 'PUT' });
+            if (resp.ok) { alert('Booking cancelled.'); loadData(); }
+        }
+
+        function openBookingModal() { document.getElementById('bookingModal').classList.add('active'); loadAvailableRooms(); }
+        function closeBookingModal() { document.getElementById('bookingModal').classList.remove('active'); }
+
+        async function loadAvailableRooms() {
             const resp = await fetch('api/rooms/available');
             const data = await resp.json();
-            const select = document.getElementById('roomSelect');
-            select.innerHTML = (data.data || []).map(r =>
+            document.getElementById('roomSelect').innerHTML = (data.data || []).map(r =>
                 `<option value="${r.roomId}">${r.roomNumber} - ${r.roomType} (LKR ${r.ratePerNight})</option>`
             ).join('');
         }
@@ -473,23 +575,27 @@
             formData.append('numGuests', document.getElementById('numGuests').value);
             formData.append('specialRequests', 'Guest Self-Booking');
 
-            const resp = await fetch('api/reservations', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData
-            });
+            try {
+                const resp = await fetch('api/reservations', { method: 'POST', body: formData });
+                const result = await resp.json();
 
-            if (resp.ok) {
-                alert('Resort Booking Successful!');
-                closeBookingModal();
-                loadData();
-            } else {
-                const data = await resp.json();
-                alert('Error: ' + data.message);
+                if (result.success) {
+                    closeBookingModal();
+                    await loadData();
+
+                    const newBill = window.allBills?.find(b => b.reservationId === result.data.reservationId);
+                    if (newBill) {
+                        payBill(newBill.billId);
+                    }
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (err) {
+                alert('Network error during booking.');
             }
         };
 
-        loadData();
+        loadProfile(); loadData();
     </script>
 </body>
 

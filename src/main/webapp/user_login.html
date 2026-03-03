@@ -4,225 +4,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guest Portal Login - Ocean View Resort</title>
+    <title>Guest Portal - Ocean View Resort</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .login-card {
-            width: 100%;
-            max-width: 440px;
-            padding: 4rem 3rem;
-            text-align: center;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 0.5rem;
-        }
-
-        .logo-container i {
-            font-size: 2.5rem;
-            color: var(--primary);
-        }
-
-        .logo-container span {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: var(--primary);
-            letter-spacing: 0.5px;
-        }
-
-        .subtitle {
-            font-size: 0.85rem;
-            color: var(--text-white);
-            letter-spacing: 3px;
-            opacity: 0.8;
-            margin-bottom: 3.5rem;
-            text-transform: uppercase;
-        }
-
-        .form-group {
-            margin-bottom: 2rem;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.8rem;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--text-white);
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 1.1rem;
-        }
-
-        input {
-            padding-left: 3.5rem !important;
-        }
-
-        .register-link {
-            margin-top: 2.5rem;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .register-link a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .footer-text {
-            margin-top: 3.5rem;
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .error-msg {
-            color: #ff6b6b;
-            font-size: 0.9rem;
-            margin-top: 1.5rem;
-            display: none;
-        }
-
-        /* Modal specific styling */
-        .modal-content {
-            padding: 3rem;
-            color: white;
-            max-width: 600px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .full-w {
-            grid-column: span 2;
-        }
-    </style>
 </head>
 
-<body>
-    <div class="glass-card login-card">
-        <div class="logo-container">
-            <i class="fas fa-umbrella-beach"></i>
-            <span>Ocean View</span>
-        </div>
-        <div class="subtitle">GUEST PORTAL</div>
+<body class="auth-page">
+    <div class="auth-container">
+        <!-- Login Panel (Left) -->
+        <div class="auth-left">
+            <div class="glass-card auth-card">
+                <div class="logo-container">
+                    <i class="fas fa-umbrella-beach"></i>
+                    <span>Ocean View</span>
+                </div>
+                <h2>Guest Portal</h2>
+                <p class="subtitle">Welcome back to paradise</p>
 
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Email Address</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" placeholder="Enter registration email" required>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <span class="label-small">Email Address</span>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" placeholder="Enter registration email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span class="label-small">Password</span>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="Enter password" required>
+                        </div>
+                    </div>
+                    <div class="error-msg" id="loginError"></div>
+                    <button type="submit" class="btn btn-primary full">Sign In</button>
+                </form>
+
+                <div class="footer-text">
+                    &copy; 2026 Ocean View Resort Management System
                 </div>
             </div>
-            <div class="form-group">
-                <label>Password</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="Enter password" required>
-                </div>
+        </div>
+
+        <!-- Registration Panel (Right) -->
+        <div class="auth-right">
+            <div class="glass-card auth-card" style="text-align: left;">
+                <h2 style="text-align: center;">Guest Registration</h2>
+                <p class="subtitle" style="text-align: center;">Join our exclusive resort community</p>
+
+                <form id="registerForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <span class="label-small">First Name</span>
+                            <input type="text" id="regFirst" required>
+                        </div>
+                        <div class="form-group">
+                            <span class="label-small">Last Name</span>
+                            <input type="text" id="regLast" required>
+                        </div>
+                        <div class="form-group full-w">
+                            <span class="label-small">Email Address</span>
+                            <input type="email" id="regEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <span class="label-small">Password</span>
+                            <input type="password" id="regPass" required>
+                        </div>
+                        <div class="form-group">
+                            <span class="label-small">Contact Number</span>
+                            <input type="text" id="regPhone" required>
+                        </div>
+                        <div class="form-group full-w">
+                            <span class="label-small">Home Address</span>
+                            <textarea id="regAddr" required style="height: 60px;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <span class="label-small">ID Type</span>
+                            <select id="regIdType">
+                                <option value="NIC">NIC</option>
+                                <option value="PASSPORT">Passport</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <span class="label-small">ID Number</span>
+                            <input type="text" id="regIdNum" required>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="button" class="btn"
+                            style="background: rgba(255,255,255,0.1); color: white; flex: 1;"
+                            onclick="window.location.href='index.html'">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="flex: 2;">Register & Join</button>
+                    </div>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary full-width" style="width: 100%;">Sign In</button>
-            <div class="error-msg" id="loginError">Invalid credentials.</div>
-        </form>
-
-        <div class="register-link">
-            New to Ocean View? <a href="#" id="openRegister">Create an account</a>
-        </div>
-
-        <div class="footer-text">
-            &copy; 2026 Ocean View Resort Management System
-        </div>
-    </div>
-
-    <!-- Registration Modal -->
-    <div class="modal" id="registerModal">
-        <div class="modal-content">
-            <h2 style="margin-top: 0; color: var(--primary); margin-bottom: 2rem;">Guest Registration</h2>
-
-            <form id="registerForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" id="regFirst" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Last Name</label>
-                        <input type="text" id="regLast" required>
-                    </div>
-                    <div class="form-group full-w">
-                        <label>Email Address</label>
-                        <input type="email" id="regEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="regPass" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Contact Number</label>
-                        <input type="text" id="regPhone" required>
-                    </div>
-                    <div class="form-group full-w">
-                        <label>Home Address</label>
-                        <textarea id="regAddr" required style="height: 80px;"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>ID Type</label>
-                        <select id="regIdType">
-                            <option value="NIC">NIC</option>
-                            <option value="PASSPORT">Passport</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>ID Number</label>
-                        <input type="text" id="regIdNum" required>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 15px; margin-top: 2rem;">
-                    <button type="button" class="btn" style="background: rgba(255,255,255,0.1); color: white; flex: 1;"
-                        onclick="document.getElementById('registerModal').classList.remove('active')">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="flex: 2;">Register & Join</button>
-                </div>
-                <div class="error-msg" id="regError"></div>
-            </form>
         </div>
     </div>
 
     <script>
-        const regModal = document.getElementById('registerModal');
-        const openBtn = document.getElementById('openRegister');
-
-        openBtn.onclick = (e) => { e.preventDefault(); regModal.classList.add('active'); };
-
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
@@ -251,9 +131,6 @@
 
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const errorMsg = document.getElementById('regError');
-            errorMsg.style.display = 'none';
-
             const formData = new URLSearchParams();
             formData.append('firstName', document.getElementById('regFirst').value);
             formData.append('lastName', document.getElementById('regLast').value);
@@ -274,18 +151,14 @@
                 const data = await response.json();
                 if (data.success) {
                     alert('Registration Successful! Welcome to Ocean View.');
-                    window.location.href = 'user_login.html';
+                    window.location.href = 'user_dashboard.html';
                 } else {
-                    errorMsg.textContent = data.message;
-                    errorMsg.style.display = 'block';
+                    alert('Error: ' + data.message);
                 }
             } catch (err) {
-                errorMsg.textContent = 'Registration failed.';
-                errorMsg.style.display = 'block';
+                alert('Registration failed.');
             }
         });
-
-        if (window.location.search.includes('register')) regModal.classList.add('active');
     </script>
 </body>
 

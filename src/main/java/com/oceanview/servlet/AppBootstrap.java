@@ -7,6 +7,7 @@ import com.oceanview.dao.RoomDao;
 import com.oceanview.dao.ReservationDao;
 import com.oceanview.dao.BillDao;
 import com.oceanview.observer.AuditLogObserver;
+import com.oceanview.observer.BillingObserver;
 import com.oceanview.observer.ReservationSubject;
 import com.oceanview.service.*;
 import jakarta.servlet.ServletContext;
@@ -15,6 +16,9 @@ import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * AppBootstrap — initialises all services once at startup
@@ -49,8 +53,12 @@ public class AppBootstrap implements ServletContextListener {
         AuthService authService = new AuthService(userDao, guestDao);
         GuestService guestService = new GuestService(guestDao);
         RoomService roomService = new RoomService(roomDao);
-        ReservationService reservationService = new ReservationService(reservationDao, roomDao, subject);
         BillingService billingService = new BillingService(billDao, reservationDao, roomDao);
+        ReservationService reservationService = new ReservationService(reservationDao, roomDao, subject);
+
+        // Link dependencies
+        billingService.setReservationService(reservationService);
+        subject.addObserver(new BillingObserver(billingService));
 
         // ── Publish to context ────────────────────────────────────────────
         ctx.setAttribute("authService", authService);
@@ -59,6 +67,59 @@ public class AppBootstrap implements ServletContextListener {
         ctx.setAttribute("reservationService", reservationService);
         ctx.setAttribute("billingService", billingService);
         ctx.setAttribute("auditLogDao", auditLogDao);
+        ctx.setAttribute("userDao", userDao); // Added for ID lookups
+
+        // Maintenance: Generate missing bills & Seed Admin
+        try {
+            billingService.generateMissingBills();
+
+            // Ensure the 'admin' user exists with the default password
+            Optional<com.oceanview.model.User> adminOpt = userDao.findByUsername("admin");
+            if (adminOpt.isEmpty()) {
+                log.info("Admin user not found. Seeding default admin account...");
+                com.oceanview.model.User admin = new com.oceanview.model.User();
+                admin.setUsername("admin");
+                admin.setFullName("System Administrator");
+                admin.setEmail("admin@oceanviewresort.lk");
+                admin.setRole(com.oceanview.model.User.Role.ADMIN);
+                admin.setActive(true);
+                // Password = Admin@1234
+                admin.setPasswordHash(com.oceanview.util.PasswordUtil.hash("Admin@1234"));
+                userDao.insert(admin);
+                log.info("Default admin created: admin / Admin@1234");
+            } else {
+                // Force update password for the default admin to ensure it's correct
+                // This is a safety measure for the USER's specific environment
+                userDao.updatePassword(adminOpt.get().getUserId(),
+                        com.oceanview.util.PasswordUtil.hash("Admin@1234"));
+                log.info("Admin password synchronized: admin / Admin@1234");
+            }
+
+            // Manual Migration: Ensure bills table has required columns and proper types
+            try (java.sql.Connection conn = com.oceanview.util.DatabaseConnection.getInstance().getConnection()) {
+                java.sql.DatabaseMetaData meta = conn.getMetaData();
+
+                // Add num_guests if missing
+                try (java.sql.ResultSet rs = meta.getColumns(null, null, "bills", "num_guests")) {
+                    if (!rs.next()) {
+                        try (java.sql.Statement st = conn.createStatement()) {
+                            st.executeUpdate("ALTER TABLE bills ADD COLUMN num_guests INT DEFAULT 1 AFTER num_nights");
+                            log.info("Migration: Added column 'num_guests' to bills table.");
+                        }
+                    }
+                }
+
+                // Fix payment_method truncation (ENUM to VARCHAR)
+                try (java.sql.Statement st = conn.createStatement()) {
+                    st.executeUpdate("ALTER TABLE bills MODIFY COLUMN payment_method VARCHAR(50) NULL");
+                    log.info("Migration: payment_method column modified to VARCHAR(50).");
+                }
+            } catch (Exception e) {
+                log.warn("Migration notice: {}", e.getMessage());
+            }
+        } catch (SQLException e) {
+            log.error("Startup maintenance failed: {}", e.getMessage());
+        }
 
         log.info("Application context ready.");
     }

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - Ocean View Resort</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-umbrella-beach"></i>
+                <span>Ocean View</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" data-section="overview">
+                    <i class="fas fa-th-large"></i> <span>Overview</span>
+                </a>
+                <a href="#" class="nav-link" data-section="rooms">
+                    <i class="fas fa-bed"></i> <span>Rooms</span>
+                </a>
+                <a href="#" class="nav-link" data-section="guests">
+                    <i class="fas fa-users"></i> <span>Guests</span>
+                </a>
+                <a href="#" class="nav-link" data-section="reservations">
+                    <i class="fas fa-calendar-check"></i> <span>Reservations</span>
+                </a>
+                <a href="#" class="nav-link" data-section="billing">
+                    <i class="fas fa-file-invoice-dollar"></i> <span>Billing</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=fcc419&color=000428" alt="User"
+                        style="width: 40px; border-radius: 50%; border: 2px solid var(--primary);">
+                    <div class="details" style="margin-left: 10px;">
+                        <span class="name" id="userName"
+                            style="display: block; font-size: 0.9rem; font-weight: 500;">User</span>
+                        <span class="role" id="userRole"
+                            style="display: block; font-size: 0.7rem; color: var(--text-muted);">Staff</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn"
+                    style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1 id="sectionTitle">Dashboard Overview</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="btnQuickBooking">
+                        <i class="fas fa-plus"></i> Quick Booking
+                    </button>
+                </div>
+            </header>
+
+            <div id="contentArea">
+                <!-- Dashboard Overview Section -->
+                <section id="overview" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-door-open"></i>
+                            <div class="stat-info">
+                                <span class="label">Available Rooms</span>
+                                <span class="value" id="countAvailable">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-user-check"></i>
+                            <div class="stat-info">
+                                <span class="label">Today's Check-ins</span>
+                                <span class="value" id="countCheckins">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-calendar-day"></i>
+                            <div class="stat-info">
+                                <span class="label">Active Reservations</span>
+                                <span class="value" id="countActive">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-wallet"></i>
+                            <div class="stat-info">
+                                <span class="label">Pending Payments</span>
+                                <span class="value" id="countPendingBills">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                        <div class="card">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                                <h3 style="color: var(--primary);">Recent Reservations</h3>
+                                <a href="#" onclick="showSection('reservations')"
+                                    style="color: var(--primary); font-size: 0.8rem; text-decoration: none;">View
+                                    All</a>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Res #</th>
+                                        <th>Guest</th>
+                                        <th>Room</th>
+                                        <th>Dates</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentReservationsBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="card">
+                            <h3 style="color: var(--primary); margin-bottom: 2rem;">Room Availability</h3>
+                            <div class="room-grid" id="roomStatusGrid"
+                                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 1rem;">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Guests Section -->
+                <section id="guests" class="content-section">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">Guest Records</h3>
+                            <button class="btn btn-primary btn-sm" id="btnAddGuest">
+                                <i class="fas fa-user-plus"></i> Add Guest
+                            </button>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Contact</th>
+                                    <th>ID Number</th>
+                                    <th>Nationality</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guestListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Rooms Section -->
+                <section id="rooms" class="content-section">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">Room Inventory</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Room Number</th>
+                                    <th>Type</th>
+                                    <th>Rate (LKR)</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roomListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Reservations Section -->
+                <section id="reservations" class="content-section">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">All Reservations</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Res #</th>
+                                    <th>Guest</th>
+                                    <th>Room</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Billing Section -->
+                <section id="billing" class="content-section">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">Billing & Payments</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Bill #</th>
+                                    <th>Guest / Reservation</th>
+                                    <th>Room</th>
+                                    <th>Total (LKR)</th>
+                                    <th>Status</th>
+                                    <th>Method</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="bookingModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="width: 100%; max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2.5rem;">
+                <h2 style="color: var(--primary);">New Reservation</h2>
+                <button class="close-modal"
+                    style="background: none; border: none; font-size: 2rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            </div>
+            <form id="bookingForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div><label>Select Guest</label><select id="guestSelect" required></select></div>
+                    <div><label>Select Room</label><select id="roomSelect" required></select></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div><label>Check-in Date</label><input type="date" id="checkInDate" required></div>
+                    <div><label>Check-out Date</label><input type="date" id="checkOutDate" required></div>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label>Number of Guests</label>
+                    <input type="number" id="numGuests" min="1" value="2" required>
+                </div>
+                <div style="margin-bottom: 2rem;">
+                    <label>Special Requests</label>
+                    <textarea id="specialRequests" style="height: 100px;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Confirm Reservation</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="guestModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="width: 100%; max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2.5rem;">
+                <h2 style="color: var(--primary);">Add New Guest</h2>
+                <button id="btnCloseGuestModal"
+                    style="background: none; border: none; font-size: 2rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            </div>
+            <form id="guestForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div><label>First Name</label><input type="text" id="guestFirst" required></div>
+                    <div><label>Last Name</label><input type="text" id="guestLast" required></div>
+                </div>
+                <div style="margin-bottom: 1.5rem;"><label>Email Address</label><input type="email" id="guestEmail"
+                        required></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div><label>Contact Number</label><input type="text" id="guestPhone" required></div>
+                    <div><label>Nationality</label><input type="text" id="guestNationality" value="Sri Lankan" required>
+                    </div>
+                </div>
+                <div style="margin-bottom: 1.5rem;"><label>Home Address</label><textarea id="guestAddress" required
+                        style="height: 60px;"></textarea></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div><label>ID Type</label><select id="guestIdType">
+                            <option value="NIC">NIC</option>
+                            <option value="PASSPORT">Passport</option>
+                        </select></div>
+                    <div><label>ID Number</label><input type="text" id="guestIdNum" required></div>
+                </div>
+                <div style="margin-bottom: 2rem;"><label>System Password</label><input type="password"
+                        id="guestPassword" value="Guest@123"></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Guest Record</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center; background: rgba(0,0,0,0.8);">
+        <div class="modal-content"
+            style="width: 100%; max-width: 400px; text-align: center; border-radius: 15px; position:relative;">
+            <button id="btnClosePaymentModal"
+                style="position: absolute; right: 20px; top: 15px; background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            <h2 style="color: var(--primary); margin-bottom: 0.5rem;">Settle Bill</h2>
+            <p style="margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-muted);">Select method to complete
+                payment.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    onclick="processSettle('VISA')">
+                    <i class="fab fa-cc-visa" style="color: #1a1aff; font-size: 1.2rem;"></i> VISA Card
+                </button>
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    onclick="processSettle('MASTERCARD')">
+                    <i class="fab fa-cc-mastercard" style="color: #eb001b; font-size: 1.2rem;"></i> MASTERCARD
+                </button>
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    onclick="processSettle('AMEX')">
+                    <i class="fab fa-cc-amex" style="color: #007bc1; font-size: 1.2rem;"></i> AMEX Card
+                </button>
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    onclick="processSettle('CASH')">
+                    <i class="fas fa-money-bill-wave" style="color: #4caf50; font-size: 1.2rem;"></i> CASH Payment
+                </button>
+            </div>
+        </div>
+        <!-- Bill Detail Modal -->
+        <div class="modal" id="billDetailModal"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center; background: rgba(0,0,0,0.85);">
+            <div class="modal-content"
+                style="width: 100%; max-width: 450px; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2 style="color: var(--primary);"><i class="fas fa-file-invoice"></i> Bill Receipt</h2>
+                    <button onclick="document.getElementById('billDetailModal').style.display='none'"
+                        style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+                </div>
+                <div id="billDetailContent" style="color: white; line-height: 1.6;"></div>
+                <div
+                    style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed rgba(255,255,255,0.1); text-align: center;">
+                    <button class="btn btn-primary" style="width: 100%;"
+                        onclick="document.getElementById('billDetailModal').style.display='none'">Close Receipt</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="js/app.js"></script>
+        <style>
+            .content-section {
+                display: none;
+            }
+
+            .content-section.active {
+                display: block;
+            }
+
+            .modal.active {
+                display: flex !important;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-size: 0.85rem;
+                color: var(--text-muted);
+            }
+        </style>
+</body>
+
+</html>

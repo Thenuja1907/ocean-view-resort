@@ -46,7 +46,11 @@ public class ReservationDao {
     // ── READ ────────────────────────────────────────────────────────────────
 
     public Optional<Reservation> findById(int id) throws SQLException {
-        String sql = "SELECT * FROM reservations WHERE reservation_id = ?";
+        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number, rm.room_type " +
+                "FROM reservations r " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE r.reservation_id = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -59,7 +63,11 @@ public class ReservationDao {
     }
 
     public Optional<Reservation> findByNumber(String number) throws SQLException {
-        String sql = "SELECT * FROM reservations WHERE reservation_number = ?";
+        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number " +
+                "FROM reservations r " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE r.reservation_number = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, number);
@@ -72,7 +80,11 @@ public class ReservationDao {
     }
 
     public List<Reservation> findAll() throws SQLException {
-        String sql = "SELECT * FROM reservations ORDER BY created_at DESC";
+        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number " +
+                "FROM reservations r " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
+                "ORDER BY r.created_at DESC";
         List<Reservation> list = new ArrayList<>();
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql);
@@ -86,7 +98,11 @@ public class ReservationDao {
     }
 
     public List<Reservation> findByStatus(Status status) throws SQLException {
-        String sql = "SELECT * FROM reservations WHERE status = ? ORDER BY check_in_date";
+        String sql = "SELECT r.*, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number " +
+                "FROM reservations r " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE r.status = ? ORDER BY r.check_in_date";
         List<Reservation> list = new ArrayList<>();
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -179,6 +195,27 @@ public class ReservationDao {
         Timestamp ua = rs.getTimestamp("updated_at");
         if (ua != null)
             r.setUpdatedAt(ua.toLocalDateTime());
+
+        // Attempt to populate Guest/Room objects if columns exist in projection
+        try {
+            com.oceanview.model.Guest g = new com.oceanview.model.Guest();
+            g.setGuestId(r.getGuestId());
+            g.setFirstName(rs.getString("first_name"));
+            g.setLastName(rs.getString("last_name"));
+            try {
+                g.setEmail(rs.getString("email"));
+                g.setContactNumber(rs.getString("contact_number"));
+            } catch (SQLException ignored) {
+            }
+            r.setGuest(g);
+
+            com.oceanview.model.Room rm = new com.oceanview.model.Room();
+            rm.setRoomId(r.getRoomId());
+            rm.setRoomNumber(rs.getString("room_number"));
+            r.setRoom(rm);
+        } catch (SQLException ignored) {
+            // Columns not in result set (e.g. from findById with *)
+        }
         return r;
     }
 }

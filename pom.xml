@@ -15,13 +15,21 @@
     <description>Advanced Programming (CIS6003) - Comprehensive hotel reservation system</description>
 
     <properties>
-        <maven.compiler.source>20</maven.compiler.source>
-        <maven.compiler.target>20</maven.compiler.target>
-        <maven.compiler.release>20</maven.compiler.release>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.0</junit.version>
         <mockito.version>5.6.0</mockito.version>
     </properties>
+    
+    <!-- Use Eclipse releases repository for Jetty 12 artifacts and fall back to Central -->
+    <repositories>
+        <repository>
+            <id>eclipse-releases</id>
+            <url>https://repo.eclipse.org/content/groups/releases/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <!-- Servlet API (provided by Tomcat) -->
@@ -105,6 +113,15 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Paytm Payment SDK (using Artifactory) -->
+        <dependency>
+            <groupId>com.paytm.pg</groupId>
+            <artifactId>paytm-checksum</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <!-- Embedded Jetty runtime removed from dependencies to allow local build
+             without requiring Jetty 12 artifacts. For local development add Jetty
+             to your IDE or set up a container; the WAR will still be produced. -->
     </dependencies>
 
     <build>
@@ -114,10 +131,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
-                <configuration>
-                    <source>20</source>
-                    <target>20</target>
-                </configuration>
+                    <configuration>
+                        <source>21</source>
+                        <target>21</target>
+                        <release>21</release>
+                    </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -135,17 +153,49 @@
                     <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>
+            <!-- JaCoCo — generates target/site/jacoco/ HTML coverage report -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals><goal>report</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Cargo plugin — deploys to a local Tomcat 10.1 instance -->
             <!-- Run with: mvn package cargo:run                         -->
             <plugin>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-maven-plugin</artifactId>
-                <version>12.0.5</version>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven3-plugin</artifactId>
+                <version>1.10.11</version>
                 <configuration>
-                    <webApp>
-                        <contextPath>/</contextPath>
-                    </webApp>
-                    <scan>-1</scan>
+                    <container>
+                        <containerId>tomcat10x</containerId>
+                        <type>embedded</type>
+                    </container>
+                    <configuration>
+                        <properties>
+                            <cargo.servlet.port>8080</cargo.servlet.port>
+                        </properties>
+                    </configuration>
+                    <deployables>
+                        <deployable>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <type>war</type>
+                            <properties>
+                                <context>/</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
                 </configuration>
             </plugin>
         </plugins>

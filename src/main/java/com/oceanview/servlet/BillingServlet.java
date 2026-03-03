@@ -114,7 +114,7 @@ public class BillingServlet extends HttpServlet {
                 throw new IllegalArgumentException("Invalid ID");
             int billId = Integer.parseInt(parts[1]);
             PaymentMethod method = PaymentMethod.valueOf(req.getParameter("method").toUpperCase());
-            billingService.recordPayment(billId, method);
+            billingService.recordPayment(billId, method, req.getRemoteAddr());
             resp.getWriter().write(JsonUtil.ok("Payment recorded.", null));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

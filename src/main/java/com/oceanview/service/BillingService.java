@@ -33,6 +33,7 @@ public class BillingService {
     private final BillDao billDao;
     private final ReservationDao reservationDao;
     private final RoomDao roomDao;
+    private ReservationService reservationService;
 
     public BillingService(BillDao billDao,
             ReservationDao reservationDao,
@@ -40,6 +41,10 @@ public class BillingService {
         this.billDao = billDao;
         this.reservationDao = reservationDao;
         this.roomDao = roomDao;
+    }
+
+    public void setReservationService(ReservationService reservationService) {
+        this.reservationService = reservationService;
     }
 
     /**
@@ -69,11 +74,18 @@ public class BillingService {
                         "Room not found for reservation: " + reservationId));
 
         int nights = (int) res.getNumNights();
-        if (nights <= 0)
-            throw new IllegalStateException("Cannot bill a same-day reservation.");
+        if (nights < 0)
+            throw new IllegalStateException("Check-out cannot be before check-in.");
+        if (nights == 0)
+            nights = 1;
 
+        int guests = res.getNumGuests() > 0 ? res.getNumGuests() : 1;
         BigDecimal rate = room.getRatePerNight();
-        BigDecimal roomCharges = rate.multiply(BigDecimal.valueOf(nights));
+
+        // roomCharges = rate * nights * guests (assuming per person per night charge as
+        // per user request)
+        BigDecimal roomCharges = rate.multiply(BigDecimal.valueOf(nights)).multiply(BigDecimal.valueOf(guests));
+
         BigDecimal taxAmount = roomCharges.multiply(taxPercentage)
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
         BigDecimal total = roomCharges.add(taxAmount)
@@ -84,6 +96,7 @@ public class BillingService {
         bill.setBillNumber(generateBillNumber());
         bill.setReservationId(reservationId);
         bill.setNumNights(nights);
+        bill.setNumGuests(guests);
         bill.setRoomRate(rate);
         bill.setRoomCharges(roomCharges);
         bill.setTaxPercentage(taxPercentage);
@@ -100,14 +113,35 @@ public class BillingService {
         return bill;
     }
 
-    /** Records a payment against an existing bill. */
+    /** Records a payment against an existing bill and confirms the reservation. */
     public void recordPayment(int billId, PaymentMethod method) throws SQLException {
+        recordPayment(billId, method, "0.0.0.0");
+    }
+
+    public void recordPayment(int billId, PaymentMethod method, String ipAddress) throws SQLException {
         billDao.updatePayment(billId, PaymentStatus.PAID, method);
-        log.info("Payment recorded for bill {} via {}", billId, method);
+
+        Optional<Bill> opt = billDao.findById(billId);
+        if (opt.isPresent()) {
+            int resId = opt.get().getReservationId();
+            if (reservationService != null) {
+                // Use service to trigger Observer/AuditLog events
+                reservationService.confirm(resId, ipAddress);
+            } else {
+                // Fallback to direct DAO if service not linked
+                reservationDao.updateStatus(resId, com.oceanview.model.Reservation.Status.CONFIRMED);
+            }
+        }
+
+        log.info("Payment recorded for bill {} via {}. Total confirmation flow triggered.", billId, method);
     }
 
     public Optional<Bill> findByReservationId(int reservationId) throws SQLException {
         return billDao.findByReservationId(reservationId);
+    }
+
+    public Optional<Bill> findByNumber(String number) throws SQLException {
+        return billDao.findByNumber(number);
     }
 
     public Optional<Bill> findById(int id) throws SQLException {
@@ -120,6 +154,24 @@ public class BillingService {
 
     public List<Bill> findByGuestId(int guestId) throws SQLException {
         return billDao.findByGuestId(guestId);
+    }
+
+    /**
+     * Maintenance: Generates bills for all reservations that don't have one.
+     * Useful for recovering from failed automatic generation or manual entries.
+     */
+    public void generateMissingBills() throws SQLException {
+        List<Reservation> allRes = reservationDao.findAll();
+        for (Reservation res : allRes) {
+            if (billDao.findByReservationId(res.getReservationId()).isEmpty()) {
+                try {
+                    generateBill(res.getReservationId());
+                    log.info("Recovered missing bill for reservation: {}", res.getReservationId());
+                } catch (Exception e) {
+                    log.warn("Failed to recover bill for reservation {}: {}", res.getReservationId(), e.getMessage());
+                }
+            }
+        }
     }
 
     // ── HELPERS ─────────────────────────────────────────────────────────────

@@ -18,28 +18,29 @@ public class BillDao {
     // ── CREATE ──────────────────────────────────────────────────────────────
 
     public Bill insert(Bill bill) throws SQLException {
-        String sql = "INSERT INTO bills (bill_number, reservation_id, num_nights, room_rate, " +
+        String sql = "INSERT INTO bills (bill_number, reservation_id, num_nights, num_guests, room_rate, " +
                 "room_charges, tax_percentage, tax_amount, service_charge, discount_amount, " +
                 "total_amount, payment_status, payment_method, notes) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, bill.getBillNumber());
             ps.setInt(2, bill.getReservationId());
             ps.setInt(3, bill.getNumNights());
-            ps.setBigDecimal(4, bill.getRoomRate());
-            ps.setBigDecimal(5, bill.getRoomCharges());
-            ps.setBigDecimal(6, bill.getTaxPercentage());
-            ps.setBigDecimal(7, bill.getTaxAmount());
-            ps.setBigDecimal(8, bill.getServiceCharge());
-            ps.setBigDecimal(9, bill.getDiscountAmount());
-            ps.setBigDecimal(10, bill.getTotalAmount());
-            ps.setString(11, bill.getPaymentStatus().name());
+            ps.setInt(4, bill.getNumGuests());
+            ps.setBigDecimal(5, bill.getRoomRate());
+            ps.setBigDecimal(6, bill.getRoomCharges());
+            ps.setBigDecimal(7, bill.getTaxPercentage());
+            ps.setBigDecimal(8, bill.getTaxAmount());
+            ps.setBigDecimal(9, bill.getServiceCharge());
+            ps.setBigDecimal(10, bill.getDiscountAmount());
+            ps.setBigDecimal(11, bill.getTotalAmount());
+            ps.setString(12, bill.getPaymentStatus().name());
             if (bill.getPaymentMethod() != null)
-                ps.setString(12, bill.getPaymentMethod().name());
+                ps.setString(13, bill.getPaymentMethod().name());
             else
-                ps.setNull(12, Types.VARCHAR);
-            ps.setString(13, bill.getNotes());
+                ps.setNull(13, Types.VARCHAR);
+            ps.setString(14, bill.getNotes());
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next())
@@ -54,7 +55,13 @@ public class BillDao {
     // ── READ ────────────────────────────────────────────────────────────────
 
     public Optional<Bill> findById(int id) throws SQLException {
-        String sql = "SELECT * FROM bills WHERE bill_id = ?";
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
+                "FROM bills b " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE b.bill_id = ?";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -67,7 +74,13 @@ public class BillDao {
     }
 
     public Optional<Bill> findByReservationId(int reservationId) throws SQLException {
-        String sql = "SELECT * FROM bills WHERE reservation_id = ? ORDER BY issued_at DESC LIMIT 1";
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
+                "FROM bills b " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE b.reservation_id = ? ORDER BY b.issued_at DESC LIMIT 1";
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, reservationId);
@@ -79,9 +92,32 @@ public class BillDao {
         }
     }
 
+    public Optional<Bill> findByNumber(String billNumber) throws SQLException {
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
+                "FROM bills b " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
+                "WHERE b.bill_number = ?";
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, billNumber);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
+            }
+        } finally {
+            DatabaseConnection.getInstance().releaseConnection(conn);
+        }
+    }
+
     public List<Bill> findByGuestId(int guestId) throws SQLException {
-        String sql = "SELECT b.* FROM bills b " +
-                "JOIN reservations r ON b.reservation_id = r.reservation_id " +
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
+                "FROM bills b " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
                 "WHERE r.guest_id = ? " +
                 "ORDER BY b.issued_at DESC";
         List<Bill> list = new ArrayList<>();
@@ -99,7 +135,13 @@ public class BillDao {
     }
 
     public List<Bill> findAll() throws SQLException {
-        String sql = "SELECT * FROM bills ORDER BY issued_at DESC";
+        String sql = "SELECT b.*, r.reservation_number, g.first_name, g.last_name, g.email, g.contact_number, rm.room_number "
+                +
+                "FROM bills b " +
+                "LEFT JOIN reservations r ON b.reservation_id = r.reservation_id " +
+                "LEFT JOIN guests g ON r.guest_id = g.guest_id " +
+                "LEFT JOIN rooms rm ON r.room_id = rm.room_id " +
+                "ORDER BY b.issued_at DESC";
         List<Bill> list = new ArrayList<>();
         Connection conn = DatabaseConnection.getInstance().getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql);
@@ -140,6 +182,12 @@ public class BillDao {
         b.setBillNumber(rs.getString("bill_number"));
         b.setReservationId(rs.getInt("reservation_id"));
         b.setNumNights(rs.getInt("num_nights"));
+        // Try to read num_guests, default to 1 if not exists/null
+        try {
+            b.setNumGuests(rs.getInt("num_guests"));
+        } catch (Exception e) {
+            b.setNumGuests(1);
+        }
         b.setRoomRate(rs.getBigDecimal("room_rate"));
         b.setRoomCharges(rs.getBigDecimal("room_charges"));
         b.setTaxPercentage(rs.getBigDecimal("tax_percentage"));
@@ -158,6 +206,32 @@ public class BillDao {
         if (pa != null)
             b.setPaidAt(pa.toLocalDateTime());
         b.setNotes(rs.getString("notes"));
+
+        // Attempt to populate Reservation hierarchy if columns exist
+        try {
+            com.oceanview.model.Reservation res = new com.oceanview.model.Reservation();
+            res.setReservationId(b.getReservationId());
+            res.setReservationNumber(rs.getString("reservation_number"));
+
+            com.oceanview.model.Guest g = new com.oceanview.model.Guest();
+            g.setFirstName(rs.getString("first_name"));
+            g.setLastName(rs.getString("last_name"));
+            try {
+                g.setEmail(rs.getString("email"));
+                g.setContactNumber(rs.getString("contact_number"));
+            } catch (SQLException ignored) {
+            }
+            res.setGuest(g);
+
+            com.oceanview.model.Room rm = new com.oceanview.model.Room();
+            rm.setRoomNumber(rs.getString("room_number"));
+            res.setRoom(rm);
+
+            b.setReservation(res);
+        } catch (SQLException ignored) {
+            // Join columns not present
+        }
+
         return b;
     }
 }

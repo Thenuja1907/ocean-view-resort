@@ -1,0 +1,253 @@
+# Ocean View Resort - UML Diagrams
+
+This document contains visual representations of the system architecture and core workflows using Mermaid.js syntax.
+
+## 👥 Use Case Diagram
+
+```mermaid
+useCaseDiagram
+    actor Guest
+    actor Receptionist
+    actor Admin
+
+    package "Resort Management System" {
+        usecase "Register/Login" as UC1
+        usecase "Search & View Rooms" as UC2
+        usecase "Book Room (Self)" as UC3
+        usecase "Cancel Booking" as UC4
+        usecase "View Personal History" as UC5
+        
+        usecase "Check-In / Check-Out" as UC6
+        usecase "Process Payment & Generate Bill" as UC7
+        usecase "Manage Room Availability" as UC8
+        usecase "View Dashboard Stats" as UC9
+        usecase "Manage Staff Accounts" as UC10
+    }
+
+    Guest --> UC1
+    Guest --> UC2
+    Guest --> UC3
+    Guest --> UC4
+    Guest --> UC5
+
+    Receptionist --> UC1
+    Receptionist --> UC6
+    Receptionist --> UC7
+    Receptionist --> UC8
+    Receptionist --> UC3
+
+    Admin --|> Receptionist
+    Admin --> UC9
+    Admin --> UC10
+```
+
+---
+
+## 🏗️ Detailed Class Diagram
+
+```mermaid
+classDiagram
+    class User {
+        +int userId
+        +String username
+        +Role role
+        +boolean active
+        +login()
+    }
+    class Role {
+        <<enumeration>>
+        ADMIN
+        STAFF
+        RECEPTIONIST
+    }
+    
+    class Guest {
+        +int guestId
+        +String email
+        +String contactNumber
+        +IdType idType
+        +getFullName()
+    }
+    class IdType {
+        <<enumeration>>
+        NIC
+        PASSPORT
+        DRIVING_LICENSE
+    }
+
+    class Room {
+        +int roomId
+        +String roomNumber
+        +RoomType roomType
+        +BigDecimal ratePerNight
+        +boolean available
+    }
+    class RoomType {
+        <<enumeration>>
+        STANDARD
+        DELUXE
+        OCEAN_VIEW
+        SUITE
+        PENTHOUSE
+    }
+
+    class Reservation {
+        +int reservationId
+        +String reservationNumber
+        +LocalDate checkInDate
+        +LocalDate checkOutDate
+        +Status status
+        +long getNumNights()
+    }
+    class Status {
+        <<enumeration>>
+        PENDING
+        CONFIRMED
+        CHECKED_IN
+        CHECKED_OUT
+        CANCELLED
+    }
+
+    class Bill {
+        +int billId
+        +BigDecimal roomCharges
+        +BigDecimal taxAmount
+        +BigDecimal totalAmount
+        +PaymentStatus paymentStatus
+    }
+    class PaymentStatus {
+        <<enumeration>>
+        PENDING
+        PAID
+        PARTIAL
+    }
+
+    User --> Role
+    Guest --> IdType
+    Room --> RoomType
+    Reservation --> Status
+    Bill --> PaymentStatus
+
+    Guest "1" -- "*" Reservation : makes
+    Room "1" -- "*" Reservation : assigned to
+    Reservation "1" -- "0..1" Bill : generates
+    User "1" -- "*" Reservation : manages
+```
+
+---
+
+## 🔄 Sequence Diagram 1: User Login
+
+```mermaid
+sequenceDiagram
+    actor User as Guest/Staff
+    participant S as AuthServlet
+    participant AS as AuthService
+    participant DAO as UserDao / GuestDao
+    participant DB as MySQL DB
+
+    User->>S: POST /api/auth/login (credentials)
+    activate S
+    S->>AS: login(username, password)
+    activate AS
+    AS->>DAO: findByUsername(username)
+    activate DAO
+    DAO->>DB: SELECT * FROM users WHERE ...
+    DB-->>DAO: ResultSet
+    DAO-->>AS: Optional<User>
+    deactivate DAO
+    
+    AS->>AS: Verify Password (BCrypt)
+    AS->>DAO: updateLastLogin(id)
+    AS-->>S: User Object
+    deactivate AS
+    
+    S->>S: Create HTTP Session
+    S-->>User: 200 OK (JSON User Data)
+    deactivate S
+```
+
+---
+
+## 🔄 Sequence Diagram 2: Add New Reservation
+
+```mermaid
+sequenceDiagram
+    actor Client
+    participant RS as ReservationServlet
+    participant SVC as ReservationService
+    participant RDAO as ReservationDao
+    participant RMDAO as RoomDao
+    participant SUB as ReservationSubject
+
+    Client->>RS: POST /api/reservations (details)
+    activate RS
+    RS->>SVC: create(guestId, roomId, in, out, ...)
+    activate SVC
+    
+    SVC->>RMDAO: findById(roomId)
+    RMDAO-->>SVC: Room Data
+    
+    SVC->>RDAO: isRoomAvailable(roomId, in, out)
+    RDAO-->>SVC: true
+    
+    SVC->>RDAO: insert(reservation)
+    RDAO-->>SVC: success
+    
+    SVC->>RMDAO: setAvailability(roomId, false)
+    
+    SVC->>SUB: notifyObservers(CREATED_EVENT)
+    activate SUB
+    SUB-->>SVC: Done
+    deactivate SUB
+    
+    SVC-->>RS: Reservation Object
+    deactivate SVC
+    RS-->>Client: 201 Created (JSON)
+    deactivate RS
+```
+
+---
+
+## 🔄 Sequence Diagram 3: Calculate and Print Bill
+
+```mermaid
+sequenceDiagram
+    actor Staff
+    participant RS as ReservationServlet
+    participant SVC as ReservationService
+    participant SUB as ReservationSubject
+    participant OBS as BillingObserver
+    participant BS as BillingService
+    participant BDAO as BillDao
+
+    Staff->>RS: PUT /api/reservations/{id}/confirm
+    activate RS
+    RS->>SVC: confirm(reservationId)
+    activate SVC
+    
+    SVC->>SVC: transition(CONFIRMED)
+    SVC->>SUB: notifyObservers(CONFIRMED_EVENT)
+    
+    activate SUB
+    SUB->>OBS: onEvent(event)
+    activate OBS
+    OBS->>BS: generateBill(reservationId)
+    activate BS
+    BS->>BS: Calculation: (Nights * Rate) + 10% Tax
+    BS->>BDAO: insert(bill)
+    BDAO-->>BS: success
+    BS-->>OBS: Bill Object
+    deactivate BS
+    OBS-->>SUB: done
+    deactivate OBS
+    SUB-->>SVC: done
+    deactivate SUB
+    
+    SVC-->>RS: Success
+    deactivate SVC
+    RS-->>Staff: 200 OK (Updates UI)
+    deactivate RS
+    
+    Note over Staff, BDAO: Printing is handled by formatting the Bill JSON in JS and calling window.print()
+```

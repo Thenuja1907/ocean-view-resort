@@ -1,0 +1,51 @@
+name: CI – Build, Test, Coverage
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ocean_view_resort_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Seed test database
+        run: mysql -h 127.0.0.1 -u root -proot ocean_view_resort_test < sql/schema.sql
+
+      - name: Build and test with Maven
+        run: mvn verify --batch-mode
+        env:
+          DB_URL: jdbc:mysql://127.0.0.1:3306/ocean_view_resort_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/

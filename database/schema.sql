@@ -55,11 +55,14 @@ CREATE TABLE IF NOT EXISTS guests (
     first_name     VARCHAR(75)  NOT NULL,
     last_name      VARCHAR(75)  NOT NULL,
     email          VARCHAR(150) NOT NULL UNIQUE,
+    password_hash  VARCHAR(255) NULL,   -- Added for Guest Portal
+    is_active      BOOLEAN      NOT NULL DEFAULT TRUE, -- Added for Guest Portal
     contact_number VARCHAR(20)  NOT NULL,
     address        TEXT         NOT NULL,
     id_type        ENUM('NIC','PASSPORT','DRIVING_LICENSE') NOT NULL DEFAULT 'NIC',
     id_number      VARCHAR(50)  NOT NULL,
     nationality    VARCHAR(100) NOT NULL DEFAULT 'Sri Lankan',
+    last_login     DATETIME     NULL,   -- Added for Guest Portal
     created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_guests_email   (email),
@@ -102,6 +105,7 @@ CREATE TABLE IF NOT EXISTS bills (
     bill_number       VARCHAR(20)    NOT NULL UNIQUE,
     reservation_id    INT            NOT NULL,
     num_nights        INT            NOT NULL,
+    num_guests        INT            NOT NULL DEFAULT 1,
     room_rate         DECIMAL(10,2)  NOT NULL,
     room_charges      DECIMAL(10,2)  NOT NULL,
     tax_percentage    DECIMAL(5,2)   NOT NULL DEFAULT 10.00,
@@ -110,7 +114,7 @@ CREATE TABLE IF NOT EXISTS bills (
     discount_amount   DECIMAL(10,2)  NOT NULL DEFAULT 0.00,
     total_amount      DECIMAL(10,2)  NOT NULL,
     payment_status    ENUM('PENDING','PARTIAL','PAID','REFUNDED') NOT NULL DEFAULT 'PENDING',
-    payment_method    ENUM('CASH','CARD','BANK_TRANSFER','ONLINE') NULL,
+    payment_method    VARCHAR(50)    NULL,
     issued_at         DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     paid_at           DATETIME       NULL,
     notes             TEXT           NULL,
@@ -145,8 +149,8 @@ CREATE TABLE IF NOT EXISTS audit_log (
 
 -- Default admin user  (password = Admin@1234)
 INSERT INTO users (username, password_hash, full_name, email, role) VALUES
-('admin',       '$2a$12$KIx5TwMbFcAEfxQGMFhWRu3G6z7m4j8Qlj9mL2sKP1pXbRNz1cA3S', 'System Administrator', 'admin@oceanviewresort.lk', 'ADMIN'),
-('receptionist','$2a$12$KIx5TwMbFcAEfxQGMFhWRu3G6z7m4j8Qlj9mL2sKP1pXbRNz1cA3S', 'Front Desk Staff',      'desk@oceanviewresort.lk',  'RECEPTIONIST');
+('admin',       '$2b$12$aiBaEvaegq2MU7heTLcrLO4BZ9cl4wDs4nvQcyldCbBBQKoRBUNGI.', 'System Administrator', 'admin@oceanviewresort.lk', 'ADMIN'),
+('receptionist','$2b$12$aiBaEvaegq2MU7heTLcrLO4BZ9cl4wDs4nvQcyldCbBBQKoRBUNGI.', 'Front Desk Staff',      'desk@oceanviewresort.lk',  'RECEPTIONIST');
 
 -- Room catalogue
 INSERT INTO rooms (room_number, room_type, floor_number, capacity, rate_per_night, description, amenities) VALUES

@@ -14,9 +14,9 @@
     <div class="dashboard-container">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-umbrella-beach"></i>
-                <span>Ocean View</span>
+            <div class="sidebar-header" style="padding: 2.5rem; border-bottom: none; gap: 12px; color: #FFC107;">
+                <i class="fas fa-umbrella-beach" style="font-size: 1.8rem;"></i>
+                <span style="font-size: 1.5rem; font-weight: 700; letter-spacing: 0.5px;">Ocean View</span>
             </div>
             <nav class="nav-menu">
                 <a href="#" class="nav-link active" data-section="overview">
@@ -35,19 +35,21 @@
                     <i class="fas fa-file-invoice-dollar"></i> <span>Billing</span>
                 </a>
             </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=fcc419&color=000428" alt="User"
-                        style="width: 40px; border-radius: 50%; border: 2px solid var(--primary);">
-                    <div class="details" style="margin-left: 10px;">
-                        <span class="name" id="userName"
-                            style="display: block; font-size: 0.9rem; font-weight: 500;">User</span>
-                        <span class="role" id="userRole"
-                            style="display: block; font-size: 0.7rem; color: var(--text-muted);">Staff</span>
+            <div class="sidebar-footer"
+                style="padding: 1.5rem 2rem; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05);">
+                <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+                    <div
+                        style="width: 42px; height: 42px; background: #FFC107; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #000; font-size: 0.9rem;">
+                        AD</div>
+                    <div class="details">
+                        <span class="name"
+                            style="display: block; font-size: 0.85rem; font-weight: 600; color: white;">User</span>
+                        <span class="role"
+                            style="display: block; font-size: 0.7rem; color: rgba(255,255,255,0.5);">Staff</span>
                     </div>
                 </div>
                 <button class="logout-btn" id="logoutBtn"
-                    style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem;">
+                    style="background: none; border: none; color: white; cursor: pointer; font-size: 1.1rem; opacity: 0.7;">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
@@ -58,7 +60,8 @@
             <header class="content-header">
                 <h1 id="sectionTitle">Dashboard Overview</h1>
                 <div class="header-actions">
-                    <button class="btn btn-primary" id="btnQuickBooking">
+                    <button class="btn btn-primary" id="btnQuickBooking"
+                        style="background: #FFC107; color: #000; border-radius: 50px; padding: 10px 24px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; border: none;">
                         <i class="fas fa-plus"></i> Quick Booking
                     </button>
                 </div>
@@ -67,33 +70,62 @@
             <div id="contentArea">
                 <!-- Dashboard Overview Section -->
                 <section id="overview" class="content-section active">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <i class="fas fa-door-open"></i>
+                    <div class="stats-grid"
+                        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
+                        <div class="stat-card glass-panel"
+                            style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem; border-radius: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                            <div
+                                style="width: 48px; height: 48px; background: rgba(255, 193, 7, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-door-open" style="color: #FFC107; font-size: 1.2rem;"></i>
+                            </div>
                             <div class="stat-info">
-                                <span class="label">Available Rooms</span>
-                                <span class="value" id="countAvailable">0</span>
+                                <span class="label"
+                                    style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 4px;">Available
+                                    Rooms</span>
+                                <span class="value" id="countAvailable"
+                                    style="font-size: 1.5rem; font-weight: 700; color: white;">0</span>
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <i class="fas fa-user-check"></i>
+                        <div class="stat-card glass-panel"
+                            style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem; border-radius: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                            <div
+                                style="width: 48px; height: 48px; background: rgba(255, 193, 7, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-check" style="color: #FFC107; font-size: 1.2rem;"></i>
+                            </div>
                             <div class="stat-info">
-                                <span class="label">Today's Check-ins</span>
-                                <span class="value" id="countCheckins">0</span>
+                                <span class="label"
+                                    style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 4px;">Today's
+                                    Check-ins</span>
+                                <span class="value" id="countCheckins"
+                                    style="font-size: 1.5rem; font-weight: 700; color: white;">0</span>
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <i class="fas fa-calendar-day"></i>
+                        <div class="stat-card glass-panel"
+                            style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem; border-radius: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                            <div
+                                style="width: 48px; height: 48px; background: rgba(255, 193, 7, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-calendar-alt" style="color: #FFC107; font-size: 1.2rem;"></i>
+                            </div>
                             <div class="stat-info">
-                                <span class="label">Active Reservations</span>
-                                <span class="value" id="countActive">0</span>
+                                <span class="label"
+                                    style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 4px;">Active
+                                    Reservations</span>
+                                <span class="value" id="countActive"
+                                    style="font-size: 1.5rem; font-weight: 700; color: white;">0</span>
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <i class="fas fa-wallet"></i>
+                        <div class="stat-card glass-panel"
+                            style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem; border-radius: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                            <div
+                                style="width: 48px; height: 48px; background: rgba(255, 193, 7, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-wallet" style="color: #FFC107; font-size: 1.2rem;"></i>
+                            </div>
                             <div class="stat-info">
-                                <span class="label">Pending Payments</span>
-                                <span class="value" id="countPendingBills">0</span>
+                                <span class="label"
+                                    style="display: block; font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 4px;">Pending
+                                    Payments</span>
+                                <span class="value" id="countPendingBills"
+                                    style="font-size: 1.5rem; font-weight: 700; color: white;">0</span>
                             </div>
                         </div>
                     </div>
@@ -102,9 +134,10 @@
                         <div class="card">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                                <h3 style="color: var(--primary);">Recent Reservations</h3>
+                                <h3 style="color: #FFC107; font-size: 1.1rem; letter-spacing: 0.5px;">Recent
+                                    Reservations</h3>
                                 <a href="#" onclick="showSection('reservations')"
-                                    style="color: var(--primary); font-size: 0.8rem; text-decoration: none;">View
+                                    style="color: rgba(255,255,255,0.5); font-size: 0.75rem; text-decoration: none; font-weight: 500;">View
                                     All</a>
                             </div>
                             <table class="data-table">
@@ -121,21 +154,23 @@
                             </table>
                         </div>
                         <div class="card">
-                            <h3 style="color: var(--primary); margin-bottom: 2rem;">Room Availability</h3>
+                            <h3 style="color: #FFC107; font-size: 1.1rem; letter-spacing: 0.5px; margin-bottom: 2rem;">
+                                Room Availability</h3>
                             <div class="room-grid" id="roomStatusGrid"
-                                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 1rem;">
+                                style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem;">
                             </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- Guests Section -->
-                <section id="guests" class="content-section" style="display: none;">
+                <section id="guests" class="content-section">
                     <div class="card">
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                            <h3 style="color: var(--primary);">Guest Records</h3>
-                            <button class="btn btn-primary btn-sm" id="btnAddGuest">
+                            <h3 style="color: #FFC107; font-size: 1.1rem; letter-spacing: 0.5px;">Guest Records</h3>
+                            <button class="btn btn-primary" id="btnAddGuest"
+                                style="background: #FFC107; color: #000; border-radius: 50px; padding: 8px 20px; font-weight: 600; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; border: none;">
                                 <i class="fas fa-user-plus"></i> Add Guest
                             </button>
                         </div>
@@ -156,41 +191,139 @@
                     </div>
                 </section>
 
-                <!-- Rooms/Reservations/Billing sections follow same card pattern -->
-                <section id="rooms" class="content-section" style="display: none;"></section>
-                <section id="reservations" class="content-section" style="display: none;"></section>
-                <section id="billing" class="content-section" style="display: none;"></section>
+                <!-- Rooms Section -->
+                <section id="rooms" class="content-section">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">Room Inventory</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Room #</th>
+                                    <th>Type</th>
+                                    <th>Rate (LKR)</th>
+                                    <th>Status</th>
+                                    <th>Occupant Details</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roomListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Reservations Section -->
+                <section id="reservations" class="content-section">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">All Reservations</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Res #</th>
+                                    <th>Guest Details</th>
+                                    <th>Room & Guests</th>
+                                    <th>Stay Period</th>
+                                    <th>Special Requests</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Billing Section -->
+                <section id="billing" class="content-section">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <h3 style="color: var(--primary);">Billing & Payments</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Bill #</th>
+                                    <th>Guest / Reservation</th>
+                                    <th>Room</th>
+                                    <th>Total (LKR)</th>
+                                    <th>Status</th>
+                                    <th>Method</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billListBody"></tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
 
     <!-- Modals -->
-    <div class="modal" id="bookingModal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center;">
-        <div class="modal-content" style="width: 100%; max-width: 650px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 2.5rem;">
-                <h2 style="color: var(--primary);">New Reservation</h2>
+    <div class="modal" id="bookingModal">
+        <div class="modal-content"
+            style="width: 100%; max-width: 650px; background: rgba(20, 20, 20, 0.95); border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 20px; padding: 3rem; color: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                <h2 style="color: #FFC107; font-size: 1.6rem; letter-spacing: 0.5px;">New Reservation</h2>
                 <button class="close-modal"
-                    style="background: none; border: none; font-size: 2rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+                    style="background: none; border: none; font-size: 1.8rem; color: rgba(255,255,255,0.6); cursor: pointer;">&times;</button>
             </div>
             <form id="bookingForm">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-                    <div><label>Select Guest</label><select id="guestSelect" required></select></div>
-                    <div><label>Select Room</label><select id="roomSelect" required></select></div>
+                    <div style="text-align:center;">
+                        <label
+                            style="display: block; font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 8px;">Select
+                            Guest</label>
+                        <select id="guestSelect" required
+                            style="width: 100%; padding: 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white;"></select>
+                    </div>
+                    <div style="text-align:center;">
+                        <label
+                            style="display: block; font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 8px;">Select
+                            Room</label>
+                        <select id="roomSelect" required
+                            style="width: 100%; padding: 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white;"></select>
+                    </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-                    <div><label>Check-in Date</label><input type="date" id="checkInDate" required></div>
-                    <div><label>Check-out Date</label><input type="date" id="checkOutDate" required></div>
+                    <div style="text-align:center;">
+                        <label
+                            style="display: block; font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 8px;">Check-in
+                            Date</label>
+                        <input type="date" id="checkInDate" required
+                            style="width: 100%; padding: 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white;">
+                    </div>
+                    <div style="text-align:center;">
+                        <label
+                            style="display: block; font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 8px;">Check-out
+                            Date</label>
+                        <input type="date" id="checkOutDate" required
+                            style="width: 100%; padding: 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white;">
+                    </div>
                 </div>
-                <div style="margin-bottom: 1.5rem;">
-                    <label>Number of Guests</label>
-                    <input type="number" id="numGuests" min="1" value="2" required>
+                <div style="margin-bottom: 1.5rem; text-align:center;">
+                    <label
+                        style="display: block; font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 8px;">Number
+                        of Guests</label>
+                    <input type="number" id="numGuests" min="1" value="2" required
+                        style="width: 100%; padding: 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; text-align: center;">
                 </div>
-                <div style="margin-bottom: 2rem;">
-                    <label>Special Requests</label>
-                    <textarea id="specialRequests" style="height: 100px;"></textarea>
+                <div style="margin-bottom: 2rem; text-align:center;">
+                    <label
+                        style="display: block; font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 8px;">Special
+                        Requests</label>
+                    <textarea id="specialRequests"
+                        style="width: 100%; height: 100px; padding: 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; resize: none;"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Confirm Reservation</button>
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; padding: 10px 24px; background: #FFC107; color: #000; border: none; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer;">Confirm
+                    Reservation</button>
             </form>
         </div>
     </div>
@@ -231,7 +364,138 @@
         </div>
     </div>
 
-    <script src="js/app.js"></script>
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center; background: rgba(0,0,0,0.8);">
+        <div class="modal-content"
+            style="width: 100%; max-width: 400px; text-align: center; border-radius: 15px; position:relative;">
+            <button id="btnClosePaymentModal"
+                style="position: absolute; right: 20px; top: 15px; background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+            <h2 style="color: var(--primary); margin-bottom: 0.5rem;">Settle Bill</h2>
+            <p style="margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-muted);">Select method to complete
+                payment.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    onclick="processSettle('VISA')">
+                    <i class="fab fa-cc-visa" style="color: #1a1aff; font-size: 1.2rem;"></i> VISA Card
+                </button>
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    onclick="processSettle('MASTERCARD')">
+                    <i class="fab fa-cc-mastercard" style="color: #eb001b; font-size: 1.2rem;"></i> MASTERCARD
+                </button>
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    onclick="processSettle('AMEX')">
+                    <i class="fab fa-cc-amex" style="color: #007bc1; font-size: 1.2rem;"></i> AMEX Card
+                </button>
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    onclick="processSettle('CASH')">
+                    <i class="fas fa-money-bill-wave" style="color: #4caf50; font-size: 1.2rem;"></i> CASH Payment
+                </button>
+                <button class="btn btn-secondary"
+                    style="padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; color: #ffffff !important;"
+                    onclick="processSettle('ONLINE')">
+                    <i class="fas fa-mobile-alt" style="color: #00baf2; font-size: 1.2rem;"></i> Online Payment (Paytm)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Guest Modal -->
+    <div id="editGuestModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; align-items: center; justify-content: center; background: rgba(0,0,0,0.75);">
+        <div class="modal-content"
+            style="width: 100%; max-width: 650px; background: rgba(20,20,20,0.97); border: 1px solid rgba(255,193,7,0.2); border-radius: 20px; padding: 3rem; color: white; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                <h2 style="color: var(--primary); font-size: 1.6rem; letter-spacing: 0.5px;">Edit Guest</h2>
+                <button id="btnCloseEditGuest"
+                    style="background: none; border: none; font-size: 2rem; color: rgba(255,255,255,0.6); cursor: pointer;">&times;</button>
+            </div>
+            <form id="editGuestForm">
+                <input type="hidden" id="editGuestId">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">First
+                            Name</label>
+                        <input type="text" id="editGuestFirst" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Last
+                            Name</label>
+                        <input type="text" id="editGuestLast" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                </div>
+                <div style="margin-bottom:1.5rem;">
+                    <label
+                        style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Email
+                        Address</label>
+                    <input type="email" id="editGuestEmail" required
+                        style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Contact
+                            Number</label>
+                        <input type="text" id="editGuestPhone" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Nationality</label>
+                        <input type="text" id="editGuestNationality" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                </div>
+                <div style="margin-bottom:1.5rem;">
+                    <label style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">Home
+                        Address</label>
+                    <textarea id="editGuestAddress" required
+                        style="width:100%; height:70px; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white; resize:none;"></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">ID
+                            Type</label>
+                        <select id="editGuestIdType"
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                            <option value="NIC">NIC</option>
+                            <option value="PASSPORT">Passport</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label
+                            style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">ID
+                            Number</label>
+                        <input type="text" id="editGuestIdNum" required
+                            style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                    </div>
+                </div>
+                <div style="margin-bottom:2rem;">
+                    <label style="display:block; font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:8px;">New
+                        Password <span style="color:var(--text-muted); font-size:0.7rem;">(leave blank to keep
+                            current)</span></label>
+                    <input type="password" id="editGuestPassword" placeholder="Leave blank to keep unchanged"
+                        style="width:100%; padding:0.9rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white;">
+                </div>
+                <button type="submit"
+                    style="width:100%; padding:1rem; background:#FFC107; color:#000; font-weight:700; font-size:1rem; border:none; border-radius:10px; cursor:pointer;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js?v=1.4"></script>
     <style>
         .content-section {
             display: none;

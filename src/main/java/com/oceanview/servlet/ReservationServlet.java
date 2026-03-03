@@ -111,7 +111,10 @@ public class ReservationServlet extends HttpServlet {
 
             if ("guest".equals(userType)) {
                 guestId = ((com.oceanview.model.Guest) actor).getGuestId();
-                bookedByUserId = 1; // Default to Admin for guest self-bookings
+                // Dynamically find 'admin' user to avoid FK issues
+                com.oceanview.dao.UserDao userDao = (com.oceanview.dao.UserDao) getServletContext()
+                        .getAttribute("userDao");
+                bookedByUserId = userDao.findByUsername("admin").map(com.oceanview.model.User::getUserId).orElse(1);
             } else {
                 guestId = Integer.parseInt(req.getParameter("guestId"));
                 bookedByUserId = ((com.oceanview.model.User) actor).getUserId();
@@ -168,9 +171,9 @@ public class ReservationServlet extends HttpServlet {
                     resp.getWriter().write(JsonUtil.error("Permission denied."));
                     return;
                 }
-                if (!"cancel".equals(action)) {
+                if (!"cancel".equals(action) && !"confirm".equals(action)) {
                     resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    resp.getWriter().write(JsonUtil.error("Guests can only cancel bookings."));
+                    resp.getWriter().write(JsonUtil.error("Guests can only cancel or confirm bookings."));
                     return;
                 }
             }
